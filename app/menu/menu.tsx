@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 import { 
@@ -8,7 +8,8 @@ import {
     DropdownMenuContent, 
     DropdownMenuLabel, 
     DropdownMenuSeparator, 
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
+    DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
@@ -26,31 +27,47 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { 
+    Tabs, 
+    TabsContent, 
+    TabsList, 
+    TabsTrigger 
+} from "@/components/ui/tabs"
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 import { 
+    Ban,
     CircleSlash2,
     Download,
     Layers2, 
+    LucideIcon, 
     Plus, 
     Pyramid, 
     Replace, 
     Ruler, 
+    Settings, 
+    Settings2, 
     Wand 
 } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { Switch } from "@/components/ui/switch";
+
+export type menuFilter = {
+    onChangeFilter: () => void;
+    name: string;
+    color: string;
+    backgroundImage?: string | null;
+}
 
 interface MenuItemProps {
   onClick?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   imgRefUrl?: string | null;
-  disabled?: boolean;
+  menuFilter?: menuFilter[];
 }
 
 export function ColorTransfer(
-    { onClick, onChange, imgRefUrl, disabled }: MenuItemProps
+    { onClick, onChange, imgRefUrl, menuFilter }: MenuItemProps
 ) {
 
     return (
@@ -62,94 +79,109 @@ export function ColorTransfer(
                     </DropdownMenuTrigger>
                 </TooltipTrigger>
                 <TooltipContent side='left'>
-                    Filter
+                    Presets
                 </TooltipContent>
             </Tooltip>
-                <DropdownMenuContent side='left' className="w-96 p-4">
+            <DropdownMenuContent side='left' className="min-w-96 p-4">
                     <DropdownMenuLabel>
-                        Filter
+                        Presets
                     </DropdownMenuLabel>
-                  <div className="space-y-4 relative mt-7">
-                    <div>
-                        <Input 
-                            id="image-ref-upload" 
-                            type="file" 
-                            accept='image/*'
-                            onChange={onChange}
-                            className="hidden"
-                        />
-                        {imgRefUrl ? 
-                        (
-                            <Tooltip>
-                                <TooltipTrigger className="absolute -top-4 -right-2">
-                                    <Label htmlFor="image-ref-upload" className="cursor-pointer flex items-center border-3 border-gray-300 p-2 rounded-lg bg-gray-50">
-                                        <Replace className="inline mr-2" />
-                                    </Label>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Change Reference Image</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        ) : (
-                            <Label htmlFor="image-ref-upload" className="cursor-pointer flex items-center h-45 border-3 border-dashed border-gray-300 p-4 mt-4 rounded-lg hover:bg-gray-50">
-                                <Plus className="inline mr-2" />
-                                Upload Reference Image
-                            </Label>
-                        )}
-                    </div>
-                    {imgRefUrl && (
-                        <div>
-                            <div className="mt-4">
-                            <Image 
-                                id="image-ref"
-                                src={imgRefUrl} 
-                                alt="Reference" 
-                                width={300} 
-                                height={200} 
-                                className="w-full h-auto rounded-lg" 
-                            />
-                            </div>
+                    <Tabs defaultValue="account" className="w-[400px]">
+                        <TabsList>
+                            <TabsTrigger value="account">With Image</TabsTrigger>
+                            <TabsTrigger value="password">Other</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="account">
 
-                            <Button 
-                                variant="outline" 
-                                className="mt-4 w-full"
-                                onClick={onClick}
-                            >
-                                Transfer Color
-                            </Button>
-                        </div>
-                    )}
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex justify-between mt-4">
-                    <h3>GrayScale</h3>
-                    <Switch />
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex flex-col justify-between mt-4 gap-6">
-                    <div className="flex flex-col gap-4">
-                        <Label htmlFor="red-slider">Red</Label>
-                        <Slider min={0} max={10} step={1} id="red-slider" />
-                    </div>
-                    <div className="flex flex-col gap-4">
-                        <Label htmlFor="green-slider">Green</Label>
-                        <Slider min={0} max={10} step={1} id='green-slider'/>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                        <Label htmlFor="blue-slider">Blue</Label>
-                        <Slider min={0} max={10} step={1} id='blue-slider'/>
-                    </div>
-                </DropdownMenuItem>
+                            <div className="space-y-4 relative mt-7">
+                                <div>
+                                    <Input 
+                                        id="image-ref-upload" 
+                                        type="file" 
+                                        accept='image/*'
+                                        onChange={onChange}
+                                        className="hidden"
+                                    />
+                                    {imgRefUrl ? 
+                                    (
+                                        <Tooltip>
+                                            <TooltipTrigger className="absolute -top-4 -right-2">
+                                                <Label htmlFor="image-ref-upload" className="cursor-pointer flex items-center border-3 border-gray-300 p-2 rounded-lg bg-gray-50">
+                                                    <Replace className="inline mr-2" />
+                                                </Label>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Change Reference Image</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    ) : (
+                                        <Label htmlFor="image-ref-upload" className="cursor-pointer flex items-center h-45 border-3 border-dashed border-gray-300 p-4 mt-4 rounded-lg hover:bg-gray-50">
+                                            <Plus className="inline mr-2" />
+                                            Upload Reference Image
+                                        </Label>
+                                    )}
+                                </div>
+                                {imgRefUrl && (
+                                    <div>
+                                        <div className="mt-4">
+                                        <Image 
+                                            id="image-ref"
+                                            src={imgRefUrl} 
+                                            alt="Reference" 
+                                            width={300} 
+                                            height={200} 
+                                            className="w-full h-auto rounded-lg" 
+                                        />
+                                        </div>
+
+                                        <Button 
+                                            variant="outline" 
+                                            className="mt-4 w-full"
+                                            onClick={onClick}
+                                        >
+                                            Transfer Color
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="password" className="flex flex-wrap justify-center">
+                            {menuFilter?.map((filter) => (
+                                <Button className="flex flex-col justify-center w-fit h-fit" variant={"ghost"} onClick={filter.onChangeFilter} key={filter.name}>
+                                    <div className={`flex items-center justify-center w-20 h-20 ${filter.color} rounded-md`}>
+                                        {filter.name === 'No Filter' ? <Ban className="w-16 h-16"/> : null}
+                                        {filter.backgroundImage ? (
+                                            <Image 
+                                                src={filter.backgroundImage} 
+                                                alt={filter.name} 
+                                                width={80} 
+                                                height={80} 
+                                                className="rounded-md object-cover w-full h-full"
+                                            />
+                                        ) : (
+                                            null
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-gray-600 mt-1 w-full text-center">
+                                        {filter.name}
+                                    </p>
+                                </Button>
+                            ))}
+                        </TabsContent>
+                    </Tabs>
             </DropdownMenuContent>
         </DropdownMenu>
     )
 }
 
 type EnhanceProps = {
-    value?: number;
-    onChange?: (value: number[]) => void;
+    blurValue?: number;
+    onChangeBlur?: (value: number[]) => void;
+    sharpValue?: number;
+    onChangeSharp?: (value: number[]) => void;
 }
 
-export function Blur({ value, onChange }: EnhanceProps) {
+export function Blur({ blurValue: value, onChangeBlur: onChange }: EnhanceProps) {
 
     return (
         <DropdownMenu>
@@ -180,14 +212,14 @@ export function Blur({ value, onChange }: EnhanceProps) {
     )
 }
 
-export function Sharp({value, onChange}: EnhanceProps) {
+export function Sharp({sharpValue: value, onChangeSharp: onChange}: EnhanceProps) {
     
     return (
         <DropdownMenu>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <DropdownMenuTrigger className="w-full">
-                        <Pyramid className="w-12" />
+                        <CircleSlash2 className="w-12" />
                     </DropdownMenuTrigger>
                 </TooltipTrigger>
                 <TooltipContent side='left'>
@@ -307,5 +339,101 @@ export function DownloadImage({ url }: DownloadProps) {
                 </DialogDescription>
             </DialogContent>
         </Dialog>
+    )
+}
+
+type ToolsProps = {
+    saturationValue?: number;
+    temperatureValue?: number;
+    tintValue?: number;
+    contrastValue?: number;
+    exposureValue?: number;
+    onChangeSaturation?: (value: number[]) => void;
+    onChangeTemperature?: (value: number[]) => void;
+    onChangeTint?: (value: number[]) => void;
+    onChangeContrast?: (value: number[]) => void;
+    onChangeExposure?: (value: number[]) => void;
+}
+
+export function Tools({
+    saturationValue: saturation,
+    temperatureValue: temperature,
+    tintValue: tint,
+    contrastValue: contrast,
+    exposureValue: exposure,
+    onChangeSaturation: onSaturationChange,
+    onChangeTemperature: onTemperatureChange,
+    onChangeTint: onTintChange,
+    onChangeContrast: onContrastChange,
+    onChangeExposure: onExposureChange
+}: ToolsProps) {
+
+    return (
+        <DropdownMenu>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <DropdownMenuTrigger className="w-full">
+                        <Settings2 className="w-12" />
+                    </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent side='left'>
+                    Tools
+                </TooltipContent>
+            </Tooltip>
+            <DropdownMenuContent side='left' className="flex flex-col gap-4 w-96 min-h-45 p-4">
+                <div>
+                    <DropdownMenuLabel>
+                        Color
+                    </DropdownMenuLabel>
+                    <div className="flex flex-col justify-between mt-4 gap-6">
+                        <div className="flex flex-col w-full gap-4">
+                            <Label htmlFor="saturation-slider" className="flex w-full justify-between">
+                                <p>Saturation</p>
+                                <p>{saturation || 0}</p>
+                            </Label>
+                            <Slider value={typeof saturation === "number" ? [saturation] : [0]} min={-6} max={6} step={0.5} id="saturation-slider" onValueChange={onSaturationChange} className="bg-slate-200" />
+                        </div>
+                        <div className="flex flex-col w-full gap-4">
+                            <Label htmlFor="temperature-slider" className="flex w-full justify-between">
+                                <p>Temperature</p>
+                                <p>{temperature || 0}</p>
+                            </Label>
+                            <Slider value={typeof temperature === "number" ? [temperature] : [0]} min={-6} max={6} step={0.5} id='temperature-slider' onValueChange={onTemperatureChange} className="bg-gradient-to-r from-blue-400 via-slate-200 to-yellow-200" />
+                        </div>
+                        <div className="flex flex-col w-full gap-4">
+                            <Label htmlFor="tint-slider" className="flex w-full justify-between">
+                                <p>Tint</p>
+                                <p>{tint || 0}</p>
+                            </Label>
+                            <Slider value={typeof tint === "number" ? [tint] : [0]} min={-6} max={6} step={0.5} id='tint-slider' onValueChange={onTintChange} className="bg-gradient-to-r from-green-400 via-slate-200 to-fuchsia-400" />
+                        </div>
+                    </div>
+                </div>
+
+                <DropdownMenuSeparator />
+
+                <div>
+                    <DropdownMenuLabel>
+                        Light
+                    </DropdownMenuLabel>
+                    <div className="flex flex-col justify-between mt-4 gap-6">
+                        <div className="flex flex-col w-full gap-4">
+                            <Label htmlFor="exposure-slider" className="flex w-full justify-between">
+                                <p>Exposure</p>
+                                <p>{exposure || 0}</p>
+                            </Label>
+                            <Slider value={typeof exposure === "number" ? [exposure] : [0]} min={-6} max={6} step={1} id='exposure-slider' onValueChange={onExposureChange} className="bg-slate-200" />
+                        </div>
+                        <div className="flex flex-col w-full gap-4">
+                            <Label htmlFor="contrast-slider" className="flex w-full justify-between">
+                                <p>Contrast</p>
+                                <p>{contrast || 0}</p>
+                            </Label>
+                            <Slider value={typeof contrast === "number" ? [contrast] : [0]} min={-6} max={6} step={1} id="contrast-slider" onValueChange={onContrastChange} className="bg-slate-200" />
+                        </div>
+                    </div>
+                </div>
+            </DropdownMenuContent>
+        </DropdownMenu>
     )
 }

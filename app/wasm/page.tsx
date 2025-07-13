@@ -11,6 +11,7 @@ import { getWindowSize } from '../dnd/get-window-size';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
+  Ban,
   Plus,
   Redo 
 } from 'lucide-react';
@@ -20,11 +21,14 @@ import {
   ColorTransfer, 
   DisplaySize, 
   DownloadImage, 
-  Sharp 
+  menuFilter, 
+  Sharp, 
+  Tools
 } from '../menu/menu';
 
-import init from 'rust-editor';
-import { blurImageWASM, fixSize, getSizeImgWASM, sharpImageWASM, transferColorWASM } from './func';
+import init, { adjust_contrasts_image, adjust_exposure_image, adjust_temperature_image, adjust_tint_image } from 'rust-editor';
+import { adjustSaturation, blurImageWASM, fixSize, getSizeImgWASM, grayscaleImage, sharpImageWASM, transferColorWASM } from './func';
+import { filterMenuItems } from '../data';
 
 export default function Wasm() {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -47,6 +51,13 @@ export default function Wasm() {
   // blur and sharp value set
   const [blurVal, setBlurVal] = useState<number>(0);
   const [sharpVal, setSharpVal] = useState<number>(0);
+
+  // tools value set (color and light)
+  const [saturation, setSaturation] = useState<number>(0);
+  const [temperature, setTemperature] = useState<number>(0);
+  const [tint, setTint] = useState<number>(0);
+  const [contrast, setContrast] = useState<number>(0);
+  const [exposure, setExposure] = useState<number>(0);
 
   const [wasmInitialized, setWasmInitialized] = useState(false);
   const [wasmError, setWasmError] = useState<string | null>(null);
@@ -109,29 +120,101 @@ export default function Wasm() {
   }
 
   // Function to process transfer color with WASM
-  async function transferColor(imgT: Uint8Array, imgR: Uint8Array): Promise<void> {
-    if (!wasmInitialized) {
-      console.warn('WASM not initialized');
-      return;
-    }
-
-    const result = transferColorWASM(imgT, imgR);
-    setEditImgArr(await result);
-    setImgUrl(ArrToURL(await result));
-    setIsLoading(false)
-  }
-
-  function handleTransferColor() {
+  async function handleTransferColor() {
     setIsLoading(true);
     // Do not log isLoading here, as it won't reflect the updated value immediately
     if (originalImgArr.length > 0 && refImgArr.length > 0) {
       console.log('Transfer Color with WASM');
-      transferColor(originalImgArr, refImgArr);
+      // transferColor(originalImgArr, refImgArr);
+      if (!wasmInitialized) {
+        console.warn('WASM not initialized');
+        return;
+      }
+
+      const result = transferColorWASM(originalImgArr, refImgArr);
+      setEditImgArr(await result);
+      setImgUrl(ArrToURL(await result));
+      setIsLoading(false)
     } else {
       setIsLoading(false);
       alert('No image data available for transfer color');
     }
   }
+
+  // handle grayscale image with WASM
+  async function handleGrayscaleImage() {
+    setIsLoading(true);
+    if (originalImgArr.length != 0) {
+      if (!wasmInitialized) {
+        console.warn('WASM nont initialized');
+        alert('WASM nont initialized');
+        return;
+      }
+
+      const result = grayscaleImage(originalImgArr);
+      setEditImgArr(await result);
+      setImgUrl(ArrToURL(await result));
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      alert('No image data available for grayscaling');
+    }
+  }
+
+  function handleNoFilter() {
+    setIsLoading(true);
+    setEditImgArr(originalImgArr);
+    setImgUrl(ArrToURL(originalImgArr));
+    setIsLoading(false);
+  }
+
+  const filterMenu: menuFilter[] = [
+    {
+      name: 'No Filter',
+      onChangeFilter: handleNoFilter,
+      color: 'bg-slate-200',
+    },
+    {
+      name: 'Grayscale',
+      onChangeFilter: handleGrayscaleImage,
+      color: 'bg-gray-400',
+    }
+  ]
+
+  async function handleFunctionFilter(imageData: Uint8Array) {
+    setIsLoading(true);
+    // Do not log isLoading here, as it won't reflect the updated value immediately
+    if (originalImgArr.length > 0 && imageData.length > 0) {
+      console.log('Transfer Color with WASM');
+      // transferColor(originalImgArr, refImgArr);
+      if (!wasmInitialized) {
+        console.warn('WASM not initialized');
+        return;
+      }
+
+      const result = transferColorWASM(originalImgArr, imageData);
+      setEditImgArr(await result);
+      setImgUrl(ArrToURL(await result));
+      setIsLoading(false)
+    } else {
+      setIsLoading(false);
+      alert('No image data available for transfer color');
+    }
+  }
+
+  filterMenuItems.map((item) => {
+    filterMenu.push({
+      name: item.label,
+      onChangeFilter: async () => {
+        const response = await fetch(item.imgUrl);
+        const blob = await response.blob();
+        const buffer = await blob.arrayBuffer();
+        handleFunctionFilter(new Uint8Array(buffer));
+      },
+      color: item.backgroundColor,
+      backgroundImage: item.imgUrl
+    });
+  })
 
   // blur image
   async function handleBlurChange(value: number[]) {
@@ -157,6 +240,59 @@ export default function Wasm() {
     setEditImgArr(result);
     setImgUrl(ArrToURL(result));
     setIsLoading(false);
+  }
+
+  // saturation
+  async function handleSaturation(value: number[]) {
+    // setIsLoading(true)
+    setSaturation(value[0])
+    const result = await adjustSaturation(originalImgArr, value[0]);
+    setEditImgArr(result);
+    setImgUrl(ArrToURL(result))
+  }
+
+  async function handleExposure(value: number[]) {
+    setExposure(value[0]);
+    // Assuming you have a function to adjust exposure
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const result = adjust_exposure_image(originalImgArr, value[0]);
+    setEditImgArr(result);
+    setImgUrl(ArrToURL(result));
+  }
+
+  async function handleContrast(value: number[]) {
+    setContrast(value[0]);
+    // Assuming you have a function to adjust contrast
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const result = adjust_contrasts_image(originalImgArr, value[0]);
+    setEditImgArr(result);
+    setImgUrl(ArrToURL(result));
+  }
+
+  async function handleTemperature(value: number[]) {
+    setTemperature(value[0]);
+    // Assuming you have a function to adjust contrast
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const result = adjust_temperature_image(originalImgArr, value[0]);
+    setEditImgArr(result);
+    setImgUrl(ArrToURL(result));
+  }
+
+  async function handleTint(value: number[]) {
+    setTint(value[0]);
+    // Assuming you have a function to adjust contrast
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const result = adjust_tint_image(originalImgArr, value[0]);
+    setEditImgArr(result);
+    setImgUrl(ArrToURL(result));
   }
 
   // Optional: useEffect to observe isLoading changes
@@ -254,22 +390,39 @@ export default function Wasm() {
                   onClick={handleTransferColor}
                   onChange={inputRefImage}
                   imgRefUrl={imgRefUrl}
+                  menuFilter={filterMenu}
                 />
               </div>
 
                 {/* Blur Tool */}
-              <div className='flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer'>
+              {/* <div className='flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer'>
                 <Blur 
-                  value={blurVal}
-                  onChange={handleBlurChange}
+                  blurValue={blurVal}
+                  onChangeBlur={handleBlurChange}
                 />
-              </div>
+              </div> */}
 
                 {/* Sharp Tool */}
               <div className='flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer'>
                 <Sharp 
-                  value={sharpVal}
-                  onChange={handleSharpChange}
+                  sharpValue={sharpVal}
+                  onChangeSharp={handleSharpChange}
+                />
+              </div>
+
+              {/* Blur Tool */}
+              <div className='flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer'>
+                <Tools 
+                  saturationValue={saturation}
+                  onChangeSaturation={handleSaturation}
+                  exposureValue={exposure}
+                  onChangeExposure={handleExposure}
+                  contrastValue={contrast}
+                  onChangeContrast={handleContrast}
+                  temperatureValue={temperature}
+                  onChangeTemperature={handleTemperature}
+                  tintValue={tint}
+                  onChangeTint={handleTint}
                 />
               </div>
 
@@ -344,15 +497,23 @@ export default function Wasm() {
                 </Label>
                 {
                   imgUrl && (
-                    <div className='relative flex items-center justify-center w-full h-full'>
+                    <div
+                      className={`relative flex items-center justify-center w-full`}
+                    >
                       <Image
                         id='image-item'
                         src={imgUrl}
                         alt="Image"
-                        width={180}
-                        height={38}
-                        className={`w-full`}
+                        width={imageSize.width}
+                        height={imageSize.height}
+                        className="w-auto h-full max-h-full"
                         priority
+                        draggable="false"
+                        style={{
+                          objectFit: 'contain',
+                          maxHeight: `${windowSize.height - 120}px`,
+                          maxWidth: '100%',
+                        }}
                       />
                       <div>
                         {isLoading && (
