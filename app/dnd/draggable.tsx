@@ -18,8 +18,8 @@ export function Draggable({ id, children, isAvailable, windowSize, position = { 
     console.log('Window Size:', windowSize);
 
     position = {
-        x: position.x + 200 > windowSize.width ? windowSize.width - 200 : position.x - 170 < -170 ? -170 : position.x,
-        y: position.y + 170 > windowSize.height ? windowSize.height - 200 : position.y - 100 < -100 ? -100 : position.y,
+        x: position.x + 20 > windowSize.width ? windowSize.width - 10 : position.x + 300 < 0 ? -100 : position.x,
+        y: position.y + 20 > windowSize.height ? windowSize.height - 10 : position.y + 100 < 0 ? -10 : position.y,
     }
 
     console.log('Adjusted position:', position);
@@ -36,8 +36,8 @@ export function Draggable({ id, children, isAvailable, windowSize, position = { 
     } else {
         style = {
             position: 'relative',
-            left: position.x - 250,
-            top: position.y - 100,
+            left: position.x,
+            top: position.y,
             transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
             zIndex: isDragging ? 1000 : 1,
         };
@@ -47,8 +47,8 @@ export function Draggable({ id, children, isAvailable, windowSize, position = { 
         <div 
             ref={setNodeRef} 
             style={{
-            ...style,
-            width: isAvailable ? windowSize.width > 1000 ? windowSize.width / 2 : windowSize.width / 1.2 : '',
+                ...style,
+                width: isAvailable ? 'fit-content' : '',
             }} 
             {...listeners} 
             {...attributes}
