@@ -62,7 +62,7 @@ export default function Wasm() {
 	const [originalImgArr, setOriginalImgArr] = useState<Uint8Array>(
 		new Uint8Array()
 	);
-	const [editImgArr, setEditImgArr] = useState<Uint8Array>(new Uint8Array());
+	// const [editImgArr, setEditImgArr] = useState<Uint8Array>(new Uint8Array());
 	const [refImgArr, setRefImgArr] = useState<Uint8Array>(new Uint8Array());
 	const [imageSize, setImageSize] = useState<{ width: number; height: number }>(
 		{ width: 0, height: 0 }
@@ -105,7 +105,7 @@ export default function Wasm() {
 		}
 
 		initializeWasm();
-	}, []);
+	}, [wasmInitialized, wasmError]);
 
 	async function inputImage(e: React.ChangeEvent<HTMLInputElement>) {
 		if (!wasmInitialized) {
@@ -123,7 +123,7 @@ export default function Wasm() {
 						new Blob([fixSizeImg], { type: "image/png" })
 					);
 					setImgUrl(imageUrl);
-					setEditImgArr(fixSizeImg); // Store original image data
+					// setEditImgArr(fixSizeImg); // Store original image data
 					setOriginalImgArr(fixSizeImg); // Store original image data
 					setIsAvailable(true);
 					const sizeImg = getSizeImgWASM(fixSizeImg); // Get image dimensions using WASM
@@ -281,7 +281,7 @@ export default function Wasm() {
 		// 	colorVal.tintValue
 		// );
 		const result = await adjustSaturation(originalImgArr, value[0]);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Saturation finish in");
 	}
