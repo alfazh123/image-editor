@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { DndContext } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
@@ -23,7 +23,6 @@ import {
 
 import init from "rust-editor";
 import {
-	adjustColorWASM,
 	adjustContrasts,
 	adjustExposure,
 	adjustSaturation,
@@ -116,7 +115,7 @@ export default function Wasm() {
 			const file = e.target.files?.[0];
 			if (file) {
 				const reader = new FileReader();
-				reader.onload = async (event) => {
+				reader.onload = async () => {
 					const fixSizeImg = await fixSize(
 						new Uint8Array(await file.arrayBuffer())
 					);
@@ -139,7 +138,7 @@ export default function Wasm() {
 		const file = e.target.files?.[0];
 		if (file) {
 			const reader = new FileReader();
-			reader.onload = async (event) => {
+			reader.onload = async () => {
 				const fixSizeImg = await fixSize(
 					new Uint8Array(await file.arrayBuffer())
 				);
@@ -167,7 +166,7 @@ export default function Wasm() {
 			}
 
 			const result = transferColorWASM(originalImgArr, refImgArr);
-			setEditImgArr(await result);
+			// setEditImgArr(await result);
 			setImgUrl(ArrToURL(await result));
 			setIsLoading(false);
 			console.timeEnd("Transfer color WASM completed in");
@@ -186,13 +185,13 @@ export default function Wasm() {
 				console.warn("WASM nont initialized");
 				alert("WASM nont initialized");
 				return;
+			} else {
+				const result = grayscaleImage(originalImgArr);
+				// setEditImgArr(await result);
+				setImgUrl(ArrToURL(await result));
+				setIsLoading(false);
+				console.timeEnd("Grayscale finish in");
 			}
-
-			const result = grayscaleImage(originalImgArr);
-			setEditImgArr(await result);
-			setImgUrl(ArrToURL(await result));
-			setIsLoading(false);
-			console.timeEnd("Grayscale finish in");
 		} else {
 			setIsLoading(false);
 			alert("No image data available for grayscaling");
@@ -201,7 +200,7 @@ export default function Wasm() {
 
 	function handleNoFilter() {
 		setIsLoading(true);
-		setEditImgArr(originalImgArr);
+		// setEditImgArr(originalImgArr);
 		setImgUrl(ArrToURL(originalImgArr));
 		setIsLoading(false);
 	}
@@ -232,7 +231,7 @@ export default function Wasm() {
 			}
 
 			const result = transferColorWASM(originalImgArr, imageData);
-			setEditImgArr(await result);
+			// setEditImgArr(await result);
 			setImgUrl(ArrToURL(await result));
 			setIsLoading(false);
 			console.timeEnd("Filter apply finish in");
@@ -262,7 +261,7 @@ export default function Wasm() {
 		setIsLoading(true);
 		setSharpVal(value[0]);
 		const result = await sharpImageWASM(originalImgArr, value[0]);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		setIsLoading(false);
 		console.timeEnd("Sharp image finish in");
@@ -300,7 +299,7 @@ export default function Wasm() {
 		// 	colorVal.tintValue
 		// );
 		const result = await adjustTemperature(originalImgArr, value[0]);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Temperature finish in");
 	}
@@ -318,7 +317,7 @@ export default function Wasm() {
 		// 	value[0]
 		// );
 		const result = await adjustTint(originalImgArr, value[0]);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint finish in");
 	}
@@ -331,7 +330,7 @@ export default function Wasm() {
 			exposureValue: value[0],
 		}));
 		const result = await adjustExposure(originalImgArr, lightVal.exposureValue);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Exposure finish in");
 	}
@@ -346,7 +345,7 @@ export default function Wasm() {
 			originalImgArr,
 			lightVal.contrastValue
 		);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Contrast finish in");
 	}
@@ -389,7 +388,7 @@ export default function Wasm() {
 
 	// Handle drag end event
 	function handleDragEnd(event: DragEndEvent): void {
-		const { active, over, delta } = event;
+		const { over, delta } = event;
 
 		if (over && over.id === "canvas") {
 			if (isOnCanvas) {

@@ -3,53 +3,42 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-import { 
-    DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuLabel, 
-    DropdownMenuSeparator, 
-    DropdownMenuTrigger,
-    DropdownMenuItem
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-    Tooltip,
-    TooltipContent, 
-    TooltipTrigger
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { 
-    Tabs, 
-    TabsContent, 
-    TabsList, 
-    TabsTrigger 
-} from "@/components/ui/tabs"
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 
-import { 
-    Ban,
-    CircleSlash2,
-    Download,
-    Layers2, 
-    LucideIcon, 
-    Plus, 
-    Pyramid, 
-    Replace, 
-    Ruler, 
-    Settings, 
-    Settings2, 
-    Wand 
+import {
+	Ban,
+	CircleSlash2,
+	Download,
+	Layers2,
+	Plus,
+	Replace,
+	Ruler,
+	Settings2,
 } from "lucide-react";
 
 export type menuFilter = {

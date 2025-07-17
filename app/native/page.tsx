@@ -11,7 +11,7 @@ import { getWindowSize } from '../dnd/get-window-size';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
-import { fixSize, getSizeImgWASM, transferColorWASM } from "../wasm/func";
+import { fixSize } from "../wasm/func";
 import { ColorTransfer, DisplaySize, Tools } from "../menu/menu";
 import init from "rust-editor";
 import {
@@ -51,7 +51,7 @@ export default function Native() {
 
 	const [imgUrl, setImgUrl] = useState<string | null>(null);
 	const [imgRefUrl, setImgRefUrl] = useState<string | null>(null);
-	const [editImgArr, setEditImgArr] = useState<Uint8Array>(new Uint8Array());
+	// const [editImgArr, setEditImgArr] = useState<Uint8Array>(new Uint8Array());
 	const [originalImgArr, setOriginalImgArr] = useState<Uint8Array>(
 		new Uint8Array()
 	);
@@ -131,12 +131,12 @@ export default function Native() {
 		const file = e.target.files?.[0];
 		if (file) {
 			const reader = new FileReader();
-			reader.onload = async (event) => {
+			reader.onload = async () => {
 				const fixSizeArr = await fixSizeNative(file);
 				setImgUrl(ArrToURL(fixSizeArr));
 				setIsLoading(false);
 				setIsAvailable(true);
-				setEditImgArr(fixSizeArr); // Store original image data
+				// setEditImgArr(fixSizeArr); // Store original image data
 				setOriginalImgArr(fixSizeArr); // Store original image data
 
 				const fixSizeFile = new Blob([fixSizeArr], { type: "image/png" });
@@ -151,7 +151,7 @@ export default function Native() {
 		const file = e.target.files?.[0];
 		if (file) {
 			const reader = new FileReader();
-			reader.onload = async (event) => {
+			reader.onload = async () => {
 				const fixSizeImg = await fixSize(
 					new Uint8Array(await file.arrayBuffer())
 				);
@@ -180,7 +180,7 @@ export default function Native() {
 		);
 		setImgUrl(ArrToURL(resultArr));
 		setIsLoading(false);
-		setEditImgArr(resultArr); // Store original image data
+		// setEditImgArr(resultArr); // Store original image data
 		setOriginalImgArr(resultArr); // Store original image data
 		console.timeEnd("Transfer color native completed in");
 	}
@@ -194,7 +194,7 @@ export default function Native() {
 
 		const blob = new Blob([originalImgArr], { type: "image/png" });
 		const result = await handleSaturationNative(blob, colorVal.saturationValue);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		// console.timeEnd('Adjust Saturation Native finish in');
 	}
@@ -211,7 +211,7 @@ export default function Native() {
 			blob,
 			colorVal.temperatureValue
 		);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Temperature Native finish in");
 	}
@@ -225,7 +225,7 @@ export default function Native() {
 
 		const blob = new Blob([originalImgArr], { type: "image/png" });
 		const result = await handleTintNative(blob, colorVal.tintValue);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint Native finish in");
 	}
@@ -239,7 +239,7 @@ export default function Native() {
 
 		const blob = new Blob([originalImgArr], { type: "image/png" });
 		const result = await handleExposureNative(blob, lightVal.exposureValue);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint Native finish in");
 	}
@@ -253,7 +253,7 @@ export default function Native() {
 
 		const blob = new Blob([originalImgArr], { type: "image/png" });
 		const result = await handleContrastsNative(blob, lightVal.contrastValue);
-		setEditImgArr(result);
+		// setEditImgArr(result);
 		setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint Native finish in");
 	}
@@ -422,7 +422,7 @@ export default function Native() {
 	);
 
 	function handleDragEnd(event: DragEndEvent): void {
-		const { active, over, delta } = event;
+		const { over, delta } = event;
 
 		if (over && over.id === "canvas") {
 			if (isOnCanvas) {
