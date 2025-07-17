@@ -14,15 +14,10 @@ export function Draggable({ id, children, isAvailable, windowSize, position = { 
         id,
     });
 
-    console.log('Draggable component rendered with position:', position, 'isDragging:', isDragging);
-    console.log('Window Size:', windowSize);
-
     position = {
         x: position.x + 20 > windowSize.width ? windowSize.width - 10 : position.x + 300 < 0 ? -100 : position.x,
         y: position.y + 20 > windowSize.height ? windowSize.height - 10 : position.y + 100 < 0 ? -10 : position.y,
     }
-
-    console.log('Adjusted position:', position);
 
     let style: React.CSSProperties
     if (!isAvailable) {
