@@ -8,22 +8,20 @@ interface DroppableProps {
 }
 
 export function Droppable({ id, children, className = '' }: DroppableProps) {
-  const {isOver, setNodeRef} = useDroppable({
-    id,
-  });
-  
-  return (
-    <div 
-      ref={setNodeRef} 
-      className={`
+  const { setNodeRef } = useDroppable({
+		id,
+	});
+
+	return (
+		<div
+			ref={setNodeRef}
+			className={`
         relative w-full h-full
         transition-all ease-in-out
         overflow-hidden
-        ${isOver ? 'bg-blue-50/30' : ''}
         ${className}
-      `}
-    >
-      {children}
-    </div>
-  );
+      `}>
+			{children}
+		</div>
+	);
 }
