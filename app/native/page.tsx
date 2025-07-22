@@ -24,22 +24,13 @@ import {
 	handleTintNative,
 	swithColorNative,
 } from "./func";
+import { useImageEditor } from "../hooks/useImageEditor";
+import { ToolsProps } from "../menu/type";
 
 interface InitType {
 	success: boolean;
 	error?: string | null;
 	message?: string | null;
-}
-
-interface LightValueProps {
-	exposureValue: number;
-	contrastValue: number;
-}
-
-interface ColorValueProps {
-	saturationValue: number;
-	temperatureValue: number;
-	tintValue: number;
 }
 
 export default function Native() {
@@ -49,32 +40,33 @@ export default function Native() {
 	const [isInitialized, setIsInitialized] = useState(false); // Add initialization flag
 	const [isAvailable, setIsAvailable] = useState(false);
 
-	const [imgUrl, setImgUrl] = useState<string | null>(null);
-	const [imgRefUrl, setImgRefUrl] = useState<string | null>(null);
+	// const [hook.imgUrl, hook.setImgUrl] = useState<string | null>(null);
+	// const [imgRefUrl, setImgRefUrl] = useState<string | null>(null);
 	// const [editImgArr, setEditImgArr] = useState<Uint8Array>(new Uint8Array());
-	const [originalImgArr, setOriginalImgArr] = useState<Uint8Array>(
-		new Uint8Array()
-	);
-	const [refImgArr, setRefImgArr] = useState<Uint8Array>(new Uint8Array());
-	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+	// const [hook.originalImgArr, setOriginalImgArr] = useState<Uint8Array>(
+	// new hook.hook.Uint8Array()
+	// );
+	// const [refImgArr, hook.setRefImgArr] = useState<Uint8Array>(new Uint8Array());
+	// const [imageSize, hook.hook.setImageSize] = useState({ width: 0, height: 0 });
 	const [isLoading, setIsLoading] = useState(false);
-
 	// tools value set (color and light)
-	const [lightVal, setLightVal] = useState<LightValueProps>({
-		exposureValue: 0,
-		contrastValue: 0,
-	});
-	const [colorVal, setColorVal] = useState<ColorValueProps>({
-		saturationValue: 0,
-		temperatureValue: 0,
-		tintValue: 0,
-	});
+	// const [lightVal, hook.setLightVal] = useState<LightValueProps>({
+	// 	exposureValue: 0,
+	// 	contrastValue: 0,
+	// });
+	// const [hook.colorVal, hook.setColorVal] = useState<ColorValueProps>({
+	// 	saturationValue: 0,
+	// 	temperatureValue: 0,
+	// 	tintValue: 0,
+	// });
 
 	const [actixInitialized, setActixInitialized] = useState<InitType>({
 		success: false,
 		error: null,
 		message: null,
 	});
+
+	const hook = useImageEditor();
 
 	// Initialize WASM in useEffect
 	useEffect(() => {
@@ -133,15 +125,15 @@ export default function Native() {
 			const reader = new FileReader();
 			reader.onload = async () => {
 				const fixSizeArr = await fixSizeNative(file);
-				setImgUrl(ArrToURL(fixSizeArr));
+				hook.setImgUrl(ArrToURL(fixSizeArr));
 				setIsLoading(false);
 				setIsAvailable(true);
 				// setEditImgArr(fixSizeArr); // Store original image data
-				setOriginalImgArr(fixSizeArr); // Store original image data
+				hook.setOriginalImgArr(fixSizeArr); // Store original image data
 
 				const fixSizeFile = new Blob([fixSizeArr], { type: "image/png" });
 				const sizeImage = await getSizeNative(fixSizeFile);
-				setImageSize({ width: sizeImage.width, height: sizeImage.height });
+				hook.setImageSize({ width: sizeImage.width, height: sizeImage.height });
 			};
 			reader.readAsDataURL(file);
 		}
@@ -158,8 +150,8 @@ export default function Native() {
 				const imageRefUrl = URL.createObjectURL(
 					new Blob([fixSizeImg], { type: "image/png" })
 				);
-				setRefImgArr(fixSizeImg); // Store reference image data
-				setImgRefUrl(imageRefUrl);
+				hook.setRefImgArr(fixSizeImg); // Store reference image data
+				hook.setImgRefUrl(imageRefUrl);
 			};
 			reader.readAsDataURL(file);
 		}
@@ -175,86 +167,95 @@ export default function Native() {
 		console.time("Transfer color native completed in");
 		setIsLoading(true);
 		const resultArr = await swithColorNative(
-			new Blob([originalImgArr], { type: "image/png" }),
-			new Blob([refImgArr], { type: "image/png" })
+			new Blob([hook.originalImgArr], { type: "image/png" }),
+			new Blob([hook.refImgArr], { type: "image/png" })
 		);
-		setImgUrl(ArrToURL(resultArr));
+		hook.setImgUrl(ArrToURL(resultArr));
 		setIsLoading(false);
 		// setEditImgArr(resultArr); // Store original image data
-		setOriginalImgArr(resultArr); // Store original image data
+		hook.setOriginalImgArr(resultArr); // Store original image data
 		console.timeEnd("Transfer color native completed in");
 	}
 
 	async function handleSaturation(value: number[]) {
 		// console.time('Adjust Saturation Native finish in');
-		setColorVal((prev) => ({
+		hook.setColorVal((prev) => ({
 			...prev,
 			saturationValue: value[0],
 		}));
 
-		const blob = new Blob([originalImgArr], { type: "image/png" });
-		const result = await handleSaturationNative(blob, colorVal.saturationValue);
+		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
+		const result = await handleSaturationNative(
+			blob,
+			hook.colorVal.saturationValue
+		);
 		// setEditImgArr(result);
-		setImgUrl(ArrToURL(result));
-		// console.timeEnd('Adjust Saturation Native finish in');
+		hook.setImgUrl(ArrToURL(result));
+		console.timeEnd("Adjust Saturation Native finish in");
 	}
 
 	async function handleTemperature(value: number[]) {
 		console.time("Adjust Temperature Native finish in");
-		setColorVal((prev) => ({
+		hook.setColorVal((prev) => ({
 			...prev,
 			temperatureValue: value[0],
 		}));
 		console.log("Temperature value:", value[0]);
-		const blob = new Blob([originalImgArr], { type: "image/png" });
+		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
 		const result = await handleTemperatureNative(
 			blob,
-			colorVal.temperatureValue
+			hook.colorVal.temperatureValue
 		);
 		// setEditImgArr(result);
-		setImgUrl(ArrToURL(result));
+		hook.setImgUrl(hook.ArrToURL(result));
 		console.timeEnd("Adjust Temperature Native finish in");
 	}
 
 	async function handleTint(value: number[]) {
 		console.time("Adjust Tint Native finish in");
-		setColorVal((prev) => ({
+		hook.setColorVal((prev) => ({
 			...prev,
 			tintValue: value[0],
 		}));
 
-		const blob = new Blob([originalImgArr], { type: "image/png" });
-		const result = await handleTintNative(blob, colorVal.tintValue);
+		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
+		const result = await handleTintNative(blob, hook.colorVal.tintValue);
 		// setEditImgArr(result);
-		setImgUrl(ArrToURL(result));
+		hook.setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint Native finish in");
 	}
 
 	async function handleExposure(value: number[]) {
 		console.time("Adjust Tint Native finish in");
-		setLightVal((prev) => ({
+		hook.setLightVal((prev) => ({
 			...prev,
 			exposureValue: value[0],
 		}));
 
-		const blob = new Blob([originalImgArr], { type: "image/png" });
-		const result = await handleExposureNative(blob, lightVal.exposureValue);
+		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
+		const result = await handleExposureNative(
+			blob,
+			hook.lightVal.exposureValue
+		);
 		// setEditImgArr(result);
-		setImgUrl(ArrToURL(result));
+		hook.setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint Native finish in");
 	}
 
 	async function handleContrast(value: number[]) {
 		console.time("Adjust Tint Native finish in");
-		setLightVal((prev) => ({
+		hook.setLightVal((prev) => ({
 			...prev,
 			contrastValue: value[0],
 		}));
 
-		const blob = new Blob([originalImgArr], { type: "image/png" });
-		const result = await handleContrastsNative(blob, lightVal.contrastValue);
+		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
+		const result = await handleContrastsNative(
+			blob,
+			hook.lightVal.contrastValue
+		);
 		// setEditImgArr(result);
-		setImgUrl(ArrToURL(result));
+		hook.setImgUrl(ArrToURL(result));
 		console.timeEnd("Adjust Tint Native finish in");
 	}
 
@@ -286,11 +287,47 @@ export default function Native() {
 		);
 	}
 
+	const toolsItems: ToolsProps = {
+		colorItem: [
+			{
+				value: hook.colorVal.saturationValue,
+				id: "saturation-slider",
+				onChange: handleSaturation,
+				className: "bg-slate-200",
+			},
+			{
+				value: hook.colorVal.temperatureValue,
+				id: "temperature-slider",
+				onChange: handleTemperature,
+				className: "bg-gradient-to-r from-blue-400 via-slate-200 to-yellow-200",
+			},
+			{
+				value: hook.colorVal.tintValue,
+				id: "tint-slider",
+				onChange: handleTint,
+				className:
+					"bg-gradient-to-r from-green-400 via-slate-200 to-fuchsia-400",
+			},
+		],
+		lightItem: [
+			{
+				value: hook.lightVal.exposureValue,
+				id: "exposure-slider",
+				onChange: handleExposure,
+			},
+			{
+				value: hook.lightVal.contrastValue,
+				id: "contrast-slider",
+				onChange: handleContrast,
+			},
+		],
+	};
+
 	return (
 		<div className="h-screen bg-gradient-to-br from-gray-50 to-blue-50">
 			<DndContext onDragEnd={handleDragEnd}>
 				{/* Toolbar */}
-				{imgUrl && (
+				{hook.imgUrl && (
 					<nav className="fixed flex items-center top-50 bottom-50 right-0 z-50 bg-white shadow-lg border-b w-16 m-4 rounded-2xl justify-center">
 						<div className="flex flex-col max-w-7xl mx-auto p-4">
 							{/* Transfer Color Tool */}
@@ -298,29 +335,21 @@ export default function Native() {
 								<ColorTransfer
 									onClick={handleTransferColor}
 									onChange={inputRefImage}
-									imgRefUrl={imgRefUrl}
+									imgRefUrl={hook.imgRefUrl}
 								/>
 							</div>
 
 							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
 								<Tools
-									saturationValue={colorVal.saturationValue}
-									onChangeSaturation={handleSaturation}
-									temperatureValue={colorVal.temperatureValue}
-									onChangeTemperature={handleTemperature}
-									tintValue={colorVal.tintValue}
-									onChangeTint={handleTint}
-									exposureValue={lightVal.exposureValue}
-									onChangeExposure={handleExposure}
-									contrastValue={lightVal.contrastValue}
-									onChangeContrast={handleContrast}
+									colorItem={toolsItems.colorItem}
+									lightItem={toolsItems.lightItem}
 								/>
 							</div>
 
 							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
 								<DisplaySize
-									width={imageSize.width}
-									height={imageSize.height}
+									width={hook.imageSize.width}
+									height={hook.imageSize.height}
 								/>
 							</div>
 						</div>
@@ -346,7 +375,7 @@ export default function Native() {
 							/>
 						</div>
 
-						{!imgUrl && (
+						{!hook.imgUrl && (
 							<div className="flex flex-col justify-center h-45 items-center z-100 mt-40">
 								<h1 className="text-2xl font-bold text-gray-600 mb-4">
 									This page use WASM for image processing.
@@ -387,15 +416,15 @@ export default function Native() {
 								<Plus className="inline mr-1" />
 								Upload Image
 							</Label>
-							{imgUrl && (
+							{hook.imgUrl && (
 								<div
 									className={`relative flex items-center justify-center w-full`}>
 									<Image
 										id="image-item"
-										src={imgUrl}
+										src={hook.imgUrl}
 										alt="Image"
-										width={imageSize.width}
-										height={imageSize.height}
+										width={hook.imageSize.width}
+										height={hook.imageSize.height}
 										className="w-auto h-full max-h-full"
 										priority
 										draggable="false"
@@ -442,3 +471,4 @@ export default function Native() {
 		}
 	}
 }
+
