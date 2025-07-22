@@ -202,9 +202,9 @@ export async function adjustColorWASM(
 	tint: number
 ): Promise<Uint8Array> {
 	try {
-		await new Promise((resolve) => setTimeout(resolve, 50));
-		await new Promise((resolve) => setTimeout(resolve, 10));
-		await new Promise((resolve) => setTimeout(resolve, 10));
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		await new Promise((resolve) => setTimeout(resolve, 200));
 		const result = adjust_color_image(imageData, saturation, temperature, tint);
 		return result;
 	} catch (error) {
@@ -212,4 +212,35 @@ export async function adjustColorWASM(
 		alert("Error while adjusting tint");
 		return new Uint8Array();
 	}
+}
+
+interface OutputInputImage {
+	imgUrl: string;
+	imgArr: Uint8Array;
+}
+
+export async function inputImage(
+	e: React.ChangeEvent<HTMLInputElement>
+): Promise<OutputInputImage> {
+	try {
+		const file = e.target.files?.[0];
+		if (file) {
+			const fixSizeImg = await fixSize(
+				new Uint8Array(await file.arrayBuffer())
+			);
+			const imageUrl = URL.createObjectURL(
+				new Blob([fixSizeImg], { type: "image/png" })
+			);
+			return {
+				imgUrl: imageUrl,
+				imgArr: fixSizeImg,
+			};
+		}
+	} catch (error) {
+		console.error("Error reading image file:", error);
+	}
+	return {
+		imgUrl: "",
+		imgArr: new Uint8Array(),
+	};
 }
