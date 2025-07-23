@@ -32,29 +32,8 @@ export async function fixSizeNative(imageSource: File): Promise<Uint8Array> {
 	const formData = new FormData();
 	formData.append("image_source", imageSource);
 
-	try {
-		const response = await fetch("http://192.168.10.99:8080/fix_size", {
-			method: "POST",
-			body: formData,
-		});
-		if (response.ok) {
-			const arr = new Uint8Array(await response.arrayBuffer());
-			return arr;
-		} else {
-			const errorText = await response.text();
-			console.error(
-				"Failed to adjust temperature:",
-				response.status,
-				errorText
-			);
-			throw new Error(
-				`Server responded with status ${response.status}: ${errorText}`
-			);
-		}
-	} catch (error) {
-		console.error("Error during color transfer:", error);
-		return new Uint8Array();
-	}
+	const result = await processImage("fix_size", formData);
+	return result;
 }
 
 interface SizeImage {
@@ -101,29 +80,8 @@ export async function swithColorNative(
 	formData.append("image_source", imageSource);
 	formData.append("image_reference", imageReference);
 
-	try {
-		const response = await fetch("http://192.168.10.99:8080/switch_color", {
-			method: "POST",
-			body: formData,
-		});
-		if (response.ok) {
-			const arr = new Uint8Array(await response.arrayBuffer());
-			return arr;
-		} else {
-			const errorText = await response.text();
-			console.error(
-				"Failed to adjust temperature:",
-				response.status,
-				errorText
-			);
-			throw new Error(
-				`Server responded with status ${response.status}: ${errorText}`
-			);
-		}
-	} catch (error) {
-		console.error("Error during color transfer:", error);
-		return new Uint8Array();
-	}
+	const result = await processImage("switch_color", formData);
+	return result;
 }
 
 export async function handleSaturationNative(
@@ -143,32 +101,8 @@ export async function handleSaturationNative(
 	formData.append("factor", factorBlob);
 	console.log(formData.get("factor"));
 
-	try {
-		const response = await fetch(
-			"http://192.168.10.99:8080/adjust_saturation",
-			{
-				method: "POST",
-				body: formData,
-			}
-		);
-		if (response.ok) {
-			const arr = new Uint8Array(await response.arrayBuffer());
-			return arr;
-		} else {
-			const errorText = await response.text();
-			console.error(
-				"Failed to adjust temperature:",
-				response.status,
-				errorText
-			);
-			throw new Error(
-				`Server responded with status ${response.status}: ${errorText}`
-			);
-		}
-	} catch (error) {
-		console.error("Error during color transfer:", error);
-		return new Uint8Array();
-	}
+	const result = await processImage("adjust_saturation", formData);
+	return result;
 }
 
 export async function handleTemperatureNative(
@@ -188,32 +122,8 @@ export async function handleTemperatureNative(
 	formData.append("factor", factorBlob);
 	console.log(formData.get("factor"));
 
-	try {
-		const response = await fetch(
-			"http://192.168.10.99:8080/adjust_temperature",
-			{
-				method: "POST",
-				body: formData,
-			}
-		);
-		if (response.ok) {
-			const arr = new Uint8Array(await response.arrayBuffer());
-			return arr;
-		} else {
-			const errorText = await response.text();
-			console.error(
-				"Failed to adjust temperature:",
-				response.status,
-				errorText
-			);
-			throw new Error(
-				`Server responded with status ${response.status}: ${errorText}`
-			);
-		}
-	} catch (error) {
-		console.error("Error during color transfer:", error);
-		return new Uint8Array();
-	}
+	const result = await processImage("adjust_temperature", formData);
+	return result;
 }
 
 export async function handleTintNative(
@@ -233,29 +143,8 @@ export async function handleTintNative(
 	formData.append("factor", factorBlob);
 	console.log(formData.get("factor"));
 
-	try {
-		const response = await fetch("http://192.168.10.99:8080/adjust_tint", {
-			method: "POST",
-			body: formData,
-		});
-		if (response.ok) {
-			const arr = new Uint8Array(await response.arrayBuffer());
-			return arr;
-		} else {
-			const errorText = await response.text();
-			console.error(
-				"Failed to adjust temperature:",
-				response.status,
-				errorText
-			);
-			throw new Error(
-				`Server responded with status ${response.status}: ${errorText}`
-			);
-		}
-	} catch (error) {
-		console.error("Error during color transfer:", error);
-		return new Uint8Array();
-	}
+	const result = await processImage("adjust_tint", formData);
+	return result;
 }
 
 export async function handleExposureNative(
@@ -275,29 +164,8 @@ export async function handleExposureNative(
 	formData.append("factor", factorBlob);
 	console.log("f", formData.get("factor"));
 
-	try {
-		const response = await fetch("http://192.168.10.99:8080/adjust_exposure", {
-			method: "POST",
-			body: formData,
-		});
-		if (response.ok) {
-			const arr = new Uint8Array(await response.arrayBuffer());
-			return arr;
-		} else {
-			const errorText = await response.text();
-			console.error(
-				"Failed to adjust temperature:",
-				response.status,
-				errorText
-			);
-			throw new Error(
-				`Server responded with status ${response.status}: ${errorText}`
-			);
-		}
-	} catch (error) {
-		console.error("Error during color transfer:", error);
-		return new Uint8Array();
-	}
+	const result = await processImage("adjust_exposure", formData);
+	return result;
 }
 
 export async function handleContrastsNative(

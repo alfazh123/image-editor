@@ -10,7 +10,7 @@ import {Draggable} from '../dnd/draggable';
 import { getWindowSize } from '../dnd/get-window-size';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
+import { Plus, Redo } from "lucide-react";
 import { fixSize } from "../wasm/func";
 import { ColorTransfer, DisplaySize, Tools } from "../menu/menu";
 import init from "rust-editor";
@@ -26,6 +26,7 @@ import {
 } from "./func";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { ToolsProps } from "../menu/type";
+import { InputBanner } from "@/components/input-banner";
 
 interface InitType {
 	success: boolean;
@@ -40,25 +41,7 @@ export default function Native() {
 	const [isInitialized, setIsInitialized] = useState(false); // Add initialization flag
 	const [isAvailable, setIsAvailable] = useState(false);
 
-	// const [hook.imgUrl, hook.setImgUrl] = useState<string | null>(null);
-	// const [imgRefUrl, setImgRefUrl] = useState<string | null>(null);
-	// const [editImgArr, setEditImgArr] = useState<Uint8Array>(new Uint8Array());
-	// const [hook.originalImgArr, setOriginalImgArr] = useState<Uint8Array>(
-	// new hook.hook.Uint8Array()
-	// );
-	// const [refImgArr, hook.setRefImgArr] = useState<Uint8Array>(new Uint8Array());
-	// const [imageSize, hook.hook.setImageSize] = useState({ width: 0, height: 0 });
-	const [isLoading, setIsLoading] = useState(false);
-	// tools value set (color and light)
-	// const [lightVal, hook.setLightVal] = useState<LightValueProps>({
-	// 	exposureValue: 0,
-	// 	contrastValue: 0,
-	// });
-	// const [hook.colorVal, hook.setColorVal] = useState<ColorValueProps>({
-	// 	saturationValue: 0,
-	// 	temperatureValue: 0,
-	// 	tintValue: 0,
-	// });
+	const [welcomeOverlay, setWelcomeOverlay] = useState(true);
 
 	const [actixInitialized, setActixInitialized] = useState<InitType>({
 		success: false,
@@ -126,7 +109,7 @@ export default function Native() {
 			reader.onload = async () => {
 				const fixSizeArr = await fixSizeNative(file);
 				hook.setImgUrl(ArrToURL(fixSizeArr));
-				setIsLoading(false);
+				hook.setIsLoading(false);
 				setIsAvailable(true);
 				// setEditImgArr(fixSizeArr); // Store original image data
 				hook.setOriginalImgArr(fixSizeArr); // Store original image data
@@ -165,13 +148,13 @@ export default function Native() {
 	// Function to process transfer color with WASM
 	async function handleTransferColor() {
 		console.time("Transfer color native completed in");
-		setIsLoading(true);
+		hook.setIsLoading(true);
 		const resultArr = await swithColorNative(
 			new Blob([hook.originalImgArr], { type: "image/png" }),
 			new Blob([hook.refImgArr], { type: "image/png" })
 		);
 		hook.setImgUrl(ArrToURL(resultArr));
-		setIsLoading(false);
+		hook.setIsLoading(false);
 		// setEditImgArr(resultArr); // Store original image data
 		hook.setOriginalImgArr(resultArr); // Store original image data
 		console.timeEnd("Transfer color native completed in");
@@ -278,6 +261,12 @@ export default function Native() {
 		handleResize(); // Set initial size
 	}, [isInitialized]);
 
+	function closeWelcomeOverlay() {
+		setTimeout(() => {
+			setWelcomeOverlay(false);
+		}, 2000);
+	}
+
 	// Don't render until initialized
 	if (!isInitialized) {
 		return (
@@ -329,7 +318,7 @@ export default function Native() {
 				{/* Toolbar */}
 				{hook.imgUrl && (
 					<nav className="fixed flex items-center top-50 bottom-50 right-0 z-50 bg-white shadow-lg border-b w-16 m-4 rounded-2xl justify-center">
-						<div className="flex flex-col max-w-7xl mx-auto p-4">
+						<div className="flex flex-col">
 							{/* Transfer Color Tool */}
 							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
 								<ColorTransfer
@@ -401,48 +390,30 @@ export default function Native() {
 							onChange={(e) => inputImage(e)}
 							className={`hidden`}
 						/>
-
+						{welcomeOverlay && (
+							<div
+								className={`absolute md:-top-0 md:-right-40 -top-10 right-40 z-50 ${
+									welcomeOverlay || !hook.imgUrl ? "flex" : "hidden"
+								}`}>
+								<h2 className="flex gap-2 text-2xl font-bold mb-4 text-gray-600 md:rotate-12 -rotate-12">
+									<Redo className="transform scale-150 -scale-x-150 -rotate-45" />
+									👋 Drag this
+								</h2>
+							</div>
+						)}
 						<Draggable
 							id="single-item"
 							position={itemPosition}
 							windowSize={windowSize}
 							isAvailable={isAvailable}>
-							{/* <input type="file" accept='image/*' onChange={(e) => inputImage(e)} className={`${isAvailable ? 'hidden' : ''}`} /> */}
-							<Label
-								className={`${
-									isAvailable ? "hidden" : ""
-								} text-sm text-gray-600 border-2 border-dashed border-slate-300 p-2 rounded-sm`}
-								htmlFor="image-upload">
-								<Plus className="inline mr-1" />
-								Upload Image
-							</Label>
-							{hook.imgUrl && (
-								<div
-									className={`relative flex items-center justify-center w-full`}>
-									<Image
-										id="image-item"
-										src={hook.imgUrl}
-										alt="Image"
-										width={hook.imageSize.width}
-										height={hook.imageSize.height}
-										className="w-auto h-full max-h-full"
-										priority
-										draggable="false"
-										style={{
-											objectFit: "contain",
-											maxHeight: `${windowSize.height - 120}px`,
-											maxWidth: "100%",
-										}}
-									/>
-									<div>
-										{isLoading && (
-											<div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-white opacity-15 text-black">
-												Loading...
-											</div>
-										)}
-									</div>
-								</div>
-							)}
+							<InputBanner
+								imageSize={hook.imageSize}
+								windowSize={windowSize}
+								imgUrl={hook.imgUrl}
+								isLoading={hook.isLoading}
+								isAvailable={isAvailable}
+								inputImage={inputImage}
+							/>
 						</Draggable>
 					</Droppable>
 				</div>

@@ -4,26 +4,29 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 
 interface InputBannerProps {
-    imageSize: { width: number; height: number };
-    windowSize: { width: number; height: number };
-    imgUrl: string | null;
-    isLoading: boolean;
-    isAvailable: boolean;
-    inputImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	imageSize: { width: number; height: number };
+	windowSize: { width: number; height: number };
+	imgUrl: string | null;
+	isLoading: boolean;
+	isAvailable: boolean;
+	inputImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	style?: React.CSSProperties;
 }
 
 export function InputBanner({
-    imageSize,
-    windowSize,
-    imgUrl,
-    isLoading,
-    isAvailable,
-    inputImage
+	imageSize,
+	imgUrl,
+	isLoading,
+	isAvailable,
+	inputImage,
+	style,
 }: InputBannerProps) {
-    return (
-        <>
-            <Label
-				className={`${isAvailable ? "hidden" : ""} text-sm text-gray-600 border-2 border-dashed border-slate-300 p-2 rounded-sm`}
+	return (
+		<>
+			<Label
+				className={`${
+					isAvailable ? "hidden" : ""
+				} text-sm text-gray-600 border-2 border-dashed border-slate-300 p-2 rounded-sm`}
 				htmlFor="image-upload">
 				<Plus className="inline mr-1" />
 				Upload Image
@@ -36,8 +39,7 @@ export function InputBanner({
 				className={`hidden`}
 			/>
 			{imgUrl && (
-				<div
-					className={`relative flex items-center justify-center w-full`}>
+				<div className={`relative flex items-center justify-center w-full`}>
 					<Image
 						id="image-item"
 						src={imgUrl}
@@ -47,11 +49,7 @@ export function InputBanner({
 						className="w-auto h-full max-h-full"
 						priority
 						draggable="false"
-						style={{
-							objectFit: "contain",
-							maxHeight: `${windowSize.height - 120}px`,
-							maxWidth: "100%",
-						}}
+						style={style}
 					/>
 					<div>
 						{isLoading && (
@@ -62,6 +60,6 @@ export function InputBanner({
 					</div>
 				</div>
 			)}
-        </>
-    )
+		</>
+	);
 }

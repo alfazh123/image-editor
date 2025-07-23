@@ -51,10 +51,14 @@ export function ColorTransfer({
 	onChange,
 	imgRefUrl,
 	menuFilter,
+	windowSize,
 }: MenuItemFilterProps) {
 	return (
-		<MenuItem icon={<Layers2 className="w-12" />} label="Preset">
-			<Tabs defaultValue="account" className="w-[400px]">
+		<MenuItem
+			icon={<Layers2 className="md:w-12 w-6" />}
+			label="Preset"
+			windowSize={windowSize}>
+			<Tabs defaultValue="account">
 				<TabsList>
 					<TabsTrigger value="account">With Image</TabsTrigger>
 					<TabsTrigger value="password">Other</TabsTrigger>
@@ -87,23 +91,29 @@ export function ColorTransfer({
 
 export function Blur({ value, onChange }: SliderMenuItemProps) {
 	return (
-		<MenuItem icon={<CircleSlash2 className="w-12" />} label="Blur Image">
+		<MenuItem icon={<CircleSlash2 className="md:w-12 w-6" />} label="Blur">
 			<SliderMenuItem id="blur-img-feat" value={value} onChange={onChange} />
 		</MenuItem>
 	);
 }
 
-export function Sharp({ value, onChange }: SliderMenuItemProps) {
+export function Sharp({ value, onChange, windowSize }: SliderMenuItemProps) {
 	return (
-		<MenuItem icon={<CircleSlash2 className="w-12" />} label="Sharp Image">
+		<MenuItem
+			icon={<CircleSlash2 className="md:w-12 w-6" />}
+			label="Sharp"
+			windowSize={windowSize}>
 			<SliderMenuItem id="sharp-img-feat" value={value} onChange={onChange} />
 		</MenuItem>
 	);
 }
 
-export function DisplaySize({ width, height }: DisplaySizeProps) {
+export function DisplaySize({ width, height, windowSize }: DisplaySizeProps) {
 	return (
-		<MenuItem icon={<Ruler className="w-12" />} label="Display Size">
+		<MenuItem
+			icon={<Ruler className="md:w-12 w-6" />}
+			label="Size"
+			windowSize={windowSize}>
 			<DropdownMenuSeparator />
 			<div className="flex gap-2 items-center py-10">
 				<div className="flex flex-col gap-4">
@@ -151,15 +161,17 @@ export function DownloadImage({ url }: DownloadProps) {
 	}
 
 	return (
-		<div className="flex items-center justify-center aspect-square p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+		<div className="flex items-center justify-center w-full h-14 my-2 rounded-2xl hover:bg-gray-100/75 cursor-pointer">
 			<Dialog>
-				<DialogTrigger>
+				<DialogTrigger className="w-full flex flex-col items-center justify-center">
 					<Tooltip>
-						<TooltipTrigger asChild>
-							<Download className="w-12" />
+						<TooltipTrigger asChild className="md:block hidden">
+							<Download className="md:w-12 w-6" />
 						</TooltipTrigger>
 						<TooltipContent side="left">Download</TooltipContent>
 					</Tooltip>
+					<Download className="w-12 md:hidden" />
+					<Label className="text-xs font-light md:hidden">Download</Label>
 				</DialogTrigger>
 				<DialogContent>
 					<DialogHeader>
@@ -184,9 +196,12 @@ export function DownloadImage({ url }: DownloadProps) {
 	);
 }
 
-export function Tools({ colorItem, lightItem }: ToolsProps) {
+export function Tools({ colorItem, lightItem, windowSize }: ToolsProps) {
 	return (
-		<MenuItem icon={<Settings2 className="w-12" />} label="Tools">
+		<MenuItem
+			icon={<Settings2 className="md:w-12 w-6" />}
+			label="Tools"
+			windowSize={windowSize}>
 			<div>
 				<DropdownMenuLabel>Color</DropdownMenuLabel>
 				<div className="flex flex-col justify-between mt-4 gap-6">
