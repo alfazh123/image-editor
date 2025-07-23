@@ -8,6 +8,7 @@ interface ToolsPropsItem {
 export interface ToolsProps {
 	colorItem: [ToolsPropsItem, ToolsPropsItem, ToolsPropsItem];
 	lightItem: [ToolsPropsItem, ToolsPropsItem];
+	windowSize?: { width: number; height: number };
 }
 
 export type DownloadProps = {
@@ -17,47 +18,59 @@ export type DownloadProps = {
 export type DisplaySizeProps = {
 	width: number;
 	height: number;
+	windowSize?: { width: number; height: number };
 };
 
 export type MenuFilter = {
-    onChangeFilter: () => void;
-    name: string;
-    color: string;
-    backgroundImage?: string | null;
+	onChangeFilter: () => void;
+	name: string;
+	color: string;
+	backgroundImage?: string | null;
 };
 
 export interface MenuItemFilterProps {
-    onClick: () => void;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    imgRefUrl?: string | null;
-    menuFilter?: MenuFilter[];
+	onClick: () => void;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	imgRefUrl?: string | null;
+	menuFilter?: MenuFilter[];
+	windowSize?: { width: number; height: number };
 }
 
 export interface InputRefBannerProps {
-    imageRefUrl: string;
-    onClick: () => void;
+	imageRefUrl: string;
+	onClick: () => void;
 }
 
 export interface InputRefProps {
-    imgRefUrl: string | null;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	imgRefUrl: string | null;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface MenuItemProps {
-    icon: React.ReactNode;
-    label: string;
-    children: React.ReactNode;
+	icon: React.ReactNode;
+	label: string;
+	children: React.ReactNode;
+	windowSize?: { width: number; height: number };
 }
 
 export interface SliderMenuItemProps {
-    value: number;
-    id: string;
+	value: number;
+	id: string;
 	onChange?: (value: number[]) => void;
+	windowSize?: { width: number; height: number };
 }
 
 export interface SliderWithValueMenuItemProps {
-    value: number;
-    onChange: (value: number[]) => void;
-    id: string;
-    className?: string;
+	value: number;
+	onChange: (value: number[]) => void;
+	id: string;
+	className?: string;
+}
+
+export interface SliderZoomProps {
+	value: number[];
+	onChange: (value: number[]) => void;
+	id: string;
+	className?: string;
+	windowSize?: { width: number; height: number };
 }
