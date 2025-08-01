@@ -29,8 +29,10 @@ import {
 	CircleSlash2,
 	Download,
 	Layers2,
+	NotebookPen,
 	Ruler,
 	Settings2,
+	Wifi,
 } from "lucide-react";
 import { MenuItem, SliderMenuItem, SliderWithValueMenuItem } from "./menu-item";
 import {
@@ -38,13 +40,14 @@ import {
 	DownloadProps,
 	MenuItemFilterProps,
 	SliderMenuItemProps,
+	SpeedTestProps,
 	ToolsProps,
 } from "./type";
 import {
 	ApplyFilterButton,
 	InputRef,
 	InputRefBanner,
-} from "@/components/color-transfer/change-ref";
+} from "@/components/change-ref";
 
 export function ColorTransfer({
 	onClick,
@@ -208,6 +211,7 @@ export function Tools({ colorItem, lightItem, windowSize }: ToolsProps) {
 					{colorItem.map((item, index) => (
 						<SliderWithValueMenuItem
 							key={index}
+							title={item.title}
 							value={item.value || 0}
 							id={item.id}
 							onChange={item.onChange}
@@ -225,6 +229,7 @@ export function Tools({ colorItem, lightItem, windowSize }: ToolsProps) {
 					{lightItem.map((item, index) => (
 						<SliderWithValueMenuItem
 							key={index}
+							title={item.title}
 							value={item.value || 0}
 							id={item.id}
 							onChange={item.onChange}
@@ -232,6 +237,44 @@ export function Tools({ colorItem, lightItem, windowSize }: ToolsProps) {
 						/>
 					))}
 				</div>
+			</div>
+		</MenuItem>
+	);
+}
+
+export function SpeedTestMenu(props: SpeedTestProps) {
+	return (
+		<MenuItem
+			icon={<NotebookPen className="md:w-12 w-6" />}
+			label="Speed Test"
+			windowSize={props.windowSize}>
+			<div className="flex flex-col w-full my-2 rounded-2xl hover:bg-gray-100/75 gap-4">
+				{!props.isLoading && (
+					<Button
+						className="w-full h-14 flex items-center justify-center"
+						onClick={props.runSpeedTest}>
+						<span className="text-sm">Run Speed Test</span>
+					</Button>
+				)}
+				{props.isLoading && (
+					<span className="text-sm text-gray-500">Running...</span>
+				)}
+				{props.isFinished && !props.isLoading && (
+					<div className="flex flex-col">
+						<span className="text-sm text-gray-500">
+							Download: {props.resultSpeed?.downloadSpeed} Mbps
+						</span>
+						<span className="text-sm text-gray-500">
+							Upload: {props.resultSpeed?.uploadSpeed} Mbps
+						</span>
+						<span className="text-sm text-gray-500">
+							Latency: {props.resultSpeed?.latency} ms
+						</span>
+					</div>
+				)}
+				{props.error && !props.isLoading && (
+					<span className="text-sm text-red-500">{props.error}</span>
+				)}
 			</div>
 		</MenuItem>
 	);

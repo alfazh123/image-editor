@@ -1,4 +1,5 @@
 interface ToolsPropsItem {
+	title: string;
 	value: number;
 	id: string;
 	className?: string;
@@ -61,6 +62,7 @@ export interface SliderMenuItemProps {
 }
 
 export interface SliderWithValueMenuItemProps {
+	title: string;
 	value: number;
 	onChange: (value: number[]) => void;
 	id: string;
@@ -68,9 +70,23 @@ export interface SliderWithValueMenuItemProps {
 }
 
 export interface SliderZoomProps {
-	value: number[];
+	value: number;
 	onChange: (value: number[]) => void;
 	id: string;
 	className?: string;
+}
+
+export interface SpeedTestResult {
+	downloadSpeed: string; // in Mbps
+	uploadSpeed: string; // in Mbps
+	latency: string; // in ms
+}
+
+export interface SpeedTestProps {
+	runSpeedTest: () => void;
+	isFinished: boolean;
+	error: string | null;
+	isLoading: boolean;
+	resultSpeed?: SpeedTestResult;
 	windowSize?: { width: number; height: number };
 }
