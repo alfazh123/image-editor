@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { InputRefBannerProps, InputRefProps, MenuFilter } from "@/app/menu/type";
 import { Ban, Plus, Replace } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export function InputRefBanner({ imageRefUrl, onClick }: InputRefBannerProps) {
     return (
