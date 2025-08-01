@@ -42,9 +42,9 @@ export function MenuItem({ icon, label, children, windowSize }: MenuItemProps) {
 export function SliderMenuItem({ value, id, onChange }: SliderMenuItemProps) {
 	return (
 		<div className="flex flex-col gap-2 items-center py-10">
-			<Label htmlFor={id}>Blur Level</Label>
+			<Label htmlFor={id}>Sharp Level</Label>
 			<p className="text-sm text-gray-600 mb-2">
-				Current Blur Level: {value || 0}
+				Current Sharp Level: {value || 0}
 			</p>
 			<Slider
 				value={typeof value === "number" && value >= 0 ? [value] : [0]}
@@ -59,6 +59,7 @@ export function SliderMenuItem({ value, id, onChange }: SliderMenuItemProps) {
 }
 
 export function SliderWithValueMenuItem({
+	title,
 	value,
 	id,
 	onChange,
@@ -69,7 +70,7 @@ export function SliderWithValueMenuItem({
 			<Label
 				htmlFor="saturation-slider"
 				className="flex w-full justify-between">
-				<p>Saturation</p>
+				<p>{title}</p>
 				<p>{value || 0}</p>
 			</Label>
 			<Slider
@@ -90,17 +91,11 @@ export function SliderZoom({
 	id,
 	onChange,
 	className,
-	windowSize,
 }: SliderZoomProps) {
-	const orientation: "vertical" | "horizontal" =
-		windowSize?.width !== undefined && windowSize?.width > 789
-			? "vertical"
-			: "horizontal";
-
 	return (
 		<div className="flex flex-col w-full gap-4">
 			<Label htmlFor="saturation-slider" className="flex w-full justify-center">
-				<p>{Math.round(value[0]) || 0}%</p>
+				<p>{value || 0}%</p>
 			</Label>
 			<div className="md:block hidden">
 				<Slider

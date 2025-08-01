@@ -40,8 +40,6 @@ export function Draggable({
 				: position.y,
 	};
 
-	console.log(windowSize.width);
-
 	const style: React.CSSProperties = {
 		position: `${isAvailable ? "relative" : "absolute"}`,
 		left: position.x,
