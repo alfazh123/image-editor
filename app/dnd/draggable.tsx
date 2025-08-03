@@ -56,7 +56,11 @@ export function Draggable({
 			ref={setNodeRef}
 			style={{
 				...style,
-				width: isAvailable ? "fit-content" : "",
+				width: isAvailable
+					? "fit-content"
+					: `${
+							windowSize.width > 400 ? "384px" : `${windowSize.width - 10}px`
+					  }`,
 				touchAction: "none",
 			}}
 			{...listeners}
@@ -66,7 +70,7 @@ export function Draggable({
             bg-transparent backdrop-blur-lg from shadow-lg hover:shadow-xl active:scale-95
             cursor-grab active:cursor-grabbing select-none
 			${isDragging ? "scale-110 rotate-2" : "hover:scale-105"}
-            ${isAvailable ? "" : "w-96 h-56 px-6 py-3 border border-slate-100"}
+            ${isAvailable ? "" : "h-56 px-6 py-3 border border-slate-100"}
             `}>
 			{children}
 		</div>

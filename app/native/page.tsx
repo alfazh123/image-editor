@@ -12,7 +12,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Redo } from "lucide-react";
 import { fixSize } from "../wasm/func";
-import { ColorTransfer, DisplaySize, Tools } from "../menu/menu";
+import {
+	ColorTransfer,
+	DisplaySize,
+	AdjustColor,
+	AdjustLight,
+} from "../menu/menu";
 import init from "rust-editor";
 import {
 	fixSizeNative,
@@ -25,7 +30,7 @@ import {
 	swithColorNative,
 } from "./func";
 import { useImageEditor } from "../hooks/useImageEditor";
-import { ToolsProps } from "../menu/type";
+import { AdjustColorProps, AdjustLightProps } from "../menu/type";
 import { InputBanner } from "@/components/input-banner";
 
 interface InitType {
@@ -276,21 +281,24 @@ export default function Native() {
 		);
 	}
 
-	const toolsItems: ToolsProps = {
+	const colorItems: AdjustColorProps = {
 		colorItem: [
 			{
+				title: "Saturation",
 				value: hook.colorVal.saturationValue,
 				id: "saturation-slider",
 				onChange: handleSaturation,
 				className: "bg-slate-200",
 			},
 			{
+				title: "Temperature",
 				value: hook.colorVal.temperatureValue,
 				id: "temperature-slider",
 				onChange: handleTemperature,
 				className: "bg-gradient-to-r from-blue-400 via-slate-200 to-yellow-200",
 			},
 			{
+				title: "Tint",
 				value: hook.colorVal.tintValue,
 				id: "tint-slider",
 				onChange: handleTint,
@@ -298,13 +306,18 @@ export default function Native() {
 					"bg-gradient-to-r from-green-400 via-slate-200 to-fuchsia-400",
 			},
 		],
+	};
+
+	const lightItems: AdjustLightProps = {
 		lightItem: [
 			{
+				title: "Exposure",
 				value: hook.lightVal.exposureValue,
 				id: "exposure-slider",
 				onChange: handleExposure,
 			},
 			{
+				title: "Contrast",
 				value: hook.lightVal.contrastValue,
 				id: "contrast-slider",
 				onChange: handleContrast,
@@ -329,10 +342,11 @@ export default function Native() {
 							</div>
 
 							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
-								<Tools
-									colorItem={toolsItems.colorItem}
-									lightItem={toolsItems.lightItem}
-								/>
+								<AdjustColor colorItem={colorItems.colorItem} />
+							</div>
+
+							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+								<AdjustLight lightItem={lightItems.lightItem} />
 							</div>
 
 							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
