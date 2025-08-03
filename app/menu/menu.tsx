@@ -2,10 +2,7 @@
 
 import React, { useState } from "react";
 
-import {
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,9 +27,9 @@ import {
 	Download,
 	Layers2,
 	NotebookPen,
+	Paintbrush,
 	Ruler,
 	Settings2,
-	Wifi,
 } from "lucide-react";
 import { MenuItem, SliderMenuItem, SliderWithValueMenuItem } from "./menu-item";
 import {
@@ -41,13 +38,10 @@ import {
 	MenuItemFilterProps,
 	SliderMenuItemProps,
 	SpeedTestProps,
-	ToolsProps,
+	AdjustColorProps,
+	AdjustLightProps,
 } from "./type";
-import {
-	ApplyFilterButton,
-	InputRef,
-	InputRefBanner,
-} from "@/components/change-ref";
+import { ApplyFilterButton, InputRefBanner } from "@/components/change-ref";
 
 export function ColorTransfer({
 	onClick,
@@ -68,15 +62,16 @@ export function ColorTransfer({
 				</TabsList>
 				<TabsContent value="account">
 					<div className="space-y-4 relative mt-7">
-						<div>
-							<InputRef onChange={onChange} imgRefUrl={imgRefUrl || null} />
-						</div>
-						{imgRefUrl && (
-							<InputRefBanner imageRefUrl={imgRefUrl} onClick={onClick} />
-						)}
+						<InputRefBanner
+							imgRefUrl={imgRefUrl || ""}
+							onClick={onClick}
+							onChange={onChange}
+						/>
 					</div>
 				</TabsContent>
-				<TabsContent value="password" className="flex flex-wrap justify-center">
+				<TabsContent
+					value="password"
+					className="flex flex-wrap justify-center md:h-auto max-h-36">
 					{menuFilter?.map((filter) => (
 						<ApplyFilterButton
 							key={filter.name}
@@ -118,8 +113,8 @@ export function DisplaySize({ width, height, windowSize }: DisplaySizeProps) {
 			label="Size"
 			windowSize={windowSize}>
 			<DropdownMenuSeparator />
-			<div className="flex gap-2 items-center py-10">
-				<div className="flex flex-col gap-4">
+			<div className="flex gap-2 items-center justify-center md:py-10">
+				<div className="flex flex-col md:items-start items-center gap-4">
 					<Label>Width</Label>
 					<Input
 						id="width-file"
@@ -129,7 +124,7 @@ export function DisplaySize({ width, height, windowSize }: DisplaySizeProps) {
 						className="cursor-not-allowed"
 					/>
 				</div>
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col md:items-start items-center gap-4">
 					<Label>Height</Label>
 					<Input
 						id="height-file"
@@ -164,7 +159,7 @@ export function DownloadImage({ url }: DownloadProps) {
 	}
 
 	return (
-		<div className="flex items-center justify-center w-full h-14 my-2 rounded-2xl hover:bg-gray-100/75 cursor-pointer">
+		<div className="flex items-center justify-center w-full h-full rounded-md hover:bg-gray-100/75 cursor-pointer">
 			<Dialog>
 				<DialogTrigger className="w-full flex flex-col items-center justify-center">
 					<Tooltip>
@@ -199,44 +194,45 @@ export function DownloadImage({ url }: DownloadProps) {
 	);
 }
 
-export function Tools({ colorItem, lightItem, windowSize }: ToolsProps) {
+export function AdjustColor({ colorItem, windowSize }: AdjustColorProps) {
+	return (
+		<MenuItem
+			icon={<Paintbrush className="md:w-12 w-6" />}
+			label="Color"
+			windowSize={windowSize}>
+			<div className="flex flex-col justify-between mt-4 gap-6">
+				{colorItem.map((item, index) => (
+					<SliderWithValueMenuItem
+						key={index}
+						title={item.title}
+						value={item.value || 0}
+						id={item.id}
+						onChange={item.onChange}
+						className={item.className || "bg-slate-200"}
+					/>
+				))}
+			</div>
+		</MenuItem>
+	);
+}
+
+export function AdjustLight({ lightItem, windowSize }: AdjustLightProps) {
 	return (
 		<MenuItem
 			icon={<Settings2 className="md:w-12 w-6" />}
-			label="Tools"
+			label="Light"
 			windowSize={windowSize}>
-			<div>
-				<DropdownMenuLabel>Color</DropdownMenuLabel>
-				<div className="flex flex-col justify-between mt-4 gap-6">
-					{colorItem.map((item, index) => (
-						<SliderWithValueMenuItem
-							key={index}
-							title={item.title}
-							value={item.value || 0}
-							id={item.id}
-							onChange={item.onChange}
-							className={item.className || "bg-slate-200"}
-						/>
-					))}
-				</div>
-			</div>
-
-			<DropdownMenuSeparator />
-
-			<div>
-				<DropdownMenuLabel>Light</DropdownMenuLabel>
-				<div className="flex flex-col justify-between mt-4 gap-6">
-					{lightItem.map((item, index) => (
-						<SliderWithValueMenuItem
-							key={index}
-							title={item.title}
-							value={item.value || 0}
-							id={item.id}
-							onChange={item.onChange}
-							className={item.className || "bg-slate-200"}
-						/>
-					))}
-				</div>
+			<div className="flex flex-col justify-between mt-4 gap-6">
+				{lightItem.map((item, index) => (
+					<SliderWithValueMenuItem
+						key={index}
+						title={item.title}
+						value={item.value || 0}
+						id={item.id}
+						onChange={item.onChange}
+						className={item.className || "bg-slate-200"}
+					/>
+				))}
 			</div>
 		</MenuItem>
 	);

@@ -15,7 +15,8 @@ import {
 	DownloadImage,
 	Sharp,
 	SpeedTestMenu,
-	Tools,
+	AdjustColor,
+	AdjustLight,
 } from "../menu/menu";
 import { StatusBanner } from "@/components/status-banner";
 import { InputBanner } from "@/components/input-banner";
@@ -24,11 +25,10 @@ import init from "rust-editor";
 import { getSizeImgWASM, inputImage } from "./func";
 import { filterMenuItems } from "../data";
 
-import { ToolsProps } from "../menu/type";
+import { AdjustColorProps, AdjustLightProps } from "../menu/type";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { ZoomControls } from "@/components/zoom-controls";
 import { useWasmHook } from "../hooks/useWasmEditor";
-import { Button } from "@/components/ui/button";
 import { useSpeedTestHook } from "../hooks/useSpeedTest";
 
 export default function Wasm() {
@@ -145,16 +145,15 @@ export default function Wasm() {
 				const newHeight = windowSize.height;
 				hook.setWindowSize({ width: newWidth, height: newHeight });
 
-				// Only set initial position once
-				if (!isInitialized) {
-					setItemPosition({
-						x: newWidth > 400 ? newWidth / 2.2 : 0,
-						y: newWidth > 400 ? newHeight / 2.5 : newHeight / 2,
-					});
-					setIsInitialized(true);
-				}
+				setItemPosition({
+					x: newWidth > 400 ? newWidth / 2.2 - 150 : 0,
+					y: newWidth > 400 ? newHeight / 2.5 : newHeight / 2,
+				});
+				setIsInitialized(true);
 			}
 		};
+
+		console.log("item", itemPosition.x, itemPosition.y);
 
 		handleResize(); // Set initial size
 		window.addEventListener("resize", handleResize);
@@ -201,7 +200,7 @@ export default function Wasm() {
 		);
 	}
 
-	const toolsItem: ToolsProps = {
+	const color: AdjustColorProps = {
 		colorItem: [
 			{
 				title: "Saturation",
@@ -226,6 +225,9 @@ export default function Wasm() {
 					"bg-gradient-to-r from-green-400 via-slate-200 to-fuchsia-400",
 			},
 		],
+	};
+
+	const light: AdjustLightProps = {
 		lightItem: [
 			{
 				title: "Exposure",
@@ -251,9 +253,9 @@ export default function Wasm() {
 				onDragEnd={handleDragEnd}>
 				{/* Toolbar */}
 				{hook.imgUrl && (
-					<div className="fixed flex flex-col items-center md:top-50 md:bottom-50 md:right-0 md:left-auto bottom-4 left-0 right-0 z-50 rounded-2xl justify-center">
-						<nav className="flex items-center z-50 bg-transparent backdrop-blur-3xl shadow-lg border-b md:w-14 w-full m-4 rounded-2xl md:justify-center justify-between">
-							<div className="flex md:flex-col w-full">
+					<div className="fixed flex flex-col items-center md:top-4 md:right-50 md:left-50 md:bottom-auto bottom-4 left-0 right-0 z-50 rounded-md justify-center">
+						<nav className="flex items-center z-50 bg-gray-200/40 backdrop-blur-3xl shadow-lg md:w-fit w-full md:m-4 rounded-md md:justify-center justify-between overflow-x-scroll scrollbar-hide">
+							<div className="flex w-full md:h-10 h-14">
 								{/* Transfer Color Tool */}
 
 								<ColorTransfer
@@ -272,9 +274,13 @@ export default function Wasm() {
 								/>
 
 								{/* Blur Tool */}
-								<Tools
-									colorItem={toolsItem.colorItem}
-									lightItem={toolsItem.lightItem}
+								<AdjustColor
+									colorItem={color.colorItem}
+									windowSize={hook.windowSize}
+								/>
+
+								<AdjustLight
+									lightItem={light.lightItem}
 									windowSize={hook.windowSize}
 								/>
 
@@ -296,7 +302,10 @@ export default function Wasm() {
 								/>
 							</div>
 						</nav>
-
+					</div>
+				)}
+				{hook.imgUrl && (
+					<div className="fixed md:block hidden bottom-10 right-10 z-50">
 						<ZoomControls
 							zoomLevel={hook.zoomLevel}
 							onZoomReset={hook.handleZoomReset}

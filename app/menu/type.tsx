@@ -6,8 +6,12 @@ interface ToolsPropsItem {
 	onChange: (value: number[]) => void;
 }
 
-export interface ToolsProps {
+export interface AdjustColorProps {
 	colorItem: [ToolsPropsItem, ToolsPropsItem, ToolsPropsItem];
+	windowSize?: { width: number; height: number };
+}
+
+export interface AdjustLightProps {
 	lightItem: [ToolsPropsItem, ToolsPropsItem];
 	windowSize?: { width: number; height: number };
 }
@@ -38,8 +42,9 @@ export interface MenuItemFilterProps {
 }
 
 export interface InputRefBannerProps {
-	imageRefUrl: string;
+	imgRefUrl: string;
 	onClick: () => void;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface InputRefProps {

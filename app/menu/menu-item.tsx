@@ -11,26 +11,29 @@ import {
 
 export function MenuItem({ icon, label, children, windowSize }: MenuItemProps) {
 	return (
-		<div className="flex items-center justify-center w-full h-14 my-2 rounded-2xl hover:bg-gray-100/75 cursor-pointer">
+		<div className="flex items-center justify-center w-full h-full rounded-md hover:bg-gray-100/80 cursor-pointer">
 			<DropdownMenu>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<DropdownMenuTrigger className="w-full flex flex-col items-center justify-center">
+						<DropdownMenuTrigger className="md:w-full w-20 flex flex-col items-center justify-center">
 							{icon}
-							<Label className="text-xs font-light md:hidden">{label}</Label>
+							<Label className="text-xs font-light md:hidden text-nowrap">
+								{label}
+							</Label>
 						</DropdownMenuTrigger>
 					</TooltipTrigger>
-					<TooltipContent side="left" className="md:block hidden">
+					<TooltipContent side="bottom" className="md:block hidden">
 						{label}
 					</TooltipContent>
 				</Tooltip>
 				<DropdownMenuContent
 					side={`${
 						windowSize?.width !== undefined && windowSize?.width > 768
-							? "left"
+							? "bottom"
 							: "top"
 					}`}
-					className={`md:min-w-96 w-[300px] p-4`}>
+					className={`md:min-w-96 md:w-96 min-w-full w-screen p-4`}
+					onWheel={(e) => e.stopPropagation()}>
 					<DropdownMenuLabel>{label}</DropdownMenuLabel>
 					{children}
 				</DropdownMenuContent>
@@ -41,8 +44,8 @@ export function MenuItem({ icon, label, children, windowSize }: MenuItemProps) {
 
 export function SliderMenuItem({ value, id, onChange }: SliderMenuItemProps) {
 	return (
-		<div className="flex flex-col gap-2 items-center py-10">
-			<Label htmlFor={id}>Sharp Level</Label>
+		<div className="flex flex-col gap-2 md:py-10">
+			{/* <Label htmlFor={id}>Sharp Level</Label> */}
 			<p className="text-sm text-gray-600 mb-2">
 				Current Sharp Level: {value || 0}
 			</p>
