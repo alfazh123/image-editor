@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Card, CardContent } from "@/components/ui/card";
 import {
 	Carousel,
 	CarouselContent,
@@ -14,14 +13,8 @@ import {
 	type CarouselApi,
 } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
-import { describe } from "node:test";
-import {
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import { Eye, Target } from "lucide-react";
+import BenchmarkChart from "@/components/benchmark-chart";
+import FeatureCard from "@/components/feature-card";
 
 const features = [
 	{
@@ -88,7 +81,7 @@ export default function Home() {
 	}, [api]);
 
 	return (
-		<div className="flex flex-col gap-8 xl:w-1/2 md:w-3/4 w-full mx-auto px-8">
+		<div className="flex flex-col xl:w-1/2 md:w-3/4 w-full mx-auto px-8">
 			<header className="flex flex-col w-full h-80 justify-center border-b-2 border-gray-200">
 				<div className="flex flex-col gap-4">
 					<h1 className="md:text-6xl text-4xl font-bold">
@@ -96,14 +89,16 @@ export default function Home() {
 					</h1>
 				</div>
 			</header>
-			<div id="info" className="flex flex-col gap-4">
+
+			{/* Main goal */}
+			<div id="info" className="flex flex-col gap-4 mt-8">
 				<h2 className="md:text-2xl text-lg font-semibold">
-					What is the purpose of this image editor?
+					Goal of this Application
 				</h2>
 				<p className="md:text-lg text-sm">
 					This image editor page provides two different implementations of image
 					processing written in Rust, one using
-					<Link href={"https://webassembly.org/"} target="_blank">
+					<Link href={"/wasm"}>
 						<Badge className="bg-[#644FF0]">
 							<Image
 								width={16}
@@ -116,8 +111,8 @@ export default function Home() {
 						</Badge>
 					</Link>{" "}
 					and the other using{" "}
-					<Link href={"https://actix.rs/"} target="_blank">
-						<Badge className="bg-red-600">
+					<Link href={"/native"}>
+						<Badge className="bg-[#F75208]">
 							<Image
 								width={16}
 								height={16}
@@ -134,7 +129,7 @@ export default function Home() {
 					of each implementation.
 				</p>
 			</div>
-			<div className="flex flex-col gap-4 relative">
+			<div className="flex flex-col gap-4 relative mt-12">
 				<Badge
 					variant={"default"}
 					className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
@@ -148,78 +143,47 @@ export default function Home() {
 					className="w-full rounded-xl border-2 border-gray-200 p-1 shadow-lg"
 				/>
 			</div>
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-col gap-4 mt-12">
 				<h2 className="md:text-2xl text-lg font-semibold">Features</h2>
+				<p>
+					Explore the various features of this image editor, powered by Rust and
+					WebAssembly.
+				</p>
 				<div className="mx-auto w-full">
 					<Carousel setApi={setApi} className="w-full cursor-all-scroll">
 						<CarouselContent>
 							{features.map((feat, index) => (
 								<CarouselItem key={index}>
-									<Card>
-										<CardContent className="grid sm:grid-cols-3 md:h-80 h-64 w-full px-6">
-											<div className="flex flex-col justify-between items-start space-y-4 md:col-span-2 col-span-3">
-												<div className="flex flex-col gap-2">
-													<h3 className="lg:text-5xl text-4xl font-semibold">
-														{feat.title}
-													</h3>
-													<p className="md:text-lg lg:text-xl text-sm">
-														{feat.describe}
-													</p>
-													<Dialog>
-														<DialogTrigger asChild>
-															<Badge className="cursor-pointer rounded-full h-7 w-7 p-0 tabular-nums">
-																<Eye />
-															</Badge>
-														</DialogTrigger>
-														<DialogContent className="lg:min-w-3/4 md:min-w-1/2 min-w-3/4">
-															<DialogTitle className="text-2xl font-semibold">
-																{feat.title}
-															</DialogTitle>
-															<div className="flex flex-col gap-4">
-																<video
-																	src={feat.demo}
-																	autoPlay
-																	className="w-full rounded-lg border-2 border-gray-200 p-1 shadow-lg"
-																	poster="/app.png"
-																/>
-																<p className="text-sm text-muted-foreground">
-																	This is a demo of the{" "}
-																	<strong>{feat.title}</strong> feature.
-																</p>
-															</div>
-														</DialogContent>
-													</Dialog>
-												</div>
-												<span>
-													{feat.references &&
-														feat.references.map((ref, id) => (
-															<div key={id}>
-																<h5>Reference:</h5>
-																<Link
-																	href={ref.url}
-																	className="underline underline-offset-2 cursor-pointer overflow-hidden"
-																	target="_blank">
-																	{ref.name}
-																</Link>
-															</div>
-														))}
-												</span>
-											</div>
-										</CardContent>
-									</Card>
+									<FeatureCard {...feat} />
 								</CarouselItem>
 							))}
 						</CarouselContent>
-						{/* <CarouselPrevious />
-						<CarouselNext /> */}
+						<CarouselPrevious />
+						<CarouselNext />
 						<div className="text-muted-foreground py-2 text-center text-sm">
-							<CarouselPrevious />
 							Feature {current} of {count}
-							<CarouselNext />
 						</div>
 					</Carousel>
 				</div>
 			</div>
+			<div className="flex flex-col gap-4 mt-12">
+				<BenchmarkChart />
+			</div>
+			<footer className="flex w-full justify-between mt-8 h-20">
+				<span className="text-sm">
+					Created by{" "}
+					<Link href="https://github.com/alfazh123" target="_blank">
+						Alfazh
+					</Link>
+				</span>
+				<span className="text-sm">
+					<Link
+						href="https://github.com/alfazh123/image-editor"
+						target="_blank">
+						Github Repo
+					</Link>
+				</span>
+			</footer>
 		</div>
 	);
 }
