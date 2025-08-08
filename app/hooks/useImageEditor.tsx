@@ -3,7 +3,9 @@ import { useState, useCallback } from 'react';
 import { ColorValueProps, LightValueProps } from '../wasm/type';
 
 export const useImageEditor = () => {
-    const [originalImgArr, setOriginalImgArr] = useState<Uint8Array>(new Uint8Array());
+	const [originalImgArr, setOriginalImgArr] = useState<Uint8Array>(
+		new Uint8Array()
+	);
 	const [editedImgArr, setEditedImgArr] = useState<Uint8Array>(
 		new Uint8Array()
 	);
