@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
 import {
+	CheckCheck,
 	CircleSlash2,
 	Download,
 	Layers2,
@@ -42,6 +43,9 @@ import {
 	AdjustLightProps,
 } from "./type";
 import { ApplyFilterButton, InputRefBanner } from "@/components/change-ref";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 export function ColorTransfer({
 	onClick,
@@ -239,35 +243,110 @@ export function AdjustLight({ lightItem, windowSize }: AdjustLightProps) {
 }
 
 export function SpeedTestMenu(props: SpeedTestProps) {
+	const testAttempts = props.testAttempts;
+	const testAttemptsLatency = props.testAttemptsLatency;
+
+	const testDataCount = [
+		{ label: "Color Transfer", key: "colorTransfer", minVal: 5 },
+		{ label: "Sharpness", key: "sharpness", minVal: 10 },
+		{ label: "Saturation", key: "saturation", minVal: 10 },
+		{ label: "Temperature", key: "temperature", minVal: 10 },
+		{ label: "Tint", key: "tint", minVal: 10 },
+		{ label: "Exposure", key: "exposure", minVal: 10 },
+		{ label: "Contrasts", key: "contrast", minVal: 10 },
+	];
+
+	function isCanSubmit(): boolean {
+		return (
+			testAttempts.colorTransfer >= 5 &&
+			testAttempts.sharpness >= 10 &&
+			testAttempts.saturation >= 10 &&
+			testAttempts.temperature >= 10 &&
+			testAttempts.tint >= 10 &&
+			testAttempts.exposure >= 10 &&
+			testAttempts.contrast >= 10 &&
+			testAttemptsLatency.colorTransfer >= 5 &&
+			testAttemptsLatency.sharpness >= 10 &&
+			testAttemptsLatency.saturation >= 10 &&
+			testAttemptsLatency.temperature >= 10 &&
+			testAttemptsLatency.tint >= 10 &&
+			testAttemptsLatency.exposure >= 10 &&
+			testAttemptsLatency.contrast >= 10
+		);
+	}
+
 	return (
 		<MenuItem
 			icon={<NotebookPen className="md:w-12 w-6" />}
-			label="Speed Test"
+			label="Benchmark"
 			windowSize={props.windowSize}>
-			<div className="flex flex-col w-full my-2 rounded-2xl hover:bg-gray-100/75 gap-4">
-				{!props.isLoading && (
+			<div className="flex flex-col w-full my-2 rounded-2xl gap-4">
+				{!props.isLoading && !props.isFinished && (
 					<Button
-						className="w-full h-14 flex items-center justify-center"
+						className="w-full flex items-center justify-center"
 						onClick={props.runSpeedTest}>
-						<span className="text-sm">Run Speed Test</span>
+						<span className="text-sm">Start Benchmark</span>
 					</Button>
 				)}
 				{props.isLoading && (
-					<span className="text-sm text-gray-500">Running...</span>
+					<span className="text-sm text-gray-500">Setup Environment...</span>
 				)}
-				{props.isFinished && !props.isLoading && (
-					<div className="flex flex-col">
+				{/* {props.isFinished && !props.isLoading && ( */}
+				<div className="flex flex-col">
+					{props.resultSpeed && (
 						<span className="text-sm text-gray-500">
-							Download: {props.resultSpeed?.downloadSpeed} Mbps
+							Latency: {props.resultSpeed?.latency.toFixed(2)} ms
 						</span>
-						<span className="text-sm text-gray-500">
-							Upload: {props.resultSpeed?.uploadSpeed} Mbps
-						</span>
-						<span className="text-sm text-gray-500">
-							Latency: {props.resultSpeed?.latency} ms
-						</span>
-					</div>
-				)}
+					)}
+					<span className="text-sm w-full flex flex-col my-4">
+						{testDataCount.map(({ label, key, minVal }) => (
+							<span key={key} className="flex w-72 justify-between mx-auto">
+								<p>{label} Attempt </p>
+								<div className="flex gap-1">
+									<p className="w-8 justify-center items-center flex">
+										{testAttempts[key as keyof typeof testAttempts] >=
+										minVal ? (
+											<Badge className="bg-blue-500">
+												<CheckCheck />
+											</Badge>
+										) : (
+											testAttempts[key as keyof typeof testAttempts]
+										)}
+									</p>
+									<p className="w-14 justify-center items-center flex">
+										{testAttemptsLatency[
+											key as keyof typeof testAttemptsLatency
+										] >= minVal ? (
+											<Badge className="bg-orange-500">
+												<CheckCheck />
+											</Badge>
+										) : (
+											testAttemptsLatency[
+												key as keyof typeof testAttemptsLatency
+											]
+										)}
+									</p>
+								</div>
+							</span>
+						))}
+					</span>
+					<span className="flex gap-2">
+						<Button
+							variant="outline"
+							className="flex items-center justify-center"
+							onClick={() => props.stopBenchmark()}>
+							<span className="text-sm">Refresh Benchmark</span>
+						</Button>
+						<Button
+							onClick={props.submitResult}
+							className={`${
+								isCanSubmit() ? "" : "opacity-50 cursor-not-allowed"
+							}`}>
+							See Result Benchmark
+						</Button>
+					</span>
+				</div>
+				{/* )} */}
 				{props.error && !props.isLoading && (
 					<span className="text-sm text-red-500">{props.error}</span>
 				)}

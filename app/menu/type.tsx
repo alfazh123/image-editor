@@ -82,9 +82,17 @@ export interface SliderZoomProps {
 }
 
 export interface SpeedTestResult {
-	downloadSpeed: string; // in Mbps
-	uploadSpeed: string; // in Mbps
-	latency: string; // in ms
+	downloadSpeed: number; // in Mbps
+	uploadSpeed: number; // in Mbps
+	latency: number; // in ms
+}
+
+export interface BenchmarkResultProps {
+	latency: number;
+	method: string;
+	width: number;
+	height: number;
+	time: number;
 }
 
 export interface SpeedTestProps {
@@ -94,4 +102,19 @@ export interface SpeedTestProps {
 	isLoading: boolean;
 	resultSpeed?: SpeedTestResult;
 	windowSize?: { width: number; height: number };
+	testAttempts: TestAttemptsProps;
+	testAttemptsLatency: TestAttemptsProps;
+	stopBenchmark: () => void;
+	type: "wasm" | "native";
+	submitResult: () => void;
+}
+
+interface TestAttemptsProps {
+	colorTransfer: number;
+	sharpness: number;
+	saturation: number;
+	temperature: number;
+	tint: number;
+	exposure: number;
+	contrast: number;
 }
