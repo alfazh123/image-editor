@@ -29,7 +29,8 @@ import { AdjustColorProps, AdjustLightProps } from "../menu/type";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { ZoomControls } from "@/components/zoom-controls";
 import { useWasmHook } from "../hooks/useWasmEditor";
-import { useSpeedTestHook } from "../hooks/useSpeedTest";
+import { useBenchmarkHook } from "../hooks/useBenchmark";
+import { useRouter } from "next/navigation";
 
 export default function Wasm() {
 	const [itemPosition, setItemPosition] = useState({ x: 0, y: 0 });
@@ -38,16 +39,19 @@ export default function Wasm() {
 	const [isAvailable, setIsAvailable] = useState(false);
 
 	const hook = useImageEditor();
-	const wasmHooks = useWasmHook(hook);
-	const speedTestHook = useSpeedTestHook();
+	const benchmarkHook = useBenchmarkHook(hook);
+	const wasmHooks = useWasmHook(hook, benchmarkHook);
 
 	const [wasmInitialized, setWasmInitialized] = useState(false);
 	const [wasmError, setWasmError] = useState<string | null>(null);
+
+	const route = useRouter();
 
 	// Initialize WASM in useEffect
 	useEffect(() => {
 		async function initializeWasm() {
 			try {
+				localStorage.removeItem("benchmarkWASM");
 				console.time("WASM initialization successful in");
 				await init(); // Initialize WASM asynchronously
 				setWasmInitialized(true);
@@ -293,12 +297,25 @@ export default function Wasm() {
 								<DownloadImage url={hook.imgUrl} />
 
 								<SpeedTestMenu
-									runSpeedTest={speedTestHook.runSpeedTest}
-									isLoading={speedTestHook.isLoading}
-									isFinished={speedTestHook.isFinished}
-									resultSpeed={speedTestHook.resultSpeed}
-									error={speedTestHook.error}
+									runSpeedTest={benchmarkHook.runSpeedTest}
+									isLoading={benchmarkHook.isLoading}
+									isFinished={benchmarkHook.isFinished}
+									resultSpeed={benchmarkHook.resultSpeed}
+									error={benchmarkHook.error}
 									windowSize={hook.windowSize}
+									testAttempts={benchmarkHook.testAttempts}
+									testAttemptsLatency={benchmarkHook.testAttemptsLatency}
+									stopBenchmark={() =>
+										benchmarkHook.stopBenchmark(benchmarkHook.benchmarkWASM)
+									}
+									type="wasm"
+									submitResult={() => {
+										localStorage.setItem(
+											"benchmarkWASM",
+											JSON.stringify(benchmarkHook.benchmarkWASM)
+										);
+										route.push("/benchmark-result?type=wasm");
+									}}
 								/>
 							</div>
 						</nav>
