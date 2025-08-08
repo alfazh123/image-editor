@@ -15,12 +15,14 @@ import {
 import { useEffect, useState } from "react";
 import BenchmarkChart from "@/components/benchmark-chart";
 import FeatureCard from "@/components/feature-card";
+import { BubblesIcon, CircleOff, PaintBucket, Waves } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const features = [
 	{
 		title: "Image Color Transfer",
 		describe:
-			"Apply Color image reference from computer or availabel image to image target.",
+			"Apply color transfer between images to change the overall color tone.",
 		references: [
 			{
 				name: "Color Transfer between Images",
@@ -28,6 +30,9 @@ const features = [
 			},
 		],
 		demo: "/feature-demo/transfer-color.mp4",
+		icon: (
+			<PaintBucket className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-11 h-11 text-gray-400" />
+		),
 	},
 	{
 		title: "Adjust Sharpness",
@@ -39,6 +44,9 @@ const features = [
 			},
 		],
 		demo: "/feature-demo/sharp.mp4",
+		icon: (
+			<CircleOff className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-9 h-9 text-gray-400" />
+		),
 	},
 	{
 		title: "Adjust Lightness",
@@ -51,17 +59,23 @@ const features = [
 			},
 		],
 		demo: "/feature-demo/light.mp4",
+		icon: (
+			<Waves className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-9 h-9 text-gray-400" />
+		),
 	},
 	{
 		title: "Adjust Color Image",
 		describe: "Adjust color of image such as saturation, temperature and tint.",
 		references: [
 			{
-				name: "Simple algorithms for adjusting image temperature and tint",
+				name: "Adjusting image temperature and tint",
 				url: "https://tannerhelland.com/2014/07/01/simple-algorithms-adjusting-image-temperature-tint.html",
 			},
 		],
 		demo: "/feature-demo/color.mp4",
+		icon: (
+			<BubblesIcon className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-11 h-11 text-gray-400" />
+		),
 	},
 ];
 
@@ -81,7 +95,7 @@ export default function Home() {
 	}, [api]);
 
 	return (
-		<div className="flex flex-col xl:w-1/2 md:w-3/4 w-full mx-auto px-8">
+		<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
 			<header className="flex flex-col w-full h-80 justify-center border-b-2 border-gray-200">
 				<div className="flex flex-col gap-4">
 					<h1 className="md:text-6xl text-4xl font-bold">
@@ -158,16 +172,21 @@ export default function Home() {
 								</CarouselItem>
 							))}
 						</CarouselContent>
-						<CarouselPrevious />
-						<CarouselNext />
+						<div className="md:flex hidden">
+							<CarouselPrevious />
+							<CarouselNext />
+						</div>
 						<div className="text-muted-foreground py-2 text-center text-sm">
 							Feature {current} of {count}
 						</div>
 					</Carousel>
 				</div>
 			</div>
-			<div className="flex flex-col gap-4 mt-12">
+			<div className="flex flex-col gap-4 mt-12" id="benchmark">
 				<BenchmarkChart />
+				<Button variant="outline" className="w-full">
+					Run Benchmark
+				</Button>
 			</div>
 			<footer className="flex w-full justify-between mt-8 h-20">
 				<span className="text-sm">
