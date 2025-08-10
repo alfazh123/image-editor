@@ -225,11 +225,9 @@ export async function inputImage(
 	try {
 		const file = e.target.files?.[0];
 		if (file) {
-			const fixSizeImg = await fixSize(
-				new Uint8Array(await file.arrayBuffer())
-			);
+			const fixSizeImg = fixSize(new Uint8Array(await file.arrayBuffer()));
 			const imageUrl = URL.createObjectURL(
-				new Blob([fixSizeImg], { type: "image/png" })
+				new Blob([new Uint8Array(fixSizeImg)], { type: "image/png" })
 			);
 			return {
 				imgUrl: imageUrl,

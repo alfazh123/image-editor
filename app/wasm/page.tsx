@@ -25,7 +25,11 @@ import init from "rust-editor";
 import { getSizeImgWASM, inputImage } from "./func";
 import { filterMenuItems } from "../data";
 
-import { AdjustColorProps, AdjustLightProps } from "../menu/type";
+import {
+	AdjustColorProps,
+	AdjustLightProps,
+	BenchmarkTestProps,
+} from "../menu/type";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { ZoomControls } from "@/components/zoom-controls";
 import { useWasmHook } from "../hooks/useWasmEditor";
@@ -248,6 +252,29 @@ export default function Wasm() {
 		],
 	};
 
+	function submitBenchmark() {
+		localStorage.setItem(
+			"benchmarkWASM",
+			JSON.stringify(benchmarkHook.benchmarkWASM)
+		);
+		route.push("/benchmark-result?type=wasm");
+	}
+
+	const benchmarkProps: BenchmarkTestProps = {
+		runSpeedTest: benchmarkHook.runSpeedTest,
+		isLoading: benchmarkHook.isLoading,
+		isFinished: benchmarkHook.isFinished,
+		resultSpeed: benchmarkHook.resultSpeed,
+		error: benchmarkHook.error,
+		windowSize: hook.windowSize,
+		testAttempts: benchmarkHook.testAttempts,
+		testAttemptsLatency: benchmarkHook.testAttemptsLatency,
+		stopBenchmark: () =>
+			benchmarkHook.stopBenchmark(benchmarkHook.benchmarkWASM),
+		type: "wasm" as "wasm", // Explicitly set as string literal type
+		submitResult: submitBenchmark,
+	};
+
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
@@ -296,27 +323,7 @@ export default function Wasm() {
 
 								<DownloadImage url={hook.imgUrl} />
 
-								<SpeedTestMenu
-									runSpeedTest={benchmarkHook.runSpeedTest}
-									isLoading={benchmarkHook.isLoading}
-									isFinished={benchmarkHook.isFinished}
-									resultSpeed={benchmarkHook.resultSpeed}
-									error={benchmarkHook.error}
-									windowSize={hook.windowSize}
-									testAttempts={benchmarkHook.testAttempts}
-									testAttemptsLatency={benchmarkHook.testAttemptsLatency}
-									stopBenchmark={() =>
-										benchmarkHook.stopBenchmark(benchmarkHook.benchmarkWASM)
-									}
-									type="wasm"
-									submitResult={() => {
-										localStorage.setItem(
-											"benchmarkWASM",
-											JSON.stringify(benchmarkHook.benchmarkWASM)
-										);
-										route.push("/benchmark-result?type=wasm");
-									}}
-								/>
+								<SpeedTestMenu {...benchmarkProps} />
 							</div>
 						</nav>
 					</div>
