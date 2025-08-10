@@ -1,3 +1,4 @@
+import { InitType } from "./type";
 
 async function processImage(
 	path: string,
@@ -186,4 +187,77 @@ export async function handleContrastsNative(
 
 	const result = await processImage("adjust_contrast", formData);
 	return result;
+}
+
+interface OutputInputImage {
+	imgUrl: string;
+	imgArr: Uint8Array;
+}
+
+export async function inputImage(
+	e: React.ChangeEvent<HTMLInputElement>
+): Promise<OutputInputImage> {
+	try {
+		const file = e.target.files?.[0];
+		if (file) {
+			const fixSizeArr = await fixSizeNative(file);
+			const imageUrl = URL.createObjectURL(
+				new Blob([new Uint8Array(fixSizeArr)], { type: "image/png" })
+			);
+			return {
+				imgUrl: imageUrl,
+				imgArr: fixSizeArr,
+			};
+		}
+	} catch (error) {
+		console.error("Error reading image file:", error);
+	}
+	return {
+		imgUrl: "",
+		imgArr: new Uint8Array(),
+	};
+}
+
+export async function initActix(): Promise<InitType> {
+	let init: InitType;
+
+	fetch("http://192.168.10.99:8080/")
+		.then(async (response) => {
+			if (response.ok) {
+				const json = await response.json();
+				console.log("JSON:", json);
+				init = {
+					success: true,
+					error: null,
+					message: json.message,
+				};
+				return init;
+			} else {
+				init = {
+					success: false,
+					error: response.statusText,
+					message: "Error",
+				};
+				console.error(
+					"Failed to connect to Actix server:",
+					response.statusText
+				);
+				return init;
+			}
+		})
+		.catch((error) => {
+			init = {
+				success: false,
+				error: "Unknown error",
+				message: null,
+			};
+			console.error("Error connecting to Actix server:", error);
+			return init;
+		});
+
+	return (init = {
+		success: true,
+		error: null,
+		message: "Actix initialized successfully",
+	});
 }

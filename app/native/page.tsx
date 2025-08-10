@@ -17,6 +17,8 @@ import {
 	DisplaySize,
 	AdjustColor,
 	AdjustLight,
+	DownloadImage,
+	Sharp,
 } from "../menu/menu";
 import init from "rust-editor";
 import {
@@ -27,34 +29,35 @@ import {
 	handleSaturationNative,
 	handleTemperatureNative,
 	handleTintNative,
+	initActix,
+	inputImage,
 	swithColorNative,
 } from "./func";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { AdjustColorProps, AdjustLightProps } from "../menu/type";
 import { InputBanner } from "@/components/input-banner";
-
-interface InitType {
-	success: boolean;
-	error?: string | null;
-	message?: string | null;
-}
+import { ZoomControls } from "@/components/zoom-controls";
+import { useBenchmarkHook } from "../hooks/useBenchmark";
+import { useNativeHook } from "../hooks/useNativeEditor";
+import { InitType } from "./type";
 
 export default function Native() {
-	const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+	// const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 	const [itemPosition, setItemPosition] = useState({ x: 0, y: 0 });
 	const [isOnCanvas, setIsOnCanvas] = useState(true);
 	const [isInitialized, setIsInitialized] = useState(false); // Add initialization flag
 	const [isAvailable, setIsAvailable] = useState(false);
 
-	const [welcomeOverlay, setWelcomeOverlay] = useState(true);
+	const hook = useImageEditor();
+	const benchmarkHook = useBenchmarkHook(hook);
+	const nativeHook = useNativeHook(hook, benchmarkHook);
+	// const [welcomeOverlay, setWelcomeOverlay] = useState(true);
 
 	const [actixInitialized, setActixInitialized] = useState<InitType>({
 		success: false,
 		error: null,
 		message: null,
 	});
-
-	const hook = useImageEditor();
 
 	// Initialize WASM in useEffect
 	useEffect(() => {
@@ -72,179 +75,62 @@ export default function Native() {
 				});
 			});
 		async function initializeActix() {
-			fetch("http://192.168.10.99:8080/")
-				.then(async (response) => {
-					if (response.ok) {
-						const json = await response.json();
-						console.log("JSON:", json);
-						setActixInitialized({
-							success: true,
-							error: null,
-							message: json.message,
-						});
-					} else {
-						setActixInitialized({
-							success: false,
-							error: response.statusText,
-							message: "Error",
-						});
-						console.error(
-							"Failed to connect to Actix server:",
-							response.statusText
-						);
-					}
-				})
-				.catch((error) => {
-					setActixInitialized({
-						success: false,
-						error: "Unknown error",
-						message: null,
-					});
-					console.error("Error connecting to Actix server:", error);
-				});
+			const init = await initActix();
+			setActixInitialized(init);
 		}
 
 		initializeActix();
 	}, []);
 
-	async function inputImage(e: React.ChangeEvent<HTMLInputElement>) {
-		const file = e.target.files?.[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = async () => {
-				const fixSizeArr = await fixSizeNative(file);
-				hook.setImgUrl(ArrToURL(fixSizeArr));
-				hook.setIsLoading(false);
-				setIsAvailable(true);
-				// setEditImgArr(fixSizeArr); // Store original image data
-				hook.setOriginalImgArr(fixSizeArr); // Store original image data
-
-				const fixSizeFile = new Blob([fixSizeArr], { type: "image/png" });
-				const sizeImage = await getSizeNative(fixSizeFile);
-				hook.setImageSize({ width: sizeImage.width, height: sizeImage.height });
-			};
-			reader.readAsDataURL(file);
+	async function inputImageTarget(e: React.ChangeEvent<HTMLInputElement>) {
+		if (!actixInitialized) {
+			return;
+		} else {
+			const { imgUrl, imgArr } = await inputImage(e);
+			hook.setImgUrl(imgUrl);
+			hook.setOriginalImgArr(imgArr);
+			setIsAvailable(true);
+			const fixSizeFile = new Blob([new Uint8Array(imgArr)], {
+				type: "image/png",
+			});
+			const sizeImage = await getSizeNative(fixSizeFile);
+			hook.setImageSize({ width: sizeImage.width, height: sizeImage.height });
 		}
 	}
 
-	function inputRefImage(e: React.ChangeEvent<HTMLInputElement>) {
-		const file = e.target.files?.[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = async () => {
-				const fixSizeImg = await fixSize(
-					new Uint8Array(await file.arrayBuffer())
-				);
-				const imageRefUrl = URL.createObjectURL(
-					new Blob([fixSizeImg], { type: "image/png" })
-				);
-				hook.setRefImgArr(fixSizeImg); // Store reference image data
-				hook.setImgRefUrl(imageRefUrl);
-			};
-			reader.readAsDataURL(file);
+	async function inputImageReference(e: React.ChangeEvent<HTMLInputElement>) {
+		if (!actixInitialized) {
+			return;
+		} else {
+			const { imgUrl, imgArr } = await inputImage(e);
+			hook.setImgRefUrl(imgUrl);
+			hook.setRefImgArr(imgArr);
 		}
-	}
-
-	function ArrToURL(arr: Uint8Array): string {
-		const blob = new Blob([arr], { type: "image/png" });
-		return URL.createObjectURL(blob);
 	}
 
 	// Function to process transfer color with WASM
 	async function handleTransferColor() {
-		console.time("Transfer color native completed in");
-		hook.setIsLoading(true);
-		const resultArr = await swithColorNative(
-			new Blob([hook.originalImgArr], { type: "image/png" }),
-			new Blob([hook.refImgArr], { type: "image/png" })
-		);
-		hook.setImgUrl(ArrToURL(resultArr));
-		hook.setIsLoading(false);
-		// setEditImgArr(resultArr); // Store original image data
-		hook.setOriginalImgArr(resultArr); // Store original image data
-		console.timeEnd("Transfer color native completed in");
+		nativeHook.transferColor();
 	}
 
 	async function handleSaturation(value: number[]) {
-		// console.time('Adjust Saturation Native finish in');
-		hook.setColorVal((prev) => ({
-			...prev,
-			saturationValue: value[0],
-		}));
-
-		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
-		const result = await handleSaturationNative(
-			blob,
-			hook.colorVal.saturationValue
-		);
-		// setEditImgArr(result);
-		hook.setImgUrl(ArrToURL(result));
-		console.timeEnd("Adjust Saturation Native finish in");
+		nativeHook.saturation(value);
 	}
 
 	async function handleTemperature(value: number[]) {
-		console.time("Adjust Temperature Native finish in");
-		hook.setColorVal((prev) => ({
-			...prev,
-			temperatureValue: value[0],
-		}));
-		console.log("Temperature value:", value[0]);
-		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
-		const result = await handleTemperatureNative(
-			blob,
-			hook.colorVal.temperatureValue
-		);
-		// setEditImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Adjust Temperature Native finish in");
+		nativeHook.temperature(value);
 	}
 
 	async function handleTint(value: number[]) {
-		console.time("Adjust Tint Native finish in");
-		hook.setColorVal((prev) => ({
-			...prev,
-			tintValue: value[0],
-		}));
-
-		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
-		const result = await handleTintNative(blob, hook.colorVal.tintValue);
-		// setEditImgArr(result);
-		hook.setImgUrl(ArrToURL(result));
-		console.timeEnd("Adjust Tint Native finish in");
+		nativeHook.tint(value);
 	}
 
 	async function handleExposure(value: number[]) {
-		console.time("Adjust Tint Native finish in");
-		hook.setLightVal((prev) => ({
-			...prev,
-			exposureValue: value[0],
-		}));
-
-		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
-		const result = await handleExposureNative(
-			blob,
-			hook.lightVal.exposureValue
-		);
-		// setEditImgArr(result);
-		hook.setImgUrl(ArrToURL(result));
-		console.timeEnd("Adjust Tint Native finish in");
+		nativeHook.exposure(value);
 	}
 
 	async function handleContrast(value: number[]) {
-		console.time("Adjust Tint Native finish in");
-		hook.setLightVal((prev) => ({
-			...prev,
-			contrastValue: value[0],
-		}));
-
-		const blob = new Blob([hook.originalImgArr], { type: "image/png" });
-		const result = await handleContrastsNative(
-			blob,
-			hook.lightVal.contrastValue
-		);
-		// setEditImgArr(result);
-		hook.setImgUrl(ArrToURL(result));
-		console.timeEnd("Adjust Tint Native finish in");
+		nativeHook.contrast(value);
 	}
 
 	useEffect(() => {
@@ -253,7 +139,7 @@ export default function Native() {
 				const windowSize = getWindowSize();
 				const newWidth = windowSize.width;
 				const newHeight = windowSize.height;
-				setWindowSize({ width: newWidth, height: newHeight });
+				hook.setWindowSize({ width: newWidth, height: newHeight });
 
 				// Only set initial position once
 				if (!isInitialized) {
@@ -268,7 +154,7 @@ export default function Native() {
 
 	function closeWelcomeOverlay() {
 		setTimeout(() => {
-			setWelcomeOverlay(false);
+			hook.setWelcomeOverlay(false);
 		}, 2000);
 	}
 
@@ -325,38 +211,72 @@ export default function Native() {
 		],
 	};
 
+	function handleDragEnd(event: DragEndEvent): void {
+		const { over, delta } = event;
+
+		if (over && over.id === "canvas") {
+			if (isOnCanvas) {
+				// Move existing item on canvas
+				setItemPosition((prev) => ({
+					x: prev.x + delta.x,
+					y: prev.y + delta.y,
+				}));
+			} else {
+				// Place item from toolbar to canvas
+				setItemPosition({
+					x: delta.x + 100, // Offset from drag start
+					y: delta.y + 100,
+				});
+				setIsOnCanvas(true);
+			}
+		}
+	}
+
 	return (
-		<div className="h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-			<DndContext onDragEnd={handleDragEnd}>
+		<div
+			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
+			onWheel={isAvailable ? hook.handleOnWheel : () => {}}>
+			<DndContext onDragStart={closeWelcomeOverlay} onDragEnd={handleDragEnd}>
 				{/* Toolbar */}
 				{hook.imgUrl && (
-					<nav className="fixed flex items-center top-50 bottom-50 right-0 z-50 bg-white shadow-lg border-b w-16 m-4 rounded-2xl justify-center">
-						<div className="flex flex-col">
-							{/* Transfer Color Tool */}
-							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+					<div className="fixed flex flex-col items-center md:top-4 md:right-50 md:left-50 md:bottom-auto bottom-4 left-0 right-0 z-50 rounded-md justify-center">
+						<nav className="flex items-center z-50 bg-gray-200/40 backdrop-blur-3xl shadow-lg md:w-fit w-full md:m-4 rounded-md md:justify-center justify-between overflow-x-scroll scrollbar-hide">
+							<div className="flex w-full md:h-10 h-14">
 								<ColorTransfer
 									onClick={handleTransferColor}
-									onChange={inputRefImage}
+									onChange={inputImageReference}
 									imgRefUrl={hook.imgRefUrl}
 								/>
-							</div>
 
-							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+								<Sharp
+									value={hook.sharpVal}
+									id="sharp-slider"
+									onChange={handleSaturation}
+									windowSize={hook.windowSize}
+								/>
+
 								<AdjustColor colorItem={colorItems.colorItem} />
-							</div>
 
-							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
 								<AdjustLight lightItem={lightItems.lightItem} />
-							</div>
 
-							<div className="flex items-center justify-center w-full p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
 								<DisplaySize
 									width={hook.imageSize.width}
 									height={hook.imageSize.height}
 								/>
+
+								<DownloadImage url={hook.imgUrl} />
 							</div>
-						</div>
-					</nav>
+						</nav>
+					</div>
+				)}
+				{hook.imgUrl && (
+					<div className="fixed md:block hidden bottom-10 right-10 z-50">
+						<ZoomControls
+							zoomLevel={hook.zoomLevel}
+							onZoomReset={hook.handleZoomReset}
+							onZoomChange={hook.handleZoomChange}
+						/>
+					</div>
 				)}
 
 				{/* Canvas Area */}
@@ -370,10 +290,12 @@ export default function Native() {
 								className="w-full h-full"
 								style={{
 									backgroundImage: `
-                    linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
-                  `,
-									backgroundSize: "20px 20px",
+										linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
+										linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px)
+									`,
+									backgroundSize: `${20 * hook.zoomLevel}px ${
+										20 * hook.zoomLevel
+									}px`,
 								}}
 							/>
 						</div>
@@ -401,32 +323,32 @@ export default function Native() {
 							id="image-upload"
 							type="file"
 							accept="image/*"
-							onChange={(e) => inputImage(e)}
+							onChange={(e) => inputImageTarget(e)}
 							className={`hidden`}
 						/>
-						{welcomeOverlay && (
-							<div
-								className={`absolute md:-top-0 md:-right-40 -top-10 right-40 z-50 ${
-									welcomeOverlay || !hook.imgUrl ? "flex" : "hidden"
-								}`}>
-								<h2 className="flex gap-2 text-2xl font-bold mb-4 text-gray-600 md:rotate-12 -rotate-12">
-									<Redo className="transform scale-150 -scale-x-150 -rotate-45" />
-									👋 Drag this
-								</h2>
-							</div>
-						)}
 						<Draggable
 							id="single-item"
 							position={itemPosition}
-							windowSize={windowSize}
+							windowSize={hook.windowSize}
 							isAvailable={isAvailable}>
+							{hook.welcomeOverlay && (
+								<div
+									className={`absolute md:-top-0 md:-right-40 -top-10 right-40 z-50 ${
+										hook.welcomeOverlay || !hook.imgUrl ? "flex" : "hidden"
+									}`}>
+									<h2 className="flex gap-2 text-2xl font-bold mb-4 text-gray-600 md:rotate-12 -rotate-12">
+										<Redo className="transform scale-150 -scale-x-150 -rotate-45" />
+										👋 Drag this
+									</h2>
+								</div>
+							)}
 							<InputBanner
 								imageSize={hook.imageSize}
-								windowSize={windowSize}
+								windowSize={hook.windowSize}
 								imgUrl={hook.imgUrl}
 								isLoading={hook.isLoading}
 								isAvailable={isAvailable}
-								inputImage={inputImage}
+								inputImage={inputImageTarget}
 							/>
 						</Draggable>
 					</Droppable>
@@ -434,26 +356,5 @@ export default function Native() {
 			</DndContext>
 		</div>
 	);
-
-	function handleDragEnd(event: DragEndEvent): void {
-		const { over, delta } = event;
-
-		if (over && over.id === "canvas") {
-			if (isOnCanvas) {
-				// Move existing item on canvas
-				setItemPosition((prev) => ({
-					x: prev.x + delta.x,
-					y: prev.y + delta.y,
-				}));
-			} else {
-				// Place item from toolbar to canvas
-				setItemPosition({
-					x: delta.x + 100, // Offset from drag start
-					y: delta.y + 100,
-				});
-				setIsOnCanvas(true);
-			}
-		}
-	}
 }
 
