@@ -2,35 +2,35 @@ import { Eye } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
-import Link from "next/link";
+import Image from "next/image";
 
 interface FeatureCardProps {
 	title: string;
-	describe: string;
-	references?: { name: string; url: string }[];
 	demo?: string;
-	icon?: React.ReactNode;
+	icon?: string;
+	textColor?: string;
+	backgroundColor?: string;
 }
 
 export default function FeatureCard({
 	title,
-	describe,
-	references,
 	demo,
 	icon,
+	backgroundColor,
 }: FeatureCardProps) {
 	return (
-		<Card className="h-full">
-			<CardContent className="grid md:grid-cols-3 md:h-80 min-h-72 h-full w-full lg:static relative px-6">
+		<Card className={`h-full w-full lg:min-h-80 ${backgroundColor}`}>
+			<CardContent className="h-full w-full relative px-6">
 				<div className="flex flex-col justify-between items-start space-y-4 lg:col-span-2 col-span-3">
 					<div className="flex flex-col gap-2">
-						<h3 className="lg:text-5xl text-4xl font-semibold w-[96%]">
+						<h3
+							className={`lg:text-5xl md:text-3xl text-xl font-semibold w-[96%] opacity-60`}>
 							{title}
 						</h3>
-						<p className="md:text-lg lg:text-xl text-sm">{describe}</p>
 						<Dialog>
 							<DialogTrigger asChild>
-								<Badge className="cursor-pointer rounded-full h-7 w-7 p-0 tabular-nums">
+								<Badge
+									className={`cursor-pointer rounded-full h-7 w-7 p-0 tabular-nums opacity-60`}>
 									<Eye />
 								</Badge>
 							</DialogTrigger>
@@ -52,23 +52,21 @@ export default function FeatureCard({
 							</DialogContent>
 						</Dialog>
 					</div>
-					<span>
-						<h5>Reference:</h5>
-						{references &&
-							references.map((ref, id) => (
-								<div key={id}>
-									<Link
-										href={ref.url}
-										className="underline underline-offset-2 cursor-pointer overflow-hidden text-ellipsis"
-										target="_blank">
-										{ref.name}
-									</Link>
-								</div>
-							))}
-					</span>
 				</div>
-				<div className="flex lg:static absolute -top-2 right-2  items-end justify-end md:col-span-1">
-					{icon}
+				<div
+					className="flex absolute sm:bottom-0 sm:right-0 -bottom-6 right-2 sm:w-auto sm:h-auto w-[100px] h-[100px] overflow-hidden"
+					style={{ pointerEvents: "none" }}>
+					<Image
+						src={icon || "globe.svg"}
+						alt={title}
+						width={100}
+						height={100}
+						className={`lg:w-28 ${
+							icon?.includes("four")
+								? "lg:h-36 sm:h-28 h-32"
+								: "lg:h-28 sm:h-22 h-28"
+						}`}
+					/>
 				</div>
 			</CardContent>
 		</Card>

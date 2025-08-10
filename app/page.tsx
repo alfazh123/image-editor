@@ -15,67 +15,32 @@ import {
 import { useEffect, useState } from "react";
 import BenchmarkChart from "@/components/benchmark-chart";
 import FeatureCard from "@/components/feature-card";
-import { BubblesIcon, CircleOff, PaintBucket, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const features = [
 	{
 		title: "Image Color Transfer",
-		describe:
-			"Apply color transfer between images to change the overall color tone.",
-		references: [
-			{
-				name: "Color Transfer between Images",
-				url: "http://ieeexplore.ieee.org/document/946629/citations",
-			},
-		],
 		demo: "/feature-demo/transfer-color.mp4",
-		icon: (
-			<PaintBucket className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-11 h-11 text-gray-400" />
-		),
+		icon: "feature-icon/one.svg",
+		backgroundColor: "bg-[#6CBBFB]",
 	},
 	{
 		title: "Adjust Sharpness",
-		describe: "Enhance the sharpness of images to improve detail and clarity.",
-		references: [
-			{
-				name: "Perbaikan Citra",
-				url: "https://informatika.stei.itb.ac.id/~rinaldi.munir/Buku/Pengolahan%20Citra%20Digital/pdf/Bab-7_Perbaikan%20Kualitas%20Citra.pdf",
-			},
-		],
 		demo: "/feature-demo/sharp.mp4",
-		icon: (
-			<CircleOff className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-9 h-9 text-gray-400" />
-		),
+		icon: "feature-icon/two.svg",
+		backgroundColor: "bg-[#69DB7C]",
 	},
 	{
 		title: "Adjust Lightness",
-		describe:
-			"Adjust the lightness of image such contrast and exposure for better visibility.",
-		references: [
-			{
-				name: "Perbaikan Citra",
-				url: "https://informatika.stei.itb.ac.id/~rinaldi.munir/Buku/Pengolahan%20Citra%20Digital/pdf/Bab-7_Perbaikan%20Kualitas%20Citra.pdf",
-			},
-		],
 		demo: "/feature-demo/light.mp4",
-		icon: (
-			<Waves className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-9 h-9 text-gray-400" />
-		),
+		icon: "feature-icon/three.svg",
+		backgroundColor: "bg-[#ff8787]",
 	},
 	{
 		title: "Adjust Color Image",
-		describe: "Adjust color of image such as saturation, temperature and tint.",
-		references: [
-			{
-				name: "Adjusting image temperature and tint",
-				url: "https://tannerhelland.com/2014/07/01/simple-algorithms-adjusting-image-temperature-tint.html",
-			},
-		],
 		demo: "/feature-demo/color.mp4",
-		icon: (
-			<BubblesIcon className="lg:w-28 lg:h-28 sm:w-16 sm:h-16 w-11 h-11 text-gray-400" />
-		),
+		icon: "feature-icon/four.svg",
+		backgroundColor: "bg-[#FFE792]",
 	},
 ];
 
@@ -144,11 +109,11 @@ export default function Home() {
 				</p>
 			</div>
 			<div className="flex flex-col gap-4 relative mt-12">
-				<Badge
+				{/* <Badge
 					variant={"default"}
 					className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
 					Application overview
-				</Badge>
+				</Badge> */}
 				<Image
 					src={"/app.png"}
 					alt="app screenshot"
@@ -163,23 +128,10 @@ export default function Home() {
 					Explore the various features of this image editor, powered by Rust and
 					WebAssembly.
 				</p>
-				<div className="mx-auto w-full">
-					<Carousel setApi={setApi} className="w-full cursor-all-scroll">
-						<CarouselContent>
-							{features.map((feat, index) => (
-								<CarouselItem key={index}>
-									<FeatureCard {...feat} />
-								</CarouselItem>
-							))}
-						</CarouselContent>
-						<div className="md:flex hidden">
-							<CarouselPrevious />
-							<CarouselNext />
-						</div>
-						<div className="text-muted-foreground py-2 text-center text-sm">
-							Feature {current} of {count}
-						</div>
-					</Carousel>
+				<div className="mx-auto w-full grid sm:grid-cols-2 gap-2 items-center justify-center">
+					{features.map((feat, index) => (
+						<FeatureCard key={index} {...feat} />
+					))}
 				</div>
 			</div>
 			<div className="flex flex-col gap-4 mt-12" id="benchmark">
