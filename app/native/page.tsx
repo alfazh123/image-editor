@@ -40,6 +40,7 @@ import { ZoomControls } from "@/components/zoom-controls";
 import { useBenchmarkHook } from "../hooks/useBenchmark";
 import { useNativeHook } from "../hooks/useNativeEditor";
 import { InitType } from "./type";
+import { filterMenuItems } from "../data";
 
 export default function Native() {
 	// const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -158,15 +159,6 @@ export default function Native() {
 		}, 2000);
 	}
 
-	// Don't render until initialized
-	if (!isInitialized) {
-		return (
-			<div className="h-screen flex items-center justify-center">
-				Loading...
-			</div>
-		);
-	}
-
 	const colorItems: AdjustColorProps = {
 		colorItem: [
 			{
@@ -232,6 +224,29 @@ export default function Native() {
 		}
 	}
 
+	filterMenuItems.map((item) => {
+		nativeHook.filterMenuNative.push({
+			name: item.label,
+			onChangeFilter: async () => {
+				const response = await fetch(item.imgUrl);
+				const blob = await response.blob();
+				const buffer = await blob.arrayBuffer();
+				nativeHook.functionFilterNative(new Uint8Array(buffer));
+			},
+			color: item.backgroundColor,
+			backgroundImage: item.imgUrl || null,
+		});
+	});
+
+	// Don't render until initialized
+	if (!isInitialized) {
+		return (
+			<div className="h-screen flex items-center justify-center">
+				Loading...
+			</div>
+		);
+	}
+
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
@@ -246,6 +261,7 @@ export default function Native() {
 									onClick={handleTransferColor}
 									onChange={inputImageReference}
 									imgRefUrl={hook.imgRefUrl}
+									menuFilter={nativeHook.filterMenuNative}
 								/>
 
 								<Sharp
@@ -349,6 +365,17 @@ export default function Native() {
 								isLoading={hook.isLoading}
 								isAvailable={isAvailable}
 								inputImage={inputImageTarget}
+								style={{
+									maxHeight: `${
+										((hook.windowSize.height < 800
+											? 600
+											: hook.windowSize.height) -
+											120) *
+										hook.zoomLevel
+									}px`,
+									maxWidth: "100%",
+									objectFit: "contain",
+								}}
 							/>
 						</Draggable>
 					</Droppable>
