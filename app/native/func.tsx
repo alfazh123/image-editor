@@ -5,7 +5,7 @@ async function processImage(
 	formData: FormData
 ): Promise<Uint8Array> {
 	try {
-		const response = await fetch(`http://192.168.10.99:8080/${path}`, {
+		const response = await fetch(`http://192.168.228.123:8080/${path}`, {
 			method: "POST",
 			body: formData,
 		});
@@ -48,7 +48,7 @@ export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
 	formData.append("image_source", imageSource);
 
 	try {
-		const response = await fetch("http://192.168.10.99:8080/get_size", {
+		const response = await fetch(`http://192.168.228.123:8080/get_size`, {
 			method: "POST",
 			body: formData,
 		});
@@ -221,7 +221,7 @@ export async function inputImage(
 export async function initActix(): Promise<InitType> {
 	let init: InitType;
 
-	fetch("http://192.168.10.99:8080/")
+	fetch(`http://192.168.228.123:8080`)
 		.then(async (response) => {
 			if (response.ok) {
 				const json = await response.json();

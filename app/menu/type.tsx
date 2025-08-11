@@ -95,7 +95,7 @@ export interface BenchmarkResultProps {
 	time: number;
 }
 
-export interface SpeedTestProps {
+export interface BenchmarkTestProps {
 	runSpeedTest: () => void;
 	isFinished: boolean;
 	error: string | null;

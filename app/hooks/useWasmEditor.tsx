@@ -57,79 +57,6 @@ export const useWasmHook = (
 		}
 	};
 
-	const grayscale = async () => {
-		console.time("Grayscale finish in");
-		hook.setIsLoading(true);
-		if (hook.editedImgArr.length == 0) {
-			hook.setIsLoading(false);
-			alert("No image data available for grayscaling");
-		}
-		const result = grayscaleImage(hook.editedImgArr);
-		hook.setEditedImgArr(await result);
-		hook.setImgUrl(hook.ArrToURL(await result));
-		hook.setIsLoading(false);
-		console.timeEnd("Grayscale finish in");
-	};
-
-	const noFilter = () => {
-		hook.setIsLoading(true);
-		hook.setImgUrl(hook.ArrToURL(hook.originalImgArr));
-		hook.setIsLoading(false);
-	};
-
-	const functionFilter = async (imageData: Uint8Array) => {
-		console.time("Filter apply finish in");
-		hook.setIsLoading(true);
-		// Do not log isLoading here, as it won't reflect the updated value immediately
-		if (hook.editedImgArr.length > 0 && imageData.length > 0) {
-			const start = performance.now();
-			const result = transferColorWASM(hook.originalImgArr, imageData);
-			// setEditImgArr(await result);
-			hook.setEditedImgArr(await result);
-			hook.setImgUrl(hook.ArrToURL(await result));
-			hook.setIsLoading(false);
-			console.timeEnd("Filter apply finish in");
-			const end = performance.now();
-			const time = end - start;
-
-			benchmarkHook.setBenchmarkWASM((prev) => [
-				...prev,
-				{
-					latency: benchmarkHook.resultSpeed?.latency ?? 0,
-					method: "transferColor",
-					time,
-					width: hook.imageSize.width,
-					height: hook.imageSize.height,
-				},
-			]);
-			benchmarkHook.resultSpeed?.latency
-				? benchmarkHook.setTestAttemptsLatency((prev) => ({
-						...prev,
-						colorTransfer: prev.colorTransfer + 1,
-				  }))
-				: benchmarkHook.setTestAttempts((prev) => ({
-						...prev,
-						colorTransfer: prev.colorTransfer + 1,
-				  }));
-		} else {
-			hook.setIsLoading(false);
-			alert("No image data available for transfer color");
-		}
-	};
-
-	const filterMenu: MenuFilter[] = [
-		{
-			name: "No Filter",
-			onChangeFilter: noFilter,
-			color: "bg-slate-200",
-		},
-		{
-			name: "Grayscale",
-			onChangeFilter: grayscale,
-			color: "bg-gray-400",
-		},
-	];
-
 	const sharp = async (value: number[]) => {
 		const start = performance.now();
 		console.time("Sharp image finish in");
@@ -339,6 +266,79 @@ export const useWasmHook = (
 					contrast: prev.contrast + 1,
 			  }));
 	};
+
+	const grayscale = async () => {
+		console.time("Grayscale finish in");
+		hook.setIsLoading(true);
+		if (hook.editedImgArr.length == 0) {
+			hook.setIsLoading(false);
+			alert("No image data available for grayscaling");
+		}
+		const result = grayscaleImage(hook.editedImgArr);
+		hook.setEditedImgArr(await result);
+		hook.setImgUrl(hook.ArrToURL(await result));
+		hook.setIsLoading(false);
+		console.timeEnd("Grayscale finish in");
+	};
+
+	const noFilter = () => {
+		hook.setIsLoading(true);
+		hook.setImgUrl(hook.ArrToURL(hook.originalImgArr));
+		hook.setIsLoading(false);
+	};
+
+	const functionFilter = async (imageData: Uint8Array) => {
+		console.time("Filter apply finish in");
+		hook.setIsLoading(true);
+		// Do not log isLoading here, as it won't reflect the updated value immediately
+		if (hook.editedImgArr.length > 0 && imageData.length > 0) {
+			const start = performance.now();
+			const result = transferColorWASM(hook.originalImgArr, imageData);
+			// setEditImgArr(await result);
+			hook.setEditedImgArr(await result);
+			hook.setImgUrl(hook.ArrToURL(await result));
+			hook.setIsLoading(false);
+			console.timeEnd("Filter apply finish in");
+			const end = performance.now();
+			const time = end - start;
+
+			benchmarkHook.setBenchmarkWASM((prev) => [
+				...prev,
+				{
+					latency: benchmarkHook.resultSpeed?.latency ?? 0,
+					method: "transferColor",
+					time,
+					width: hook.imageSize.width,
+					height: hook.imageSize.height,
+				},
+			]);
+			benchmarkHook.resultSpeed?.latency
+				? benchmarkHook.setTestAttemptsLatency((prev) => ({
+						...prev,
+						colorTransfer: prev.colorTransfer + 1,
+				  }))
+				: benchmarkHook.setTestAttempts((prev) => ({
+						...prev,
+						colorTransfer: prev.colorTransfer + 1,
+				  }));
+		} else {
+			hook.setIsLoading(false);
+			alert("No image data available for transfer color");
+		}
+	};
+
+	const filterMenu: MenuFilter[] = [
+		{
+			name: "No Filter",
+			onChangeFilter: noFilter,
+			color: "bg-slate-200",
+		},
+		{
+			name: "Grayscale",
+			onChangeFilter: grayscale,
+			color: "bg-gray-400",
+		},
+	];
 
 	return {
 		transferColor,
