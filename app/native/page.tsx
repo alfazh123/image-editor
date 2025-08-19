@@ -19,6 +19,7 @@ import {
 	AdjustLight,
 	DownloadImage,
 	Sharp,
+	BenchmarkMenu,
 } from "../menu/menu";
 import init from "rust-editor";
 import {
@@ -34,15 +35,22 @@ import {
 	swithColorNative,
 } from "./func";
 import { useImageEditor } from "../hooks/useImageEditor";
-import { AdjustColorProps, AdjustLightProps } from "../menu/type";
+import {
+	AdjustColorProps,
+	AdjustLightProps,
+	BenchmarkTestProps,
+} from "../menu/type";
 import { InputBanner } from "@/components/input-banner";
 import { ZoomControls } from "@/components/zoom-controls";
 import { useBenchmarkHook } from "../hooks/useBenchmark";
 import { useNativeHook } from "../hooks/useNativeEditor";
 import { InitType } from "./type";
 import { filterMenuItems } from "../data";
+import { useRouter } from "next/navigation";
 
 export default function Native() {
+	const route = useRouter();
+
 	// const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 	const [itemPosition, setItemPosition] = useState({ x: 0, y: 0 });
 	const [isOnCanvas, setIsOnCanvas] = useState(true);
@@ -62,22 +70,13 @@ export default function Native() {
 
 	// Initialize WASM in useEffect
 	useEffect(() => {
-		init()
-			.then(() => {
-				console.log("WASM initialized successfully");
-				setIsInitialized(true);
-			})
-			.catch((error) => {
-				console.error("Failed to initialize WASM:", error);
-				setActixInitialized({
-					success: false,
-					error: "Failed to initialize WASM",
-					message: null,
-				});
-			});
 		async function initializeActix() {
+			console.time("Actix initialization successful in");
 			const init = await initActix();
+			console.log("init", init);
 			setActixInitialized(init);
+			console.timeEnd("Actix initialization successful in");
+			console.log(actixInitialized);
 		}
 
 		initializeActix();
@@ -141,16 +140,20 @@ export default function Native() {
 				const newWidth = windowSize.width;
 				const newHeight = windowSize.height;
 				hook.setWindowSize({ width: newWidth, height: newHeight });
-
-				// Only set initial position once
-				if (!isInitialized) {
-					setItemPosition({ x: newWidth / 2.2, y: newHeight / 2.5 });
-					setIsInitialized(true);
-				}
+				setItemPosition({
+					x: newWidth > 400 ? newWidth / 2.2 - 150 : 0,
+					y: newWidth > 400 ? newHeight / 2.5 : newHeight / 2,
+				});
+				setIsInitialized(true);
 			}
 		};
 
 		handleResize(); // Set initial size
+		window.addEventListener("resize", handleResize);
+		// Cleanup event listener on unmount
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
 	}, [isInitialized]);
 
 	function closeWelcomeOverlay() {
@@ -247,6 +250,29 @@ export default function Native() {
 		);
 	}
 
+	function submitBenchmark() {
+		localStorage.setItem(
+			"benchmarkWASM",
+			JSON.stringify(benchmarkHook.benchmarkNative)
+		);
+		route.push("/benchmark-result?type=wasm");
+	}
+
+	const benchmarkProps: BenchmarkTestProps = {
+		runSpeedTest: benchmarkHook.runSpeedTest,
+		isLoading: benchmarkHook.isLoading,
+		isFinished: benchmarkHook.isFinished,
+		resultSpeed: benchmarkHook.resultSpeed,
+		error: benchmarkHook.error,
+		windowSize: hook.windowSize,
+		testAttempts: benchmarkHook.testAttempts,
+		testAttemptsLatency: benchmarkHook.testAttemptsLatency,
+		stopBenchmark: () =>
+			benchmarkHook.stopBenchmark(benchmarkHook.benchmarkNative),
+		type: "native" as "native", // Explicitly set as string literal type
+		submitResult: submitBenchmark,
+	};
+
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
@@ -279,6 +305,8 @@ export default function Native() {
 									width={hook.imageSize.width}
 									height={hook.imageSize.height}
 								/>
+
+								<BenchmarkMenu {...benchmarkProps} />
 
 								<DownloadImage url={hook.imgUrl} />
 							</div>
@@ -319,7 +347,7 @@ export default function Native() {
 						{!hook.imgUrl && (
 							<div className="flex flex-col justify-center h-45 items-center z-100 mt-40">
 								<h1 className="text-2xl font-bold text-gray-600 mb-4">
-									This page use WASM for image processing.
+									This page use Actix web for image processing.
 								</h1>
 
 								{!actixInitialized.success ? (

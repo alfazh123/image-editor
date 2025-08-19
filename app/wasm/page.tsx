@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DndContext } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
 
@@ -14,7 +14,7 @@ import {
 	DisplaySize,
 	DownloadImage,
 	Sharp,
-	SpeedTestMenu,
+	BenchmarkMenu,
 	AdjustColor,
 	AdjustLight,
 } from "../menu/menu";
@@ -61,7 +61,6 @@ export default function Wasm() {
 				setWasmInitialized(true);
 				console.timeEnd("WASM initialization successful in");
 			} catch (error) {
-				console.error("Failed to initialize WASM:", error);
 				setWasmError(
 					error instanceof Error ? error.message : "Unknown WASM error"
 				);
@@ -160,8 +159,6 @@ export default function Wasm() {
 				setIsInitialized(true);
 			}
 		};
-
-		console.log("item", itemPosition.x, itemPosition.y);
 
 		handleResize(); // Set initial size
 		window.addEventListener("resize", handleResize);
@@ -323,7 +320,7 @@ export default function Wasm() {
 
 								<DownloadImage url={hook.imgUrl} />
 
-								<SpeedTestMenu {...benchmarkProps} />
+								<BenchmarkMenu {...benchmarkProps} />
 							</div>
 						</nav>
 					</div>
