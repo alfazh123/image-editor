@@ -61,18 +61,18 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
-			<header className="flex flex-col w-full h-80 justify-center border-b-2 border-gray-200 relative">
+			<header className="flex flex-col w-full h-80 justify-center relative mb-10">
 				<div className="flex flex-col gap-4 lg:max-w-1/2">
 					<h1 className="md:text-6xl text-4xl font-bold">
 						Image editor with Rust Benchmarks
 					</h1>
 				</div>
 				<Image
-					src={"header-home.svg"}
+					src={"tools.svg"}
 					alt="app screenshot"
 					width={800}
 					height={600}
-					className="w-80 rounded-xl p-1 lg:block hidden absolute right-0 top-10"
+					className="w-96 rounded-xl p-1 lg:block hidden absolute -right-20 top-10 mask-r-from-40% mask-r-to-90%"
 				/>
 			</header>
 
