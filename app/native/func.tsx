@@ -1,11 +1,13 @@
 import { InitType } from "./type";
 
+const endpoint = process.env.NEXT_PUBLIC_API;
+
 async function processImage(
 	path: string,
 	formData: FormData
 ): Promise<Uint8Array> {
 	try {
-		const response = await fetch(`http://192.168.228.123:8080/${path}`, {
+		const response = await fetch(`${endpoint}${path}`, {
 			method: "POST",
 			body: formData,
 		});
@@ -48,7 +50,7 @@ export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
 	formData.append("image_source", imageSource);
 
 	try {
-		const response = await fetch(`http://192.168.228.123:8080/get_size`, {
+		const response = await fetch(`${endpoint}get_size`, {
 			method: "POST",
 			body: formData,
 		});
@@ -221,43 +223,34 @@ export async function inputImage(
 export async function initActix(): Promise<InitType> {
 	let init: InitType;
 
-	fetch(`http://192.168.228.123:8080`)
-		.then(async (response) => {
-			if (response.ok) {
-				const json = await response.json();
-				console.log("JSON:", json);
-				init = {
-					success: true,
-					error: null,
-					message: json.message,
-				};
-				return init;
-			} else {
-				init = {
-					success: false,
-					error: response.statusText,
-					message: "Error",
-				};
-				console.error(
-					"Failed to connect to Actix server:",
-					response.statusText
-				);
-				return init;
-			}
-		})
-		.catch((error) => {
+	try {
+		const response = await fetch(`${endpoint}`);
+		if (response.ok) {
+			const json = await response.json();
+			console.log("JSON:", json);
+			init = {
+				success: true,
+				error: null,
+				message: json.message,
+			};
+			console.log("a");
+			return init;
+		} else {
 			init = {
 				success: false,
-				error: "Unknown error",
-				message: null,
+				error: response.statusText,
+				message: "Error",
 			};
-			console.error("Error connecting to Actix server:", error);
+			console.error("Failed to connect to Actix server:", response.statusText);
 			return init;
-		});
-
-	return (init = {
-		success: true,
-		error: null,
-		message: "Actix initialized successfully",
-	});
+		}
+	} catch (error) {
+		init = {
+			success: false,
+			error: "Unknown error",
+			message: null,
+		};
+		console.error("Error connecting to Actix server:", error);
+		return init;
+	}
 }

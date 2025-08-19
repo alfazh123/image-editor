@@ -109,7 +109,7 @@ export interface BenchmarkTestProps {
 	submitResult: () => void;
 }
 
-interface TestAttemptsProps {
+export interface TestAttemptsProps {
 	colorTransfer: number;
 	sharpness: number;
 	saturation: number;
