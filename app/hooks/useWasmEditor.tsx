@@ -11,46 +11,23 @@ import {
 } from "../wasm/func";
 import { useImageEditor } from "./useImageEditor";
 import { useBenchmarkHook } from "./useBenchmark";
+import { useRef } from "react";
+import { Saturation, Temperature, Tint } from "./wasm/color";
+import { TranferColor, TransferColorProvided } from "./wasm/transfer-color";
+import { Sharp } from "./wasm/sharp";
+import { Contrast, Exposure } from "./wasm/light";
 
 export const useWasmHook = (
 	hook: ReturnType<typeof useImageEditor>,
 	benchmarkHook: ReturnType<typeof useBenchmarkHook>
 ) => {
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
 	const transferColor = async () => {
-		console.time("Transfer color WASM completed in");
 		hook.setIsLoading(true);
 
 		if (hook.editedImgArr.length > 0 && hook.refImgArr.length > 0) {
-			const start = performance.now();
-			console.log("Transfer Color with WASM");
-			const result = transferColorWASM(hook.editedImgArr, hook.refImgArr);
-			hook.setEditedImgArr(await result);
-			// setEditImgArr(await result);
-			hook.setImgUrl(hook.ArrToURL(await result));
-			hook.setIsLoading(false);
-			console.timeEnd("Transfer color WASM completed in");
-			const end = performance.now();
-			const time = end - start;
-
-			benchmarkHook.setBenchmarkWASM((prev) => [
-				...prev,
-				{
-					latency: benchmarkHook.resultSpeed?.latency ?? 0,
-					method: "transferColor",
-					time,
-					width: hook.imageSize.width,
-					height: hook.imageSize.height,
-				},
-			]);
-			benchmarkHook.resultSpeed?.latency
-				? benchmarkHook.setTestAttemptsLatency((prev) => ({
-						...prev,
-						colorTransfer: prev.colorTransfer + 1,
-				  }))
-				: benchmarkHook.setTestAttempts((prev) => ({
-						...prev,
-						colorTransfer: prev.colorTransfer + 1,
-				  }));
+			TranferColor(hook, benchmarkHook);
 		} else {
 			hook.setIsLoading(false);
 			alert("No image data available for transfer color");
@@ -58,141 +35,52 @@ export const useWasmHook = (
 	};
 
 	const sharp = async (value: number[]) => {
-		const start = performance.now();
-		console.time("Sharp image finish in");
 		hook.setSharpVal(value[0]);
-		const result = await sharpImageWASM(hook.originalImgArr, value[0]);
-		hook.setEditedImgArr(result);
-		// setEditImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Sharp image finish in");
-		const end = performance.now();
-		const time = end - start;
-
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				method: "sharp",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-			},
-		]);
-		benchmarkHook.resultSpeed?.latency
-			? benchmarkHook.setTestAttemptsLatency((prev) => ({
-					...prev,
-					sharpness: prev.sharpness + 1,
-			  }))
-			: benchmarkHook.setTestAttempts((prev) => ({
-					...prev,
-					sharpness: prev.sharpness + 1,
-			  }));
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+		timeoutRef.current = setTimeout(async () => {
+			Sharp(hook, benchmarkHook, value);
+		}, 300);
 	};
 
 	const saturation = async (value: number[]) => {
-		const start = performance.now();
-		console.time("Adjust Saturation finish in");
 		hook.setColorVal((prev) => ({
 			...prev,
 			saturationValue: value[0],
 		}));
-		const result = await adjustSaturation(hook.originalImgArr, value[0]);
-		hook.setEditedImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Adjust Saturation finish in");
-		const end = performance.now();
-		const time = end - start;
-
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				method: "saturation",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-			},
-		]);
-		benchmarkHook.resultSpeed?.latency
-			? benchmarkHook.setTestAttemptsLatency((prev) => ({
-					...prev,
-					saturation: prev.saturation + 1,
-			  }))
-			: benchmarkHook.setTestAttempts((prev) => ({
-					...prev,
-					saturation: prev.saturation + 1,
-			  }));
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+		timeoutRef.current = setTimeout(async () => {
+			Saturation(hook, benchmarkHook, value);
+		}, 300);
 	};
 
 	const temperature = async (value: number[]) => {
-		const start = performance.now();
-		console.time("Adjust Temperature finish in");
 		hook.setColorVal((prev) => ({
 			...prev,
 			temperatureValue: value[0],
 		}));
-		const result = await adjustTemperature(hook.originalImgArr, value[0]);
-		hook.setEditedImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Adjust Temperature finish in");
-		const end = performance.now();
-		const time = end - start;
-
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				method: "temperature",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-			},
-		]);
-		benchmarkHook.resultSpeed?.latency
-			? benchmarkHook.setTestAttemptsLatency((prev) => ({
-					...prev,
-					temperature: prev.temperature + 1,
-			  }))
-			: benchmarkHook.setTestAttempts((prev) => ({
-					...prev,
-					temperature: prev.temperature + 1,
-			  }));
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+		timeoutRef.current = setTimeout(async () => {
+			Temperature(hook, benchmarkHook, value);
+		}, 300);
 	};
 
 	const tint = async (value: number[]) => {
-		const start = performance.now();
-		console.time("Adjust Temperature finish in");
 		hook.setColorVal((prev) => ({
 			...prev,
 			tintValue: value[0],
 		}));
-		const result = await adjustTint(hook.originalImgArr, value[0]);
-		hook.setEditedImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Adjust Temperature finish in");
-		const end = performance.now();
-		const time = end - start;
-
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				method: "tint",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-			},
-		]);
-		benchmarkHook.resultSpeed?.latency
-			? benchmarkHook.setTestAttemptsLatency((prev) => ({
-					...prev,
-					tint: prev.tint + 1,
-			  }))
-			: benchmarkHook.setTestAttempts((prev) => ({
-					...prev,
-					tint: prev.tint + 1,
-			  }));
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+		timeoutRef.current = setTimeout(async () => {
+			Tint(hook, benchmarkHook, value);
+		}, 300);
 	};
 
 	const exposure = async (value: number[]) => {
@@ -202,33 +90,12 @@ export const useWasmHook = (
 			...prev,
 			exposureValue: value[0],
 		}));
-		const result = await adjustExposure(hook.originalImgArr, value[0]);
-		hook.setEditedImgArr(result);
-		// setEditImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Adjust Exposure finish in");
-		const end = performance.now();
-		const time = end - start;
-
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				method: "exposure",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-			},
-		]);
-		benchmarkHook.resultSpeed?.latency
-			? benchmarkHook.setTestAttemptsLatency((prev) => ({
-					...prev,
-					exposure: prev.exposure + 1,
-			  }))
-			: benchmarkHook.setTestAttempts((prev) => ({
-					...prev,
-					exposure: prev.exposure + 1,
-			  }));
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+		timeoutRef.current = setTimeout(async () => {
+			Exposure(hook, benchmarkHook, value);
+		}, 300);
 	};
 
 	const contrast = async (value: number[]) => {
@@ -238,33 +105,12 @@ export const useWasmHook = (
 			...prev,
 			contrastValue: value[0],
 		}));
-		const result = await adjustContrasts(hook.originalImgArr, value[0]);
-		hook.setEditedImgArr(result);
-		// setEditImgArr(result);
-		hook.setImgUrl(hook.ArrToURL(result));
-		console.timeEnd("Adjust Exposure finish in");
-		const end = performance.now();
-		const time = end - start;
-
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				method: "contrast",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-			},
-		]);
-		benchmarkHook.resultSpeed?.latency
-			? benchmarkHook.setTestAttemptsLatency((prev) => ({
-					...prev,
-					contrast: prev.contrast + 1,
-			  }))
-			: benchmarkHook.setTestAttempts((prev) => ({
-					...prev,
-					contrast: prev.contrast + 1,
-			  }));
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
+		timeoutRef.current = setTimeout(async () => {
+			Contrast(hook, benchmarkHook, value);
+		}, 300);
 	};
 
 	const grayscale = async () => {
@@ -292,35 +138,36 @@ export const useWasmHook = (
 		hook.setIsLoading(true);
 		// Do not log isLoading here, as it won't reflect the updated value immediately
 		if (hook.editedImgArr.length > 0 && imageData.length > 0) {
-			const start = performance.now();
-			const result = transferColorWASM(hook.originalImgArr, imageData);
-			// setEditImgArr(await result);
-			hook.setEditedImgArr(await result);
-			hook.setImgUrl(hook.ArrToURL(await result));
-			hook.setIsLoading(false);
-			console.timeEnd("Filter apply finish in");
-			const end = performance.now();
-			const time = end - start;
+			// const start = performance.now();
+			// const result = transferColorWASM(hook.originalImgArr, imageData);
+			// // setEditImgArr(await result);
+			// hook.setEditedImgArr(await result);
+			// hook.setImgUrl(hook.ArrToURL(await result));
+			// hook.setIsLoading(false);
+			// console.timeEnd("Filter apply finish in");
+			// const end = performance.now();
+			// const time = end - start;
 
-			benchmarkHook.setBenchmarkWASM((prev) => [
-				...prev,
-				{
-					latency: benchmarkHook.resultSpeed?.latency ?? 0,
-					method: "transferColor",
-					time,
-					width: hook.imageSize.width,
-					height: hook.imageSize.height,
-				},
-			]);
-			benchmarkHook.resultSpeed?.latency
-				? benchmarkHook.setTestAttemptsLatency((prev) => ({
-						...prev,
-						colorTransfer: prev.colorTransfer + 1,
-				  }))
-				: benchmarkHook.setTestAttempts((prev) => ({
-						...prev,
-						colorTransfer: prev.colorTransfer + 1,
-				  }));
+			// benchmarkHook.setBenchmarkWASM((prev) => [
+			// 	...prev,
+			// 	{
+			// 		latency: benchmarkHook.resultSpeed?.latency ?? 0,
+			// 		method: "transferColor",
+			// 		time,
+			// 		width: hook.imageSize.width,
+			// 		height: hook.imageSize.height,
+			// 	},
+			// ]);
+			// benchmarkHook.resultSpeed?.latency
+			// 	? benchmarkHook.setTestAttemptsLatency((prev) => ({
+			// 			...prev,
+			// 			colorTransfer: prev.colorTransfer + 1,
+			// 	  }))
+			// 	: benchmarkHook.setTestAttempts((prev) => ({
+			// 			...prev,
+			// 			colorTransfer: prev.colorTransfer + 1,
+			// 	  }));
+			TransferColorProvided(hook, benchmarkHook, imageData);
 		} else {
 			hook.setIsLoading(false);
 			alert("No image data available for transfer color");

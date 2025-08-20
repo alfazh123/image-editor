@@ -45,7 +45,9 @@ export const useImageEditor = () => {
 	};
 
 	const ArrToURL = useCallback((arr: Uint8Array): string => {
-		return URL.createObjectURL(new Blob([arr], { type: "image/png" }));
+		return URL.createObjectURL(
+			new Blob([new Uint8Array(arr)], { type: "image/png" })
+		);
 	}, []);
 
 	return {
