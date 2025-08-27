@@ -113,6 +113,10 @@ export default function Native() {
 		nativeHook.transferColor();
 	}
 
+	async function handleSharp(value: number[]) {
+		nativeHook.sharp(value);
+	}
+
 	async function handleSaturation(value: number[]) {
 		nativeHook.saturation(value);
 	}
@@ -293,7 +297,7 @@ export default function Native() {
 								<Sharp
 									value={hook.sharpVal}
 									id="sharp-slider"
-									onChange={handleSaturation}
+									onChange={handleSharp}
 									windowSize={hook.windowSize}
 								/>
 
@@ -401,7 +405,6 @@ export default function Native() {
 											120) *
 										hook.zoomLevel
 									}px`,
-									maxWidth: "100%",
 									objectFit: "contain",
 								}}
 							/>

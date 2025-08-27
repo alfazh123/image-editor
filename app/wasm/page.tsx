@@ -395,7 +395,6 @@ export default function Wasm() {
 											120) *
 										hook.zoomLevel
 									}px`,
-									maxWidth: "100%",
 									objectFit: "contain",
 								}}
 							/>
