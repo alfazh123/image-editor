@@ -75,6 +75,27 @@ export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
 	}
 }
 
+export async function handleSharpNative(
+	imageSource: Blob,
+	factorVal: number
+): Promise<Uint8Array> {
+	const factorJson = {
+		factor: factorVal,
+	};
+	console.log("Factor JSON:", factorJson.factor);
+
+	const factorBlob = new Blob([JSON.stringify(factorJson)], {
+		type: "application/json",
+	});
+
+	const formData = new FormData();
+	formData.append("image_source", imageSource);
+	formData.append("factor", factorBlob);
+
+	const result = await processImage("sharp", formData);
+	return result;
+}
+
 export async function swithColorNative(
 	imageSource: Blob,
 	imageReference: Blob
