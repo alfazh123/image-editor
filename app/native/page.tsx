@@ -57,6 +57,8 @@ export default function Native() {
 	const [isInitialized, setIsInitialized] = useState(false); // Add initialization flag
 	const [isAvailable, setIsAvailable] = useState(false);
 
+	const [isUpload, setIsUpload] = useState(false);
+
 	const hook = useImageEditor();
 	const benchmarkHook = useBenchmarkHook(hook);
 	const nativeHook = useNativeHook(hook, benchmarkHook);
@@ -86,6 +88,7 @@ export default function Native() {
 		if (!actixInitialized) {
 			return;
 		} else {
+			setIsUpload(true);
 			const { imgUrl, imgArr } = await inputImage(e);
 			hook.setImgUrl(imgUrl);
 			hook.setOriginalImgArr(imgArr);
@@ -95,6 +98,7 @@ export default function Native() {
 			});
 			const sizeImage = await getSizeNative(fixSizeFile);
 			hook.setImageSize({ width: sizeImage.width, height: sizeImage.height });
+			setIsUpload(false);
 		}
 	}
 
@@ -256,10 +260,10 @@ export default function Native() {
 
 	function submitBenchmark() {
 		localStorage.setItem(
-			"benchmarkWASM",
+			"benchmarkNative",
 			JSON.stringify(benchmarkHook.benchmarkNative)
 		);
-		route.push("/benchmark-result?type=wasm");
+		route.push("/benchmark-result?type=native");
 	}
 
 	const benchmarkProps: BenchmarkTestProps = {
@@ -397,6 +401,7 @@ export default function Native() {
 								isLoading={hook.isLoading}
 								isAvailable={isAvailable}
 								inputImage={inputImageTarget}
+								isUploadImage={isUpload}
 								style={{
 									maxHeight: `${
 										((hook.windowSize.height < 800

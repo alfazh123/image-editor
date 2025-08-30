@@ -68,7 +68,7 @@ export function Draggable({
 			className={`
             flex items-center justify-center relative rounded-lg font-medium text-slate-500
             bg-transparent backdrop-blur-lg from shadow-lg hover:shadow-xl scale-90
-            cursor-grab active:cursor-grabbing select-none
+            cursor-grab active:cursor-grabbing	
 			${isDragging ? "rotate-2" : ""}
             ${isAvailable ? "" : "h-56 px-6 py-3 border border-slate-100"}
             `}>

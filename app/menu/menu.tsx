@@ -169,7 +169,7 @@ export function DownloadImage({ url }: DownloadProps) {
 						<TooltipTrigger asChild className="md:block hidden">
 							<Download className="md:w-12 w-6" />
 						</TooltipTrigger>
-						<TooltipContent side="left">Download</TooltipContent>
+						<TooltipContent side="bottom">Download</TooltipContent>
 					</Tooltip>
 					<Download className="w-12 md:hidden" />
 					<Label className="text-xs font-light md:hidden">Download</Label>
