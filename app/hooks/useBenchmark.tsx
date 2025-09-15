@@ -1,12 +1,11 @@
 'use client';
 
-import SpeedTest from '@cloudflare/speedtest';
-import { useState } from 'react';
-import { useImageEditor } from "./useImageEditor";
-import { BenchmarkResultProps, SpeedTestResult } from '../menu/type';
-import { toast } from 'sonner';
+import SpeedTest, { Results } from "@cloudflare/speedtest";
+import { useState } from "react";
+import { BenchmarkResultProps, SpeedTestResult } from "../menu/type";
+import { toast } from "sonner";
 
-export const useBenchmarkHook = (hook: ReturnType<typeof useImageEditor>) => {
+export const useBenchmarkHook = () => {
 	const [isFinished, setIsFinished] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -29,15 +28,15 @@ export const useBenchmarkHook = (hook: ReturnType<typeof useImageEditor>) => {
 				// setIsRunning(false);
 			}, 30000); // 30 seconds
 
-			speedTest.onFinish = (result: any) => {
+			speedTest.onFinish = (result: Results) => {
 				clearTimeout(testTimeout);
 				console.log("Speed Test Results:", result);
-				console.log(result.getSummary());
-				console.log(result.getSummary());
+				const summary = result.getSummary();
+				console.log(summary);
 				setResultSpeed({
-					downloadSpeed: result.getSummary().download * 10 ** -6,
-					uploadSpeed: result.getSummary().upload * 10 ** -6,
-					latency: result.getSummary().latency,
+					downloadSpeed: (summary.download ?? 0) * 10 ** -6,
+					uploadSpeed: (summary.upload ?? 0) * 10 ** -6,
+					latency: summary.latency ?? 0,
 				});
 				setIsFinished(true);
 				setIsLoading(false);
@@ -57,24 +56,24 @@ export const useBenchmarkHook = (hook: ReturnType<typeof useImageEditor>) => {
 	};
 
 	const [testAttempts, setTestAttempts] = useState({
-			colorTransfer: 0,
-			sharpness: 0,
-			saturation: 0,
-			temperature: 0,
-			tint: 0,
-			exposure: 0,
-			contrast: 0,
-		});
+		colorTransfer: 0,
+		sharpness: 0,
+		saturation: 0,
+		temperature: 0,
+		tint: 0,
+		exposure: 0,
+		contrast: 0,
+	});
 
 	const [testAttemptsLatency, setTestAttemptsLatency] = useState({
-			colorTransfer: 0,
-			sharpness: 0,
-			saturation: 0,
-			temperature: 0,
-			tint: 0,
-			exposure: 0,
-			contrast: 0,
-		});
+		colorTransfer: 0,
+		sharpness: 0,
+		saturation: 0,
+		temperature: 0,
+		tint: 0,
+		exposure: 0,
+		contrast: 0,
+	});
 
 	const [benchmarkWASM, setBenchmarkWASM] = useState<BenchmarkResultProps[]>(
 		[]
@@ -109,8 +108,24 @@ export const useBenchmarkHook = (hook: ReturnType<typeof useImageEditor>) => {
 			exposure: 0,
 			contrast: 0,
 		});
-		toast.info("Benchmark stopped successfully")
-	}
+		toast.info("Benchmark stopped successfully");
+	};
 
-	return { runSpeedTest, isFinished, error, isLoading, resultSpeed, setResultSpeed, benchmarkWASM, setBenchmarkWASM, benchmarkNative, setBenchmarkNative, testAttempts, setTestAttempts, stopBenchmark, testAttemptsLatency, setTestAttemptsLatency };
+	return {
+		runSpeedTest,
+		isFinished,
+		error,
+		isLoading,
+		resultSpeed,
+		setResultSpeed,
+		benchmarkWASM,
+		setBenchmarkWASM,
+		benchmarkNative,
+		setBenchmarkNative,
+		testAttempts,
+		setTestAttempts,
+		stopBenchmark,
+		testAttemptsLatency,
+		setTestAttemptsLatency,
+	};
 };

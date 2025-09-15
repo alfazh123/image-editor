@@ -1,17 +1,14 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
-import Image from 'next/image';
-import {DndContext} from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
+import React, { useEffect, useState } from "react";
+import { DndContext } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 
-import {Droppable} from '../dnd/droppable';
-import {Draggable} from '../dnd/draggable';
-import { getWindowSize } from '../dnd/get-window-size';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Plus, Redo } from "lucide-react";
-import { fixSize } from "../wasm/func";
+import { Droppable } from "../dnd/droppable";
+import { Draggable } from "../dnd/draggable";
+import { getWindowSize } from "../dnd/get-window-size";
+import { Input } from "@/components/ui/input";
+import { Redo } from "lucide-react";
 import {
 	ColorTransfer,
 	DisplaySize,
@@ -21,19 +18,7 @@ import {
 	Sharp,
 	BenchmarkMenu,
 } from "../menu/menu";
-import init from "rust-editor";
-import {
-	fixSizeNative,
-	getSizeNative,
-	handleContrastsNative,
-	handleExposureNative,
-	handleSaturationNative,
-	handleTemperatureNative,
-	handleTintNative,
-	initActix,
-	inputImage,
-	swithColorNative,
-} from "./func";
+import { getSizeNative, initActix, inputImage } from "./func";
 import { useImageEditor } from "../hooks/useImageEditor";
 import {
 	AdjustColorProps,
@@ -60,7 +45,7 @@ export default function Native() {
 	const [isUpload, setIsUpload] = useState(false);
 
 	const hook = useImageEditor();
-	const benchmarkHook = useBenchmarkHook(hook);
+	const benchmarkHook = useBenchmarkHook();
 	const nativeHook = useNativeHook(hook, benchmarkHook);
 	// const [welcomeOverlay, setWelcomeOverlay] = useState(true);
 
@@ -82,7 +67,7 @@ export default function Native() {
 		}
 
 		initializeActix();
-	}, []);
+	}, [actixInitialized]);
 
 	async function inputImageTarget(e: React.ChangeEvent<HTMLInputElement>) {
 		if (!actixInitialized) {
@@ -256,6 +241,12 @@ export default function Native() {
 				Loading...
 			</div>
 		);
+	} else if (actixInitialized.error) {
+		return (
+			<div className="h-screen flex items-center justify-center">
+				Actix initialization failed
+			</div>
+		);
 	}
 
 	function submitBenchmark() {
@@ -265,6 +256,8 @@ export default function Native() {
 		);
 		route.push("/benchmark-result?type=native");
 	}
+
+	const type = "native";
 
 	const benchmarkProps: BenchmarkTestProps = {
 		runSpeedTest: benchmarkHook.runSpeedTest,
@@ -277,14 +270,16 @@ export default function Native() {
 		testAttemptsLatency: benchmarkHook.testAttemptsLatency,
 		stopBenchmark: () =>
 			benchmarkHook.stopBenchmark(benchmarkHook.benchmarkNative),
-		type: "native" as "native", // Explicitly set as string literal type
+		type: type, // Explicitly set as string literal type
 		submitResult: submitBenchmark,
 	};
 
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
-			onWheel={isAvailable ? hook.handleOnWheel : () => {}}>
+			onWheel={
+				isAvailable ? (e) => hook.handleOnWheel(e.nativeEvent) : () => {}
+			}>
 			<DndContext onDragStart={closeWelcomeOverlay} onDragEnd={handleDragEnd}>
 				{/* Toolbar */}
 				{hook.imgUrl && (

@@ -50,7 +50,7 @@ export const useNativeHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			SaturationNative(hook, benchmarkHook, value);
+			SaturationNative(hook, benchmarkHook);
 		}, 300);
 	};
 
@@ -77,7 +77,7 @@ export const useNativeHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			TintNative(hook, benchmarkHook, value);
+			TintNative(hook, benchmarkHook);
 		}, 300);
 	};
 
@@ -91,7 +91,7 @@ export const useNativeHook = (
 		}
 
 		timeoutRef.current = setTimeout(async () => {
-			ExposureNative(hook, benchmarkHook, value);
+			ExposureNative(hook, benchmarkHook);
 		}, 300);
 	};
 
@@ -104,7 +104,7 @@ export const useNativeHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			ContrastNative(hook, benchmarkHook, value);
+			ContrastNative(hook, benchmarkHook);
 		}, 300);
 	};
 

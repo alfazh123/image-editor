@@ -10,8 +10,12 @@ interface ZoomControlsProps {
   windowSize?: { width: number; height: number };
 }
 
-export function ZoomControls({ zoomLevel, onZoomReset, onZoomChange, windowSize }: ZoomControlsProps) {
-  return (
+export function ZoomControls({
+	zoomLevel,
+	onZoomReset,
+	onZoomChange,
+}: ZoomControlsProps) {
+	return (
 		<div className="z-50 bg-transparent backdrop-blur-xl rounded-lg shadow-lg p-2 md:w-14 w-full items-center">
 			<div className="flex md:flex-col space-y-2">
 				<Button

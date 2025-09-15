@@ -56,13 +56,15 @@ function addBenchmarkResult(benchmarkHook: ReturnType<typeof useBenchmarkHook>, 
 			height: imageSize.height,
 		},
 	]);
-	benchmarkHook.resultSpeed?.latency
-		? benchmarkHook.setTestAttemptsLatency((prev) => ({
-				...prev,
-				colorTransfer: prev.colorTransfer + 1,
-		}))
-		: benchmarkHook.setTestAttempts((prev) => ({
+	if (benchmarkHook.resultSpeed?.latency) {
+		benchmarkHook.setTestAttemptsLatency((prev) => ({
 			...prev,
 			colorTransfer: prev.colorTransfer + 1,
 		}));
+	} else {
+		benchmarkHook.setTestAttempts((prev) => ({
+			...prev,
+			colorTransfer: prev.colorTransfer + 1,
+		}));
+	}
 }

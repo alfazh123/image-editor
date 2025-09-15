@@ -62,8 +62,8 @@ export function InputBanner({
 						width={imageSize.width}
 						height={imageSize.height}
 						className="w-auto h-full max-h-full"
-						priority
 						draggable="false"
+						loading="lazy"
 						style={style}
 					/>
 					<div>

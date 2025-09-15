@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
 
@@ -43,7 +43,7 @@ export default function Wasm() {
 	const [isAvailable, setIsAvailable] = useState(false);
 
 	const hook = useImageEditor();
-	const benchmarkHook = useBenchmarkHook(hook);
+	const benchmarkHook = useBenchmarkHook();
 	const wasmHooks = useWasmHook(hook, benchmarkHook);
 
 	const [wasmInitialized, setWasmInitialized] = useState(false);
@@ -166,7 +166,7 @@ export default function Wasm() {
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		};
-	}, [isInitialized]);
+	}, []);
 
 	// Handle drag end event
 	function handleDragEnd(event: DragEndEvent): void {
@@ -257,6 +257,8 @@ export default function Wasm() {
 		route.push("/benchmark-result?type=wasm");
 	}
 
+	const type = "wasm";
+
 	const benchmarkProps: BenchmarkTestProps = {
 		runSpeedTest: benchmarkHook.runSpeedTest,
 		isLoading: benchmarkHook.isLoading,
@@ -268,14 +270,16 @@ export default function Wasm() {
 		testAttemptsLatency: benchmarkHook.testAttemptsLatency,
 		stopBenchmark: () =>
 			benchmarkHook.stopBenchmark(benchmarkHook.benchmarkWASM),
-		type: "wasm" as "wasm", // Explicitly set as string literal type
+		type: type, // Explicitly set as string literal type
 		submitResult: submitBenchmark,
 	};
 
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
-			onWheel={isAvailable ? hook.handleOnWheel : () => {}}>
+			onWheel={
+				isAvailable ? (e) => hook.handleOnWheel(e.nativeEvent) : () => {}
+			}>
 			<DndContext
 				onDragStart={closeWelcomeOverlay} // Hide overlay when drag starts
 				onDragEnd={handleDragEnd}>

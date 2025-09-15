@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { InputRefBannerProps, InputRefProps, MenuFilter } from "@/app/menu/type";
+import { InputRefBannerProps, MenuFilter } from "@/app/menu/type";
 import { Ban, Plus, Replace } from "lucide-react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";

@@ -3,16 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
-	type CarouselApi,
-} from "@/components/ui/carousel";
-import { useEffect, useState } from "react";
 import BenchmarkChart from "@/components/benchmark-chart";
 import FeatureCard from "@/components/feature-card";
 import { Button } from "@/components/ui/button";
@@ -45,20 +35,6 @@ const features = [
 ];
 
 export default function Home() {
-	const [api, setApi] = useState<CarouselApi>();
-	const [current, setCurrent] = useState(0);
-	const [count, setCount] = useState(0);
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
-		setCount(api.scrollSnapList().length);
-		setCurrent(api.selectedScrollSnap() + 1);
-		api.on("select", () => {
-			setCurrent(api.selectedScrollSnap() + 1);
-		});
-	}, [api]);
-
 	return (
 		<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
 			<header className="flex flex-col w-full h-80 justify-center relative mb-10">

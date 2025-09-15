@@ -1,14 +1,5 @@
 import { MenuFilter } from "../menu/type";
-import {
-	adjustContrasts,
-	adjustExposure,
-	adjustSaturation,
-	adjustTemperature,
-	adjustTint,
-	grayscaleImage,
-	sharpImageWASM,
-	transferColorWASM,
-} from "../wasm/func";
+import { grayscaleImage } from "../wasm/func";
 import { useImageEditor } from "./useImageEditor";
 import { useBenchmarkHook } from "./useBenchmark";
 import { useRef } from "react";
@@ -84,7 +75,6 @@ export const useWasmHook = (
 	};
 
 	const exposure = async (value: number[]) => {
-		const start = performance.now();
 		console.time("Adjust Exposure finish in");
 		hook.setLightVal((prev) => ({
 			...prev,
@@ -99,7 +89,6 @@ export const useWasmHook = (
 	};
 
 	const contrast = async (value: number[]) => {
-		const start = performance.now();
 		console.time("Adjust Exposure finish in");
 		hook.setLightVal((prev) => ({
 			...prev,

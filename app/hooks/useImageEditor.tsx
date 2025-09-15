@@ -36,7 +36,7 @@ export const useImageEditor = () => {
 		setZoomLevel(Math.max(0.5, Math.min(newZoom, 2))); // Clamp between 0.5 and 3
 	};
 
-	const handleOnWheel = (event: any) => {
+	const handleOnWheel = (event: WheelEvent) => {
 		if (event.deltaY < 0) {
 			setZoomLevel(Math.max(0.5, Math.min(zoomLevel + 0.1, 2)));
 		} else if (event.deltaY > 0) {

@@ -24,13 +24,15 @@ export async function Sharp(hook: ReturnType<typeof useImageEditor>, benchmarkHo
             height: hook.imageSize.height,
         },
     ]);
-    benchmarkHook.resultSpeed?.latency
-        ? benchmarkHook.setTestAttemptsLatency((prev) => ({
-            ...prev,
-            sharpness: prev.sharpness + 1,
-        }))
-        : benchmarkHook.setTestAttempts((prev) => ({
-            ...prev,
-            sharpness: prev.sharpness + 1,
-    }));
+    if (benchmarkHook.resultSpeed?.latency) {
+			benchmarkHook.setTestAttemptsLatency((prev) => ({
+				...prev,
+				sharpness: prev.sharpness + 1,
+			}));
+		} else {
+			benchmarkHook.setTestAttempts((prev) => ({
+				...prev,
+				sharpness: prev.sharpness + 1,
+			}));
+		}
 }
