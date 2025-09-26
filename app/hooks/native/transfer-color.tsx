@@ -57,6 +57,7 @@ function addBenchmarkResult(
 	time: number,
 	imageSize: { width: number; height: number }
 ) {
+	const date = new Date();
 	benchmarkHook.setBenchmarkNative((prev) => [
 		...prev,
 		{
@@ -65,6 +66,7 @@ function addBenchmarkResult(
 			time,
 			width: imageSize.width,
 			height: imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {

@@ -119,15 +119,6 @@ export const useBenchmarkHook = () => {
 		toast.info("Benchmark stopped successfully");
 	};
 
-	const [alreadyBenchmarkWASM, setAlreadyBenchmarkWASM] = useState(false);
-	const [alreadyBenchmarkNative, setAlreadyBenchmarkNative] = useState(false);
-	const [alreadyTransferColorAttemptWASM, setAlreadyTransferColorAttemptWASM] =
-		useState(false);
-	const [
-		alreadyTransferColorAttemptNative,
-		setAlreadyTransferColorAttemptNative,
-	] = useState(false);
-
 	return {
 		runSpeedTest,
 		isFinished,
