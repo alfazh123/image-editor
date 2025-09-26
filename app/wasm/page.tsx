@@ -22,7 +22,7 @@ import { StatusBanner } from "@/components/status-banner";
 import { InputBanner } from "@/components/input-banner";
 
 import init from "rust-editor";
-import { getSizeImgWASM, inputImage } from "./func";
+import { getSizeImgWASM, inputImage } from "../hooks/wasm/func";
 import { filterMenuItems } from "../data";
 
 import {
@@ -56,6 +56,7 @@ export default function Wasm() {
 		async function initializeWasm() {
 			try {
 				localStorage.removeItem("benchmarkWASM");
+				localStorage.removeItem("transferColorAttemp");
 				console.time("WASM initialization successful in");
 				await init(); // Initialize WASM asynchronously
 				setWasmInitialized(true);
@@ -94,12 +95,13 @@ export default function Wasm() {
 			hook.setImgRefUrl(imgUrl);
 			console.log("Reference Image URL:", imgUrl);
 			hook.setRefImgArr(imgArr);
+			hook.setRefSize(await getSizeImgWASM(imgArr));
 		}
 	}
 
 	// Function to process transfer color with WASM
 	async function handleTransferColor() {
-		wasmHooks.transferColor();
+		wasmHooks.transferColor(hook.refSize);
 	}
 
 	filterMenuItems.map((item) => {
@@ -109,7 +111,10 @@ export default function Wasm() {
 				const response = await fetch(item.imgUrl);
 				const blob = await response.blob();
 				const buffer = await blob.arrayBuffer();
-				wasmHooks.functionFilter(new Uint8Array(buffer));
+				wasmHooks.functionFilter(new Uint8Array(buffer), {
+					width: item.width,
+					height: item.height,
+				});
 			},
 			color: item.backgroundColor,
 			backgroundImage: item.imgUrl,
@@ -253,6 +258,10 @@ export default function Wasm() {
 		localStorage.setItem(
 			"benchmarkWASM",
 			JSON.stringify(benchmarkHook.benchmarkWASM)
+		);
+		localStorage.setItem(
+			"transferColorAttemp",
+			JSON.stringify(benchmarkHook.transferColorAttemp)
 		);
 		route.push("/benchmark-result?type=wasm");
 	}

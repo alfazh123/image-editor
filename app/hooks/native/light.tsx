@@ -1,4 +1,7 @@
-import { handleContrastsNative, handleExposureNative } from "@/app/native/func";
+import {
+	handleContrastsNative,
+	handleExposureNative,
+} from "@/app/hooks/native/func";
 import { useBenchmarkHook } from "../useBenchmark";
 import { useImageEditor } from "../useImageEditor";
 
@@ -18,6 +21,8 @@ export async function ExposureNative(
 	console.timeEnd("Adjust Tint Native finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
+
 	benchmarkHook.setBenchmarkNative((prev) => [
 		...prev,
 		{
@@ -26,6 +31,7 @@ export async function ExposureNative(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {
@@ -57,6 +63,8 @@ export async function ContrastNative(
 	console.timeEnd("Adjust Tint Native finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
+
 	benchmarkHook.setBenchmarkNative((prev) => [
 		...prev,
 		{
@@ -65,6 +73,7 @@ export async function ContrastNative(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {

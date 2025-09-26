@@ -35,6 +35,12 @@ const features = [
 ];
 
 export default function Home() {
+	// setInterval(() => {
+	// 	const perf = performance.now(); // timestamp high-res
+	// 	// bisa dipakai untuk mengukur lamanya event loop "delay" / blocking
+	// 	console.log("Timestamp:", perf);
+	// }, 1000);
+
 	return (
 		<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
 			<header className="flex flex-col w-full h-80 justify-center relative mb-10">

@@ -18,7 +18,7 @@ import {
 	Sharp,
 	BenchmarkMenu,
 } from "../menu/menu";
-import { getSizeNative, initActix, inputImage } from "./func";
+import { getSizeNative, initActix, inputImage } from "../hooks/native/func";
 import { useImageEditor } from "../hooks/useImageEditor";
 import {
 	AdjustColorProps,

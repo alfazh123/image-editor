@@ -1,10 +1,11 @@
-import { transferColorWASM } from "@/app/wasm/func";
+import { transferColorWASM } from "@/app/hooks/wasm/func";
 import { useImageEditor } from "../useImageEditor";
 import { useBenchmarkHook } from "../useBenchmark";
 
 export async function TranferColor(
 	hook: ReturnType<typeof useImageEditor>,
-	benchmarkHook: ReturnType<typeof useBenchmarkHook>
+	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
+	refSize: { width: number; height: number }
 ) {
 	console.time("Transfer color WASM completed in");
 	const start = performance.now();
@@ -17,16 +18,22 @@ export async function TranferColor(
 	const end = performance.now();
 	const time = end - start;
 
-	addBenchmarkResult(benchmarkHook, time, {
-		width: hook.imageSize.width,
-		height: hook.imageSize.height,
-	});
+	addBenchmarkResult(
+		benchmarkHook,
+		time,
+		{
+			width: hook.imageSize.width,
+			height: hook.imageSize.height,
+		},
+		refSize
+	);
 }
 
 export async function TransferColorProvided(
 	hook: ReturnType<typeof useImageEditor>,
 	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
-	providedImgArr: Uint8Array
+	providedImgArr: Uint8Array,
+	refSize: { width: number; height: number }
 ) {
 	const start = performance.now();
 	const result = transferColorWASM(hook.originalImgArr, providedImgArr);
@@ -37,27 +44,43 @@ export async function TransferColorProvided(
 	const end = performance.now();
 	const time = end - start;
 
-	addBenchmarkResult(benchmarkHook, time, {
-		width: hook.imageSize.width,
-		height: hook.imageSize.height,
-	});
+	addBenchmarkResult(
+		benchmarkHook,
+		time,
+		{
+			width: hook.imageSize.width,
+			height: hook.imageSize.height,
+		},
+		refSize
+	);
 }
 
 function addBenchmarkResult(
 	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
 	time: number,
-	imageSize: { width: number; height: number }
+	imageSize: { width: number; height: number },
+	refImageSize?: { width: number; height: number }
 ) {
-	benchmarkHook.setBenchmarkWASM((prev) => [
+	// benchmarkHook.setBenchmarkWASM((prev) => [
+	// 	...prev,
+	// 	{
+	// 	},
+	// ]);
+	benchmarkHook.setTransferColorAttemp((prev) => [
 		...prev,
 		{
 			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "transferColor",
 			time,
 			width: imageSize.width,
 			height: imageSize.height,
+			internetAvailable: false,
+			targetSize: imageSize,
+			referenceSize: refImageSize || { width: 0, height: 0 },
+			timeTaken: time,
+			type: "WASM",
 		},
 	]);
+	console.log(benchmarkHook.transferColorAttemp);
 	if (benchmarkHook.resultSpeed?.latency) {
 		benchmarkHook.setTestAttemptsLatency((prev) => ({
 			...prev,

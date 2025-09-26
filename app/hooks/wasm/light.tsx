@@ -1,4 +1,4 @@
-import { adjustContrasts, adjustExposure } from "@/app/wasm/func";
+import { adjustContrasts, adjustExposure } from "@/app/hooks/wasm/func";
 import { useBenchmarkHook } from "../useBenchmark";
 import { useImageEditor } from "../useImageEditor";
 
@@ -20,6 +20,7 @@ export async function Exposure(
 	console.timeEnd("Adjust Exposure finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
 
 	benchmarkHook.setBenchmarkWASM((prev) => [
 		...prev,
@@ -29,6 +30,7 @@ export async function Exposure(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {
@@ -62,6 +64,7 @@ export async function Contrast(
 	console.timeEnd("Adjust Exposure finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
 
 	benchmarkHook.setBenchmarkWASM((prev) => [
 		...prev,
@@ -71,6 +74,7 @@ export async function Contrast(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {

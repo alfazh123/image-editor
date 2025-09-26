@@ -2,7 +2,11 @@
 
 import SpeedTest, { Results } from "@cloudflare/speedtest";
 import { useState } from "react";
-import { BenchmarkResultProps, SpeedTestResult } from "../menu/type";
+import {
+	BenchmarkResultProps,
+	SpeedTestResult,
+	TransferColorAttempt,
+} from "../menu/type";
 import { toast } from "sonner";
 
 export const useBenchmarkHook = () => {
@@ -75,6 +79,10 @@ export const useBenchmarkHook = () => {
 		contrast: 0,
 	});
 
+	const [transferColorAttemp, setTransferColorAttemp] = useState<
+		TransferColorAttempt[]
+	>([]);
+
 	const [benchmarkWASM, setBenchmarkWASM] = useState<BenchmarkResultProps[]>(
 		[]
 	);
@@ -111,6 +119,15 @@ export const useBenchmarkHook = () => {
 		toast.info("Benchmark stopped successfully");
 	};
 
+	const [alreadyBenchmarkWASM, setAlreadyBenchmarkWASM] = useState(false);
+	const [alreadyBenchmarkNative, setAlreadyBenchmarkNative] = useState(false);
+	const [alreadyTransferColorAttemptWASM, setAlreadyTransferColorAttemptWASM] =
+		useState(false);
+	const [
+		alreadyTransferColorAttemptNative,
+		setAlreadyTransferColorAttemptNative,
+	] = useState(false);
+
 	return {
 		runSpeedTest,
 		isFinished,
@@ -127,5 +144,7 @@ export const useBenchmarkHook = () => {
 		stopBenchmark,
 		testAttemptsLatency,
 		setTestAttemptsLatency,
+		transferColorAttemp,
+		setTransferColorAttemp,
 	};
 };

@@ -1,4 +1,8 @@
-import { adjustSaturation, adjustTemperature, adjustTint } from "@/app/wasm/func";
+import {
+	adjustSaturation,
+	adjustTemperature,
+	adjustTint,
+} from "@/app/hooks/wasm/func";
 import { useBenchmarkHook } from "../useBenchmark";
 import { useImageEditor } from "../useImageEditor";
 
@@ -15,6 +19,7 @@ export async function Saturation(
 	console.timeEnd("Adjust Saturation finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
 
 	benchmarkHook.setBenchmarkWASM((prev) => [
 		...prev,
@@ -24,6 +29,7 @@ export async function Saturation(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {
@@ -52,7 +58,7 @@ export async function Temperature(
 	console.timeEnd("Adjust Temperature finish in");
 	const end = performance.now();
 	const time = end - start;
-	console.log("Temperature : ", time);
+	const date = new Date();
 
 	benchmarkHook.setBenchmarkWASM((prev) => [
 		...prev,
@@ -62,6 +68,7 @@ export async function Temperature(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {
@@ -90,6 +97,7 @@ export async function Tint(
 	console.timeEnd("Adjust Tint finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
 
 	benchmarkHook.setBenchmarkWASM((prev) => [
 		...prev,
@@ -99,6 +107,7 @@ export async function Tint(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {

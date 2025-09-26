@@ -244,6 +244,7 @@ export function AdjustLight({ lightItem, windowSize }: AdjustLightProps) {
 export function BenchmarkMenu(props: BenchmarkTestProps) {
 	const testAttempts = props.testAttempts;
 	const testAttemptsLatency = props.testAttemptsLatency;
+	const latency = Number(props.resultSpeed?.latency.toFixed(2));
 
 	const [page, setPage] = useState(1);
 
@@ -301,7 +302,11 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 					<>
 						{page === 1 && <BenchmarkSegmen data={testAttempts} type="time" />}
 						{page === 2 && props.isFinished && (
-							<BenchmarkSegmen data={testAttemptsLatency} type="latency" />
+							<BenchmarkSegmen
+								data={testAttemptsLatency}
+								type="latency"
+								latency={latency ?? 0}
+							/>
 						)}
 						<span className="flex gap-2">
 							<Button

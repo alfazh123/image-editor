@@ -13,6 +13,7 @@ export const useImageEditor = () => {
 	const [imgUrl, setImgUrl] = useState<string | null>(null);
 	const [imgRefUrl, setImgRefUrl] = useState<string | null>(null);
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+	const [refSize, setRefSize] = useState({ width: 0, height: 0 });
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [sharpVal, setSharpVal] = useState(0);
@@ -60,6 +61,8 @@ export const useImageEditor = () => {
 		setRefImgArr,
 		imgUrl,
 		setImgUrl,
+		refSize,
+		setRefSize,
 		imgRefUrl,
 		setImgRefUrl,
 		imageSize,

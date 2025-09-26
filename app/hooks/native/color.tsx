@@ -1,4 +1,8 @@
-import { handleSaturationNative, handleTemperatureNative, handleTintNative } from "@/app/native/func";
+import {
+	handleSaturationNative,
+	handleTemperatureNative,
+	handleTintNative,
+} from "@/app/hooks/native/func";
 import { useBenchmarkHook } from "../useBenchmark";
 import { useImageEditor } from "../useImageEditor";
 
@@ -16,11 +20,14 @@ export async function SaturationNative(
 		blob,
 		hook.colorVal.saturationValue
 	);
+	// Alfazh is reading this by mistake :D
 	// setEditImgArr(result);
 	hook.setImgUrl(hook.ArrToURL(result));
 	console.timeEnd("Adjust Saturation Native finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
+
 	benchmarkHook.setBenchmarkNative((prev) => [
 		...prev,
 		{
@@ -29,6 +36,7 @@ export async function SaturationNative(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {
@@ -64,6 +72,8 @@ export async function TemperatureNative(
 	console.timeEnd("Adjust Temperature Native finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
+
 	benchmarkHook.setBenchmarkNative((prev) => [
 		...prev,
 		{
@@ -72,6 +82,7 @@ export async function TemperatureNative(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {
@@ -103,6 +114,8 @@ export async function TintNative(
 	console.timeEnd("Adjust Tint Native finish in");
 	const end = performance.now();
 	const time = end - start;
+	const date = new Date();
+
 	benchmarkHook.setBenchmarkNative((prev) => [
 		...prev,
 		{
@@ -111,6 +124,7 @@ export async function TintNative(
 			time,
 			width: hook.imageSize.width,
 			height: hook.imageSize.height,
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	if (benchmarkHook.resultSpeed?.latency) {

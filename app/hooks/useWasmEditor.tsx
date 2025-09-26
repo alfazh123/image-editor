@@ -1,5 +1,5 @@
 import { MenuFilter } from "../menu/type";
-import { grayscaleImage } from "../wasm/func";
+import { grayscaleImage } from "./wasm/func";
 import { useImageEditor } from "./useImageEditor";
 import { useBenchmarkHook } from "./useBenchmark";
 import { useRef } from "react";
@@ -14,11 +14,11 @@ export const useWasmHook = (
 ) => {
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	const transferColor = async () => {
+	const transferColor = async (refSize: { width: number; height: number }) => {
 		hook.setIsLoading(true);
 
 		if (hook.editedImgArr.length > 0 && hook.refImgArr.length > 0) {
-			TranferColor(hook, benchmarkHook);
+			TranferColor(hook, benchmarkHook, refSize);
 		} else {
 			hook.setIsLoading(false);
 			alert("No image data available for transfer color");
@@ -122,41 +122,15 @@ export const useWasmHook = (
 		hook.setIsLoading(false);
 	};
 
-	const functionFilter = async (imageData: Uint8Array) => {
+	const functionFilter = async (
+		imageData: Uint8Array,
+		refSize: { width: number; height: number }
+	) => {
 		console.time("Filter apply finish in");
 		hook.setIsLoading(true);
 		// Do not log isLoading here, as it won't reflect the updated value immediately
 		if (hook.editedImgArr.length > 0 && imageData.length > 0) {
-			// const start = performance.now();
-			// const result = transferColorWASM(hook.originalImgArr, imageData);
-			// // setEditImgArr(await result);
-			// hook.setEditedImgArr(await result);
-			// hook.setImgUrl(hook.ArrToURL(await result));
-			// hook.setIsLoading(false);
-			// console.timeEnd("Filter apply finish in");
-			// const end = performance.now();
-			// const time = end - start;
-
-			// benchmarkHook.setBenchmarkWASM((prev) => [
-			// 	...prev,
-			// 	{
-			// 		latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			// 		method: "transferColor",
-			// 		time,
-			// 		width: hook.imageSize.width,
-			// 		height: hook.imageSize.height,
-			// 	},
-			// ]);
-			// benchmarkHook.resultSpeed?.latency
-			// 	? benchmarkHook.setTestAttemptsLatency((prev) => ({
-			// 			...prev,
-			// 			colorTransfer: prev.colorTransfer + 1,
-			// 	  }))
-			// 	: benchmarkHook.setTestAttempts((prev) => ({
-			// 			...prev,
-			// 			colorTransfer: prev.colorTransfer + 1,
-			// 	  }));
-			TransferColorProvided(hook, benchmarkHook, imageData);
+			TransferColorProvided(hook, benchmarkHook, imageData, refSize);
 		} else {
 			hook.setIsLoading(false);
 			alert("No image data available for transfer color");

@@ -1,4 +1,4 @@
-import { InitType } from "./type";
+import { InitType } from "../../native/type";
 
 const endpoint = process.env.NEXT_PUBLIC_API;
 

@@ -93,6 +93,18 @@ export interface BenchmarkResultProps {
 	width: number;
 	height: number;
 	time: number;
+	date: string;
+}
+
+export interface TransferColorAttempt {
+	latency: number;
+	width: number;
+	height: number;
+	time: number;
+	targetSize: { width: number; height: number };
+	referenceSize: { width: number; height: number };
+	timeTaken: number;
+	type: "WASM" | "Native";
 }
 
 export interface BenchmarkTestProps {

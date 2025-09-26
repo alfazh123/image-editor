@@ -1,14 +1,26 @@
-import { BenchmarkResultProps } from "../menu/type";
+import { BenchmarkResultProps, TransferColorAttempt } from "../menu/type";
 
-function filterData(data: BenchmarkResultProps[], method: string, more = false) {
-    return data.filter((item) => item.method === method && (more ? item.latency > 0 : item.latency === 0)).map((item) => ({
-        ...item,
-        time: (item.time / 1000).toFixed(2), // Convert to seconds
-    }));
+function filterData(
+	data: BenchmarkResultProps[],
+	method: string,
+	more = false
+) {
+	return data
+		.filter(
+			(item) =>
+				item.method === method && (more ? item.latency > 0 : item.latency === 0)
+		)
+		.map((item) => ({
+			...item,
+			time: (item.time / 1000).toFixed(2), // Convert to seconds
+		}));
 }
 
-export function getBenchmarkData(data: BenchmarkResultProps[]) {
-	const ct = filterData(data, "transferColor");
+export function getBenchmarkData(
+	data: BenchmarkResultProps[],
+	transferColorAttempts: TransferColorAttempt[]
+) {
+	// const ct = filterData(data, "transferColor");
 	const sharp = filterData(data, "sharp");
 	const saturation = filterData(data, "saturation");
 	const temperature = filterData(data, "temperature");
@@ -16,13 +28,27 @@ export function getBenchmarkData(data: BenchmarkResultProps[]) {
 	const constrast = filterData(data, "contrast");
 	const exposure = filterData(data, "exposure");
 
-	const ctL = filterData(data, "transferColor", true);
+	// const ctL = filterData(data, "transferColor", true);
 	const sharpL = filterData(data, "sharp", true);
 	const saturationL = filterData(data, "saturation", true);
 	const temperatureL = filterData(data, "temperature", true);
 	const tintL = filterData(data, "tint", true);
 	const constrastL = filterData(data, "contrast", true);
 	const exposureL = filterData(data, "exposure", true);
+
+	const ct = transferColorAttempts
+		.filter((item) => item.latency === 0)
+		.map((item) => ({
+			...item,
+			referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
+		}));
+
+	const ctL = transferColorAttempts
+		.filter((item) => item.latency > 0)
+		.map((item) => ({
+			...item,
+			referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
+		}));
 
 	const benchmarkData = [
 		{
