@@ -282,7 +282,7 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 									? startBenchmarkWithLatency
 									: () => props.setStartBenchmark(true)
 							}>
-							<span className="text-sm">Setup Benchmark</span>
+							<span className="text-sm">Start Benchmark</span>
 						</Button>
 					</div>
 				)}
