@@ -1,10 +1,6 @@
 import { BenchmarkResultProps, TransferColorAttempt } from "../menu/type";
 
-function filterData(
-	data: BenchmarkResultProps[],
-	method: string,
-	more = false
-) {
+function filterData(data: BenchmarkResultProps[], method: string) {
 	return data
 		.filter((item) => item.method === method)
 		.map((item) => ({
