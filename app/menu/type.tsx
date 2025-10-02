@@ -115,10 +115,12 @@ export interface BenchmarkTestProps {
 	resultSpeed?: SpeedTestResult;
 	windowSize?: { width: number; height: number };
 	testAttempts: TestAttemptsProps;
-	testAttemptsLatency: TestAttemptsProps;
-	stopBenchmark: () => void;
 	type: "wasm" | "native";
 	submitResult: () => void;
+	startBenchmark: boolean;
+	useLatency: boolean;
+	changeUseLatency: () => void;
+	setStartBenchmark: (value: boolean) => void;
 }
 
 export interface TestAttemptsProps {

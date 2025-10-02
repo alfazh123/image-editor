@@ -6,10 +6,7 @@ function filterData(
 	more = false
 ) {
 	return data
-		.filter(
-			(item) =>
-				item.method === method && (more ? item.latency > 0 : item.latency === 0)
-		)
+		.filter((item) => item.method === method)
 		.map((item) => ({
 			...item,
 			time: (item.time / 1000).toFixed(2), // Convert to seconds
@@ -28,27 +25,10 @@ export function getBenchmarkData(
 	const constrast = filterData(data, "contrast");
 	const exposure = filterData(data, "exposure");
 
-	// const ctL = filterData(data, "transferColor", true);
-	const sharpL = filterData(data, "sharp", true);
-	const saturationL = filterData(data, "saturation", true);
-	const temperatureL = filterData(data, "temperature", true);
-	const tintL = filterData(data, "tint", true);
-	const constrastL = filterData(data, "contrast", true);
-	const exposureL = filterData(data, "exposure", true);
-
-	const ct = transferColorAttempts
-		.filter((item) => item.latency === 0)
-		.map((item) => ({
-			...item,
-			referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
-		}));
-
-	const ctL = transferColorAttempts
-		.filter((item) => item.latency > 0)
-		.map((item) => ({
-			...item,
-			referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
-		}));
+	const ct = transferColorAttempts.map((item) => ({
+		...item,
+		referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
+	}));
 
 	const benchmarkData = [
 		{
@@ -81,36 +61,5 @@ export function getBenchmarkData(
 		},
 	];
 
-	const benchmarkDataLatency = [
-		{
-			name: "Color Transfer",
-			data: ctL,
-		},
-		{
-			name: "Sharpness",
-			data: sharpL,
-		},
-		{
-			name: "Saturation",
-			data: saturationL,
-		},
-		{
-			name: "Temperature",
-			data: temperatureL,
-		},
-		{
-			name: "Tint",
-			data: tintL,
-		},
-		{
-			name: "Contrasts",
-			data: constrastL,
-		},
-		{
-			name: "Exposure",
-			data: exposureL,
-		},
-	];
-
-	return { benchmarkData, benchmarkDataLatency };
+	return { benchmarkData };
 }

@@ -276,11 +276,13 @@ export default function Wasm() {
 		error: benchmarkHook.error,
 		windowSize: hook.windowSize,
 		testAttempts: benchmarkHook.testAttempts,
-		testAttemptsLatency: benchmarkHook.testAttemptsLatency,
-		stopBenchmark: () =>
-			benchmarkHook.stopBenchmark(benchmarkHook.benchmarkWASM),
+		// testAttemptsLatency: benchmarkHook.testAttemptsLatency,
 		type: type, // Explicitly set as string literal type
 		submitResult: submitBenchmark,
+		startBenchmark: benchmarkHook.startBenchmark,
+		useLatency: benchmarkHook.useLatency,
+		changeUseLatency: benchmarkHook.changeUseLatency,
+		setStartBenchmark: benchmarkHook.setStartBenchmark,
 	};
 
 	return (

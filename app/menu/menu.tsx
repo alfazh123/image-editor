@@ -45,6 +45,7 @@ import {
 } from "./type";
 import { ApplyFilterButton, InputRefBanner } from "@/components/change-ref";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 
 export function ColorTransfer({
 	onClick,
@@ -243,10 +244,7 @@ export function AdjustLight({ lightItem, windowSize }: AdjustLightProps) {
 
 export function BenchmarkMenu(props: BenchmarkTestProps) {
 	const testAttempts = props.testAttempts;
-	const testAttemptsLatency = props.testAttemptsLatency;
 	const latency = Number(props.resultSpeed?.latency.toFixed(2));
-
-	const [page, setPage] = useState(1);
 
 	function isCanSubmit(): boolean {
 		return (
@@ -260,26 +258,12 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 		);
 	}
 
-	function isCanSubmitLatency(): boolean {
-		return (
-			testAttemptsLatency.colorTransfer >= 5 &&
-			testAttemptsLatency.sharpness >= 10 &&
-			testAttemptsLatency.saturation >= 10 &&
-			testAttemptsLatency.temperature >= 10 &&
-			testAttemptsLatency.tint >= 10 &&
-			testAttemptsLatency.exposure >= 10 &&
-			testAttemptsLatency.contrast >= 10
-		);
-	}
-
-	function nextPage() {
-		if (page === 2) return;
-		setPage(page + 1);
-	}
-
-	function prevPage() {
-		if (page === 1) return;
-		setPage(page - 1);
+	function startBenchmarkWithLatency() {
+		console.log("Starting benchmark with latency...");
+		// props.startBenchmarkFunc;
+		props.runSpeedTest();
+		props.setStartBenchmark(true);
+		console.log("Running speed test...");
 	}
 
 	return (
@@ -288,47 +272,49 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 			label="Benchmark"
 			windowSize={props.windowSize}>
 			<div className="flex flex-col w-full my-2 rounded-2xl gap-4">
-				{!props.isLoading && !props.isFinished && page === 2 && (
-					<Button
-						className="w-full flex items-center justify-center"
-						onClick={props.runSpeedTest}>
-						<span className="text-sm">Start Benchmark</span>
-					</Button>
+				{!props.startBenchmark && !props.isLoading && !props.isFinished && (
+					<div className="text-sm text-gray-500">
+						<Switch onClick={props.changeUseLatency} />
+						<Button
+							className="mb-4 w-full flex items-center justify-center"
+							onClick={
+								props.useLatency
+									? startBenchmarkWithLatency
+									: () => props.setStartBenchmark(true)
+							}>
+							<span className="text-sm">Setup Benchmark</span>
+						</Button>
+					</div>
 				)}
+				{!props.isLoading &&
+					!props.isFinished &&
+					props.startBenchmark &&
+					props.useLatency && (
+						<Button
+							className="w-full flex items-center justify-center"
+							onClick={props.runSpeedTest}>
+							<span className="text-sm">Setup Benchmark</span>
+						</Button>
+					)}
 				{props.isLoading && (
 					<span className="text-sm text-gray-500">Setup Environment...</span>
 				)}
-				{!props.isLoading && (
+				{!props.isLoading && props.startBenchmark && (
 					<>
-						{page === 1 && <BenchmarkSegmen data={testAttempts} type="time" />}
-						{page === 2 && props.isFinished && (
+						{
 							<BenchmarkSegmen
-								data={testAttemptsLatency}
-								type="latency"
-								latency={latency ?? 0}
+								data={testAttempts}
+								type={props.useLatency}
+								latency={latency}
 							/>
-						)}
+						}
 						<span className="flex gap-2">
 							<Button
-								variant="outline"
-								className={`flex flex-1 items-center justify-center ${[
-									page != 1 ? "" : "hidden",
-								]}`}
-								onClick={prevPage}>
-								<span className="text-sm">Back</span>
-							</Button>
-							<Button
-								onClick={page === 1 ? nextPage : props.submitResult}
+								onClick={props.submitResult}
 								className={`flex-1 ${
-									page === 1
-										? isCanSubmit()
-											? ""
-											: "opacity-50 cursor-not-allowed"
-										: isCanSubmitLatency()
-										? ""
-										: "opacity-50 cursor-not-allowed"
+									isCanSubmit() ? "" : "opacity-50 cursor-not-allowed"
 								}`}>
-								{page === 1 ? "Next Page" : "See Result"}
+								See Result
 							</Button>
 						</span>
 					</>
@@ -347,7 +333,7 @@ function BenchmarkSegmen({
 	latency,
 }: {
 	data: TestAttemptsProps;
-	type: "time" | "latency";
+	type: boolean;
 	latency?: number;
 }) {
 	const testDataCount = [
@@ -361,7 +347,7 @@ function BenchmarkSegmen({
 	];
 	return (
 		<div>
-			{type === "latency" && <p>latency: {latency} ms</p>}
+			{type && <p>latency: {latency} ms</p>}
 			<span className="text-sm w-full flex flex-col my-4">
 				{testDataCount.map(({ label, key, minVal }) => (
 					<span key={key} className="flex w-72 justify-between mx-auto">
@@ -369,10 +355,7 @@ function BenchmarkSegmen({
 						<div className="flex gap-1">
 							<p className="w-8 justify-center items-center flex">
 								{data[key as keyof typeof data] >= minVal ? (
-									<Badge
-										className={`${
-											type === "time" ? `bg-blue-500` : `bg-orange-500`
-										}`}>
+									<Badge className={`bg-blue-500`}>
 										<CheckCheck />
 									</Badge>
 								) : (

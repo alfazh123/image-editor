@@ -24,7 +24,11 @@ export async function TransferColorNative(
 		width: hook.imageSize.width,
 		height: hook.imageSize.height,
 	};
-	addBenchmarkResult(benchmarkHook, time, imageSize);
+	const refImageSize = {
+		width: hook.refSize.width,
+		height: hook.refSize.height,
+	};
+	addBenchmarkResult(benchmarkHook, time, imageSize, refImageSize);
 }
 
 export async function TransferColorProvidedNative(
@@ -49,23 +53,32 @@ export async function TransferColorProvidedNative(
 		width: hook.imageSize.width,
 		height: hook.imageSize.height,
 	};
-	addBenchmarkResult(benchmarkHook, time, imageSize);
+	const refImageSize = {
+		width: hook.refSize.width,
+		height: hook.refSize.height,
+	};
+	addBenchmarkResult(benchmarkHook, time, imageSize, refImageSize);
 }
 
 function addBenchmarkResult(
 	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
 	time: number,
-	imageSize: { width: number; height: number }
+	imageSize: { width: number; height: number },
+	refImageSize: { width: number; height: number }
 ) {
 	const date = new Date();
-	benchmarkHook.setBenchmarkNative((prev) => [
+	benchmarkHook.setTransferColorAttemp((prev) => [
 		...prev,
 		{
 			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "transferColor",
 			time,
 			width: imageSize.width,
 			height: imageSize.height,
+			internetAvailable: false,
+			targetSize: imageSize,
+			referenceSize: refImageSize || { width: 0, height: 0 },
+			timeTaken: time,
+			type: "WASM",
 			date: date.toLocaleTimeString(),
 		},
 	]);

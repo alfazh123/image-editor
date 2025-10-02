@@ -10,13 +10,13 @@ import { Button } from "@/components/ui/button";
 const features = [
 	{
 		title: "Image Color Transfer",
-		demo: "/feature-demo/transfer-color.mp4",
+		demo: "feature-demo/transfer-color.mp4",
 		icon: "feature-icon/one.svg",
 		backgroundColor: "bg-[#6CBBFB]",
 	},
 	{
 		title: "Adjust Sharpness",
-		demo: "/feature-demo/sharp.mp4",
+		demo: "feature-demo/sharp.mp4",
 		icon: "feature-icon/two.svg",
 		backgroundColor: "bg-[#69DB7C]",
 	},
@@ -28,7 +28,7 @@ const features = [
 	},
 	{
 		title: "Adjust Color Image",
-		demo: "/feature-demo/color.mp4",
+		demo: "feature-demo/color.mp4",
 		icon: "feature-icon/four.svg",
 		backgroundColor: "bg-[#FFE792]",
 	},
@@ -72,7 +72,7 @@ export default function Home() {
 								width={16}
 								height={16}
 								className="inline w-4 h-4"
-								src="/wasm.svg"
+								src="wasm.svg"
 								alt="WASM"
 							/>
 							WebAssembly (WASM)
@@ -85,7 +85,7 @@ export default function Home() {
 								width={16}
 								height={16}
 								className="inline w-4 h-4"
-								src="/actix.svg"
+								src="actix.svg"
 								alt="WASM"
 							/>
 							Actix web

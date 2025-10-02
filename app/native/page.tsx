@@ -67,7 +67,7 @@ export default function Native() {
 		}
 
 		initializeActix();
-	}, [actixInitialized]);
+	}, []);
 
 	async function inputImageTarget(e: React.ChangeEvent<HTMLInputElement>) {
 		if (!actixInitialized) {
@@ -254,6 +254,10 @@ export default function Native() {
 			"benchmarkNative",
 			JSON.stringify(benchmarkHook.benchmarkNative)
 		);
+		localStorage.setItem(
+			"transferColorAttemp",
+			JSON.stringify(benchmarkHook.transferColorAttemp)
+		);
 		route.push("/benchmark-result?type=native");
 	}
 
@@ -267,11 +271,13 @@ export default function Native() {
 		error: benchmarkHook.error,
 		windowSize: hook.windowSize,
 		testAttempts: benchmarkHook.testAttempts,
-		testAttemptsLatency: benchmarkHook.testAttemptsLatency,
-		stopBenchmark: () =>
-			benchmarkHook.stopBenchmark(benchmarkHook.benchmarkNative),
+		// testAttemptsLatency: benchmarkHook.testAttemptsLatency,
 		type: type, // Explicitly set as string literal type
 		submitResult: submitBenchmark,
+		startBenchmark: benchmarkHook.startBenchmark,
+		useLatency: benchmarkHook.useLatency,
+		changeUseLatency: benchmarkHook.changeUseLatency,
+		setStartBenchmark: benchmarkHook.setStartBenchmark,
 	};
 
 	return (

@@ -91,32 +91,11 @@ export const useBenchmarkHook = () => {
 		BenchmarkResultProps[]
 	>([]);
 
-	const stopBenchmark = (benchmark: BenchmarkResultProps[]) => {
-		console.log("Benchmark stopped:", benchmark);
-		setBenchmarkWASM(benchmark);
-		setBenchmarkNative(benchmark);
-		setIsFinished(false);
-		setError(null);
-		setIsLoading(false);
-		setTestAttempts({
-			colorTransfer: 0,
-			sharpness: 0,
-			saturation: 0,
-			temperature: 0,
-			tint: 0,
-			exposure: 0,
-			contrast: 0,
-		});
-		setTestAttemptsLatency({
-			colorTransfer: 0,
-			sharpness: 0,
-			saturation: 0,
-			temperature: 0,
-			tint: 0,
-			exposure: 0,
-			contrast: 0,
-		});
-		toast.info("Benchmark stopped successfully");
+	const [startBenchmark, setStartBenchmark] = useState(false);
+	const [useLatency, setUseLatency] = useState(false);
+	const changeUseLatency = () => {
+		setUseLatency(!useLatency);
+		console.log("Use Latency:", !useLatency);
 	};
 
 	return {
@@ -132,10 +111,14 @@ export const useBenchmarkHook = () => {
 		setBenchmarkNative,
 		testAttempts,
 		setTestAttempts,
-		stopBenchmark,
 		testAttemptsLatency,
 		setTestAttemptsLatency,
 		transferColorAttemp,
 		setTransferColorAttemp,
+		startBenchmark,
+		setStartBenchmark,
+		useLatency,
+		setUseLatency,
+		changeUseLatency,
 	};
 };

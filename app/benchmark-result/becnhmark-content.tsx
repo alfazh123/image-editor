@@ -21,13 +21,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import LogTable from "@/components/log-table";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 
 export const columns: ColumnDef<BenchmarkResultProps>[] = [
 	{
@@ -90,11 +83,6 @@ export default function BenchmarkContent() {
 		height: 0,
 	});
 	const [isLoaded, setIsLoaded] = useState(false);
-	// const [filter, setFilter] = useState("wasm");
-
-	// function handleFilterChange(value: string) {
-	// 	setFilter(value);
-	// }
 
 	useEffect(() => {
 		// Hanya dijalankan di client
@@ -155,10 +143,7 @@ export default function BenchmarkContent() {
 			(item: { type: string }) => item.type.toLowerCase() === type
 		);
 
-		const { benchmarkData, benchmarkDataLatency } = getBenchmarkData(
-			parsedData,
-			colTransferData
-		);
+		const { benchmarkData } = getBenchmarkData(parsedData, colTransferData);
 
 		const benchmarkConfig = {
 			wasm: {
@@ -167,7 +152,7 @@ export default function BenchmarkContent() {
 			},
 			native: {
 				label: "Actix",
-				color: "#60a5fa",
+				color: "#FF8528",
 			},
 		} satisfies ChartConfig;
 
@@ -190,17 +175,6 @@ export default function BenchmarkContent() {
 					</span>
 					.
 				</p>
-				{/* <div>
-					<Select onValueChange={handleFilterChange} value={filter}>
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Select option" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="wasm">WASM</SelectItem>
-							<SelectItem value="native">Native</SelectItem>
-						</SelectContent>
-					</Select>
-				</div> */}
 				<div className="flex flex-col gap-8 mb-10">
 					{benchmarkData &&
 						benchmarkData.map((benchmark, id) => (
@@ -244,92 +218,6 @@ export default function BenchmarkContent() {
 														benchmark.name === "Color Transfer"
 															? "Image Reference Size"
 															: "Iteration"
-													}`,
-													position: "insideBottom",
-													offset: -10,
-													fill: "var(--muted-foreground)",
-													fontWeight: 600,
-												}}
-											/>
-											<YAxis
-												dataKey={"time"}
-												axisLine={false}
-												tickLine={false}
-												tickMargin={10}
-												className="text-gray-700 font-medium"
-												label={{
-													value: "Time (seconds)",
-													angle: -90,
-													position: "insideLeft",
-													offset: 10,
-													fill: "var(--muted-foreground)",
-													fontWeight: 600,
-												}}
-											/>
-											<Bar
-												dataKey="time"
-												fill={`var(--color-${type})`}
-												radius={6}></Bar>
-										</BarChart>
-									</ChartContainer>
-								</CardContent>
-							</Card>
-						))}
-				</div>
-				<div className="flex flex-col gap-8 mb-10">
-					<div>
-						<Select>
-							<SelectTrigger className="w-[180px]">
-								<SelectValue placeholder="Select option" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="wasm">WASM</SelectItem>
-								<SelectItem value="native">Native</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					{benchmarkDataLatency &&
-						benchmarkDataLatency.map((benchmark, id) => (
-							<Card
-								key={id}
-								className="border border-blue-200 shadow-md bg-white/80 hover:shadow-lg transition-shadow">
-								<CardHeader>
-									<CardTitle className="text-2xl font-bold text-blue-700">
-										Benchmark {benchmark.name}
-									</CardTitle>
-									<CardDescription className="text-gray-500">
-										This chart shows the time execution of various image
-										processing methods.
-									</CardDescription>
-								</CardHeader>
-								<CardContent>
-									<ChartContainer
-										config={benchmarkConfig}
-										className="min-h-[200px] w-full">
-										<BarChart
-											accessibilityLayer
-											data={benchmark.data}
-											outerRadius={10}
-											innerRadius={10}
-											margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-											<CartesianGrid vertical={false} strokeDasharray="3 3" />
-											<ChartTooltip content={<ChartTooltipContent />} />
-											<XAxis
-												dataKey={`${
-													benchmark.name === "Color Transfer"
-														? "referenceSize"
-														: "time"
-												}`}
-												axisLine={false}
-												tickLine={false}
-												tickMargin={10}
-												tickFormatter={(value) => value.slice(0.3)}
-												className="text-gray-700 font-medium"
-												label={{
-													value: `${
-														benchmark.name === "Color Transfer"
-															? "Image Reference Size"
-															: "Time (seconds)"
 													}`,
 													position: "insideBottom",
 													offset: -10,

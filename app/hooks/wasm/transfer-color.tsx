@@ -61,11 +61,7 @@ function addBenchmarkResult(
 	imageSize: { width: number; height: number },
 	refImageSize?: { width: number; height: number }
 ) {
-	// benchmarkHook.setBenchmarkWASM((prev) => [
-	// 	...prev,
-	// 	{
-	// 	},
-	// ]);
+	const date = new Date();
 	benchmarkHook.setTransferColorAttemp((prev) => [
 		...prev,
 		{
@@ -78,6 +74,7 @@ function addBenchmarkResult(
 			referenceSize: refImageSize || { width: 0, height: 0 },
 			timeTaken: time,
 			type: "WASM",
+			date: date.toLocaleTimeString(),
 		},
 	]);
 	console.log(benchmarkHook.transferColorAttemp);
