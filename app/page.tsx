@@ -104,7 +104,7 @@ export default function Home() {
 					Application overview
 				</Badge> */}
 				<Image
-					src={"/app.png"}
+					src={"app.png"}
 					alt="app screenshot"
 					width={800}
 					height={600}
