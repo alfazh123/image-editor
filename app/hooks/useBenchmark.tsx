@@ -69,16 +69,6 @@ export const useBenchmarkHook = () => {
 		contrast: 0,
 	});
 
-	const [testAttemptsLatency, setTestAttemptsLatency] = useState({
-		colorTransfer: 0,
-		sharpness: 0,
-		saturation: 0,
-		temperature: 0,
-		tint: 0,
-		exposure: 0,
-		contrast: 0,
-	});
-
 	const [transferColorAttemp, setTransferColorAttemp] = useState<
 		TransferColorAttempt[]
 	>([]);
@@ -111,8 +101,6 @@ export const useBenchmarkHook = () => {
 		setBenchmarkNative,
 		testAttempts,
 		setTestAttempts,
-		testAttemptsLatency,
-		setTestAttemptsLatency,
 		transferColorAttemp,
 		setTransferColorAttemp,
 		startBenchmark,

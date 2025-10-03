@@ -19,23 +19,18 @@ export async function Sharp(
 	const time = end - start;
 	const date = new Date();
 
-	benchmarkHook.setBenchmarkWASM((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "sharp",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkWASM((prev) => [
 			...prev,
-			sharpness: prev.sharpness + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "sharp",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			sharpness: prev.sharpness + 1,

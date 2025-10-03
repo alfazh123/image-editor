@@ -67,27 +67,23 @@ function addBenchmarkResult(
 	refImageSize: { width: number; height: number }
 ) {
 	const date = new Date();
-	benchmarkHook.setTransferColorAttemp((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			time,
-			width: imageSize.width,
-			height: imageSize.height,
-			internetAvailable: false,
-			targetSize: imageSize,
-			referenceSize: refImageSize || { width: 0, height: 0 },
-			timeTaken: time,
-			type: "WASM",
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setTransferColorAttemp((prev) => [
 			...prev,
-			colorTransfer: prev.colorTransfer + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				time,
+				width: imageSize.width,
+				height: imageSize.height,
+				internetAvailable: false,
+				targetSize: imageSize,
+				referenceSize: refImageSize || { width: 0, height: 0 },
+				timeTaken: time,
+				type: "WASM",
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			colorTransfer: prev.colorTransfer + 1,

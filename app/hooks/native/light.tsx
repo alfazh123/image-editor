@@ -23,23 +23,18 @@ export async function ExposureNative(
 	const time = end - start;
 	const date = new Date();
 
-	benchmarkHook.setBenchmarkNative((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "exposure",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkNative((prev) => [
 			...prev,
-			exposure: prev.exposure + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "exposure",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			exposure: prev.exposure + 1,
@@ -65,23 +60,18 @@ export async function ContrastNative(
 	const time = end - start;
 	const date = new Date();
 
-	benchmarkHook.setBenchmarkNative((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "contrast",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkNative((prev) => [
 			...prev,
-			contrast: prev.contrast + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "contrast",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			contrast: prev.contrast + 1,

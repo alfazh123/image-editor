@@ -19,24 +19,20 @@ export async function SharpNative(
 	const end = performance.now();
 	const time = end - start;
 	const date = new Date();
-	benchmarkHook.setBenchmarkNative((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "sharp",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
 
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkNative((prev) => [
 			...prev,
-			sharpness: prev.sharpness + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "sharp",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
+
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			sharpness: prev.sharpness + 1,

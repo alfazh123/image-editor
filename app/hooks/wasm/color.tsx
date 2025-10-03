@@ -21,23 +21,18 @@ export async function Saturation(
 	const time = end - start;
 	const date = new Date();
 
-	benchmarkHook.setBenchmarkWASM((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "saturation",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkWASM((prev) => [
 			...prev,
-			saturation: prev.saturation + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "saturation",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			saturation: prev.saturation + 1,
@@ -60,23 +55,18 @@ export async function Temperature(
 	const time = end - start;
 	const date = new Date();
 
-	benchmarkHook.setBenchmarkWASM((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "temperature",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkWASM((prev) => [
 			...prev,
-			temperature: prev.temperature + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "temperature",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			temperature: prev.temperature + 1,
@@ -99,23 +89,18 @@ export async function Tint(
 	const time = end - start;
 	const date = new Date();
 
-	benchmarkHook.setBenchmarkWASM((prev) => [
-		...prev,
-		{
-			latency: benchmarkHook.resultSpeed?.latency ?? 0,
-			method: "tint",
-			time,
-			width: hook.imageSize.width,
-			height: hook.imageSize.height,
-			date: date.toLocaleTimeString(),
-		},
-	]);
-	if (benchmarkHook.resultSpeed?.latency) {
-		benchmarkHook.setTestAttemptsLatency((prev) => ({
+	if (benchmarkHook.startBenchmark) {
+		benchmarkHook.setBenchmarkWASM((prev) => [
 			...prev,
-			tint: prev.tint + 1,
-		}));
-	} else {
+			{
+				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				method: "tint",
+				time,
+				width: hook.imageSize.width,
+				height: hook.imageSize.height,
+				date: date.toLocaleTimeString(),
+			},
+		]);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			tint: prev.tint + 1,
