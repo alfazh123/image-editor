@@ -22,7 +22,7 @@ const features = [
 	},
 	{
 		title: "Adjust Lightness",
-		demo: "/feature-demo/light.mp4",
+		demo: "feature-demo/light.mp4",
 		icon: "feature-icon/three.svg",
 		backgroundColor: "bg-[#ff8787]",
 	},
@@ -72,7 +72,7 @@ export default function Home() {
 								width={16}
 								height={16}
 								className="inline w-4 h-4"
-								src="wasm.svg"
+								src="./wasm.svg"
 								alt="WASM"
 							/>
 							WebAssembly (WASM)
@@ -85,7 +85,7 @@ export default function Home() {
 								width={16}
 								height={16}
 								className="inline w-4 h-4"
-								src="actix.svg"
+								src="./actix.svg"
 								alt="WASM"
 							/>
 							Actix web
@@ -103,13 +103,13 @@ export default function Home() {
 					className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
 					Application overview
 				</Badge> */}
-				<Image
+				{/* <Image
 					src={"app.png"}
 					alt="app screenshot"
 					width={800}
 					height={600}
 					className="w-full rounded-xl border-2 border-gray-200 p-1 shadow-lg"
-				/>
+				/> */}
 			</div>
 			<div className="flex flex-col gap-4 mt-12">
 				<h2 className="md:text-2xl text-lg font-semibold">Features</h2>

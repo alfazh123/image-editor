@@ -274,7 +274,10 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 			<div className="flex flex-col w-full my-2 rounded-2xl gap-4">
 				{!props.startBenchmark && !props.isLoading && !props.isFinished && (
 					<div className="text-sm text-gray-500">
-						<Switch onClick={props.changeUseLatency} />
+						<div className="flex justify-center items-center gap-4 mb-4">
+							<p>Enable this option to display latency records per action.</p>
+							<Switch onClick={props.changeUseLatency} />
+						</div>
 						<Button
 							className="mb-4 w-full flex items-center justify-center"
 							onClick={
@@ -301,13 +304,11 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 				)}
 				{!props.isLoading && props.startBenchmark && (
 					<>
-						{
-							<BenchmarkSegmen
-								data={testAttempts}
-								type={props.useLatency}
-								latency={latency}
-							/>
-						}
+						<BenchmarkSegmen
+							data={testAttempts}
+							type={props.useLatency}
+							latency={latency}
+						/>
 						<span className="flex gap-2">
 							<Button
 								onClick={props.submitResult}
