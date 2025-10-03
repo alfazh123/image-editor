@@ -27,16 +27,16 @@ export const useNativeHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			SharpNative(hook, benchmarkHook, value);
+			SharpNative(hook, benchmarkHook);
 		}, 300);
 	};
 
-	const transferColor = async () => {
+	const transferColor = async (refSize: { width: number; height: number }) => {
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			TransferColorNative(hook, benchmarkHook);
+			TransferColorNative(hook, benchmarkHook, refSize);
 		}, 300);
 	};
 
@@ -108,8 +108,11 @@ export const useNativeHook = (
 		}, 300);
 	};
 
-	const functionFilterNative = async (imageData: Uint8Array) => {
-		TransferColorProvidedNative(hook, benchmarkHook, imageData);
+	const functionFilterNative = async (
+		imageData: Uint8Array,
+		refSize: { width: number; height: number }
+	) => {
+		TransferColorProvidedNative(hook, benchmarkHook, imageData, refSize);
 	};
 
 	const noFilter = () => {

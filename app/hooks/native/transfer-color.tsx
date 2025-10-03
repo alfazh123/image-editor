@@ -4,7 +4,8 @@ import { useImageEditor } from "../useImageEditor";
 
 export async function TransferColorNative(
 	hook: ReturnType<typeof useImageEditor>,
-	benchmarkHook: ReturnType<typeof useBenchmarkHook>
+	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
+	refSize: { width: number; height: number }
 ) {
 	console.time("Transfer color native completed in");
 	const start = performance.now();
@@ -25,8 +26,8 @@ export async function TransferColorNative(
 		height: hook.imageSize.height,
 	};
 	const refImageSize = {
-		width: hook.refSize.width,
-		height: hook.refSize.height,
+		width: refSize.width,
+		height: refSize.height,
 	};
 	addBenchmarkResult(benchmarkHook, time, imageSize, refImageSize);
 }
@@ -34,7 +35,8 @@ export async function TransferColorNative(
 export async function TransferColorProvidedNative(
 	hook: ReturnType<typeof useImageEditor>,
 	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
-	providedImgArr: Uint8Array
+	providedImgArr: Uint8Array,
+	refSize: { width: number; height: number }
 ) {
 	hook.setIsLoading(true);
 	const start = performance.now();
@@ -54,8 +56,8 @@ export async function TransferColorProvidedNative(
 		height: hook.imageSize.height,
 	};
 	const refImageSize = {
-		width: hook.refSize.width,
-		height: hook.refSize.height,
+		width: refSize.width,
+		height: refSize.height,
 	};
 	addBenchmarkResult(benchmarkHook, time, imageSize, refImageSize);
 }

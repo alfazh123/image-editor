@@ -93,13 +93,18 @@ export default function Native() {
 		} else {
 			const { imgUrl, imgArr } = await inputImage(e);
 			hook.setImgRefUrl(imgUrl);
+			const refImageFile = new Blob([new Uint8Array(imgArr)], {
+				type: "image/png",
+			});
+			const sizeImage = await getSizeNative(refImageFile);
+			hook.setRefSize({ width: sizeImage.width, height: sizeImage.height });
 			hook.setRefImgArr(imgArr);
 		}
 	}
 
 	// Function to process transfer color with WASM
 	async function handleTransferColor() {
-		nativeHook.transferColor();
+		nativeHook.transferColor(hook.refSize);
 	}
 
 	async function handleSharp(value: number[]) {
@@ -227,7 +232,13 @@ export default function Native() {
 				const response = await fetch(item.imgUrl);
 				const blob = await response.blob();
 				const buffer = await blob.arrayBuffer();
-				nativeHook.functionFilterNative(new Uint8Array(buffer));
+				const refImageFile = new Blob([new Uint8Array(buffer)], {
+					type: "image/png",
+				});
+				const sizeImage = await getSizeNative(refImageFile);
+				hook.setRefSize({ width: sizeImage.width, height: sizeImage.height });
+				nativeHook.functionFilterNative(new Uint8Array(buffer), hook.refSize);
+				console.log(hook.refSize);
 			},
 			color: item.backgroundColor,
 			backgroundImage: item.imgUrl || null,

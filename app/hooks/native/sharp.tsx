@@ -4,15 +4,14 @@ import { useImageEditor } from "../useImageEditor";
 
 export async function SharpNative(
 	hook: ReturnType<typeof useImageEditor>,
-	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
-	value: number[]
+	benchmarkHook: ReturnType<typeof useBenchmarkHook>
 ) {
 	console.time("Adjust Sharp Native finish in");
 	const start = performance.now();
 	const blob = new Blob([new Uint8Array(hook.originalImgArr)], {
 		type: "image/png",
 	});
-	const result = await handleSharpNative(blob, value[0]);
+	const result = await handleSharpNative(blob, hook.sharpVal);
 	// setEditImgArr(result);
 	hook.setImgUrl(hook.ArrToURL(result));
 	console.timeEnd("Adjust Sharp Native finish in");
