@@ -1,6 +1,13 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+	Bar,
+	BarChart,
+	CartesianGrid,
+	LabelList,
+	XAxis,
+	YAxis,
+} from "recharts";
 import {
 	ChartConfig,
 	ChartContainer,
@@ -186,8 +193,10 @@ export default function BenchmarkContent() {
 										Benchmark {benchmark.name}
 									</CardTitle>
 									<CardDescription className="text-gray-500">
-										This chart shows the time execution of various image
-										processing methods.
+										This process had an average execution time of{" "}
+										<span className="font-semibold text-blue-700">
+											{benchmark.mean.toFixed(2)} seconds
+										</span>
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
@@ -206,12 +215,11 @@ export default function BenchmarkContent() {
 												dataKey={`${
 													benchmark.name === "Color Transfer"
 														? "referenceSize"
-														: "time"
+														: "label"
 												}`}
 												axisLine={false}
 												tickLine={false}
 												tickMargin={10}
-												tickFormatter={(value) => value.slice(0.3)}
 												className="text-gray-700 font-medium"
 												label={{
 													value: `${
@@ -243,7 +251,14 @@ export default function BenchmarkContent() {
 											<Bar
 												dataKey="time"
 												fill={`var(--color-${type})`}
-												radius={6}></Bar>
+												radius={6}>
+												<LabelList
+													position="top"
+													offset={12}
+													className="fill-foreground"
+													fontSize={12}
+												/>
+											</Bar>
 										</BarChart>
 									</ChartContainer>
 								</CardContent>
