@@ -48,6 +48,9 @@ export default function Home() {
 					<h1 className="md:text-6xl text-4xl font-bold">
 						Image editor with Rust Benchmarks
 					</h1>
+					<Button>
+						<Link href={"/benchmark-result"}>Go to benchmark page</Link>
+					</Button>
 				</div>
 				<Image
 					src={"tools.svg"}

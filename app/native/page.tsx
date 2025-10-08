@@ -261,15 +261,20 @@ export default function Native() {
 	}
 
 	function submitBenchmark() {
+		localStorage.removeItem("benchmarkNative");
+		const ct = localStorage.getItem("transferColorAttemp");
+		const ctJSON = ct ? JSON.parse(ct) : [];
+		const ctFiltered = ctJSON.filter(
+			(item: { type: string }) => item.type === "WASM"
+		);
+		const updatedCT = [...ctFiltered, ...benchmarkHook.transferColorAttemp];
+
+		localStorage.setItem("transferColorAttemp", JSON.stringify(updatedCT));
 		localStorage.setItem(
 			"benchmarkNative",
 			JSON.stringify(benchmarkHook.benchmarkNative)
 		);
-		localStorage.setItem(
-			"transferColorAttemp",
-			JSON.stringify(benchmarkHook.transferColorAttemp)
-		);
-		route.push("/benchmark-result?type=native");
+		route.push("/benchmark-result");
 	}
 
 	const type = "native";

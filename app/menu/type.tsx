@@ -104,7 +104,7 @@ export interface TransferColorAttempt {
 	targetSize: { width: number; height: number };
 	referenceSize: { width: number; height: number };
 	timeTaken: number;
-	type: "WASM" | "Native";
+	type: "WASM" | "NATIVE";
 }
 
 export interface BenchmarkTestProps {

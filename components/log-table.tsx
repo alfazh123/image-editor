@@ -21,7 +21,6 @@ import {
 interface LogTableProps<TData, TValue> {
 	data: TData[];
 	columns: ColumnDef<TData, TValue>[];
-	columnsWithNoLatency: ColumnDef<TData, TValue>[];
 }
 
 export default function LogTable<TData, TValue>({

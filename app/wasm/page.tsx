@@ -55,8 +55,6 @@ export default function Wasm() {
 	useEffect(() => {
 		async function initializeWasm() {
 			try {
-				localStorage.removeItem("benchmarkWASM");
-				localStorage.removeItem("transferColorAttemp");
 				console.time("WASM initialization successful in");
 				await init(); // Initialize WASM asynchronously
 				setWasmInitialized(true);
@@ -255,15 +253,19 @@ export default function Wasm() {
 	};
 
 	function submitBenchmark() {
+		localStorage.removeItem("benchmarkWASM");
+		const ct = localStorage.getItem("transferColorAttemp");
+		const ctJSON = ct ? JSON.parse(ct) : [];
+		const ctFiltered = ctJSON.filter(
+			(item: { type: string }) => item.type === "NATIVE"
+		);
+		const updatedCT = [...ctFiltered, ...benchmarkHook.transferColorAttemp];
 		localStorage.setItem(
 			"benchmarkWASM",
 			JSON.stringify(benchmarkHook.benchmarkWASM)
 		);
-		localStorage.setItem(
-			"transferColorAttemp",
-			JSON.stringify(benchmarkHook.transferColorAttemp)
-		);
-		route.push("/benchmark-result?type=wasm");
+		localStorage.setItem("transferColorAttemp", JSON.stringify(updatedCT));
+		route.push("/benchmark-result");
 	}
 
 	const type = "wasm";

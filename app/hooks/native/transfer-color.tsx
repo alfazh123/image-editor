@@ -82,7 +82,7 @@ function addBenchmarkResult(
 				targetSize: imageSize,
 				referenceSize: refImageSize || { width: 0, height: 0 },
 				timeTaken: time,
-				type: "WASM",
+				type: "NATIVE",
 				date: date.toLocaleTimeString(),
 			},
 		]);

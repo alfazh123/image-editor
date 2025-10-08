@@ -12,7 +12,8 @@ function filterData(data: BenchmarkResultProps[], method: string) {
 
 export function getBenchmarkData(
 	data: BenchmarkResultProps[],
-	transferColorAttempts: TransferColorAttempt[]
+	transferColorAttempts: TransferColorAttempt[],
+	type: "WASM" | "NATIVE"
 ) {
 	// const ct = filterData(data, "transferColor");
 	const sharp = filterData(data, "sharp").map((item) => ({
@@ -24,12 +25,14 @@ export function getBenchmarkData(
 	const constrast = filterData(data, "contrast");
 	const exposure = filterData(data, "exposure");
 
-	const ct = transferColorAttempts.map((item, id) => ({
-		...item,
-		referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
-		time: (item.time / 1000).toFixed(2), // Convert to seconds
-		label: id + 1,
-	}));
+	const ct = transferColorAttempts
+		.filter((item) => item.type === type)
+		.map((item, id) => ({
+			...item,
+			referenceSize: `${item.referenceSize.width}px X ${item.referenceSize.height}px`,
+			time: (item.time / 1000).toFixed(2), // Convert to seconds
+			label: id + 1,
+		}));
 
 	const ctMean =
 		ct.reduce((acc, item) => acc + parseFloat(item.time), 0) / ct.length;
