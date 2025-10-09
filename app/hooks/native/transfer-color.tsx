@@ -75,6 +75,8 @@ function addBenchmarkResult(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				time,
 				width: imageSize.width,
 				height: imageSize.height,

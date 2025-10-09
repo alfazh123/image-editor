@@ -27,6 +27,8 @@ export async function Exposure(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				method: "exposure",
 				time,
 				width: hook.imageSize.width,
@@ -66,6 +68,8 @@ export async function Contrast(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				method: "contrast",
 				time,
 				width: hook.imageSize.width,

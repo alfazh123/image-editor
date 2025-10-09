@@ -26,6 +26,8 @@ export async function Saturation(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				method: "saturation",
 				time,
 				width: hook.imageSize.width,
@@ -60,6 +62,8 @@ export async function Temperature(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				method: "temperature",
 				time,
 				width: hook.imageSize.width,
@@ -94,6 +98,8 @@ export async function Tint(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				method: "tint",
 				time,
 				width: hook.imageSize.width,

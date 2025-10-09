@@ -89,6 +89,8 @@ export interface SpeedTestResult {
 
 export interface BenchmarkResultProps {
 	latency: number;
+	downloadSpeed: number;
+	uploadSpeed: number;
 	method: string;
 	width: number;
 	height: number;
@@ -98,6 +100,8 @@ export interface BenchmarkResultProps {
 
 export interface TransferColorAttempt {
 	latency: number;
+	downloadSpeed: number;
+	uploadSpeed: number;
 	width: number;
 	height: number;
 	time: number;

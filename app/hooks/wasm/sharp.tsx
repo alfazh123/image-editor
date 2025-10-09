@@ -24,6 +24,8 @@ export async function Sharp(
 			...prev,
 			{
 				latency: benchmarkHook.resultSpeed?.latency ?? 0,
+				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
+				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
 				method: "sharp",
 				time,
 				width: hook.imageSize.width,

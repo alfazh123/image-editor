@@ -33,34 +33,34 @@ export const columns: ColumnDef<BenchmarkResultProps>[] = [
 		accessorKey: "method",
 		header: "Method",
 	},
+	// {
+	// 	accessorKey: "latency",
+	// 	header: "Latency (ms)",
+	// 	cell: ({ row }) => {
+	// 		return row.original.latency === 0
+	// 			? "No Latency"
+	// 			: `${row.original.latency.toFixed(2)} ms`;
+	// 	},
+	// },
 	{
-		accessorKey: "latency",
-		header: "Latency (ms)",
+		accessorKey: "downloadSpeed",
+		header: "Download Speed (Mbps)",
 		cell: ({ row }) => {
-			return row.original.latency === 0
-				? "No Latency"
-				: `${row.original.latency.toFixed(2)} ms`;
+			return row.original.downloadSpeed === 0 ||
+				row.original.downloadSpeed === undefined
+				? "N/A"
+				: `${row.original.downloadSpeed.toFixed(2)} Mbps`;
 		},
 	},
 	{
-		accessorKey: "time",
-		header: "Time Execute (ms)",
+		accessorKey: "uploadSpeed",
+		header: "Upload Speed (Mbps)",
 		cell: ({ row }) => {
-			return row.original.time === 0
-				? "No Latency"
-				: `${row.original.time.toFixed(2)} ms`;
+			return row.original.uploadSpeed === 0 ||
+				row.original.uploadSpeed === undefined
+				? "N/A"
+				: `${row.original.uploadSpeed.toFixed(2)} Mbps`;
 		},
-	},
-	{
-		accessorKey: "date",
-		header: "Date",
-	},
-];
-
-export const columnsWithNoLatency: ColumnDef<BenchmarkResultProps>[] = [
-	{
-		accessorKey: "method",
-		header: "Method",
 	},
 	{
 		accessorKey: "time",
@@ -144,18 +144,18 @@ export default function BenchmarkContent() {
 			<div className="flex items-center justify-center min-h-screen px-4">
 				<div className="mx-auto max-w-4xl p-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-xl shadow-lg border border-blue-200">
 					<h1 className="text-4xl font-extrabold mb-4 text-blue-800 tracking-tight drop-shadow">
-						{parsedDataWasm.length
+						{!parsedDataWasm.length
 							? "No WASM Benchmark Data"
 							: "No Native Benchmark Data"}
 					</h1>
 					<p className="text-gray-700 mb-2 text-lg">
-						{parsedDataWasm.length
+						{!parsedDataWasm.length
 							? "No WASM benchmark data found."
 							: "No Native benchmark data found."}{" "}
 						Please run the benchmark tests first by click link bellow.
 					</p>
 					<Link
-						href={parsedDataWasm.length ? "/wasm" : "/native"}
+						href={!parsedDataWasm.length ? "/wasm" : "/native"}
 						className="inline-block mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition-colors">
 						Go Edits
 					</Link>
@@ -296,7 +296,7 @@ export default function BenchmarkContent() {
 				<br />
 
 				<h1 className="text-4xl font-extrabold mb-4 text-blue-800 tracking-tight drop-shadow">
-					Benchmark WASM Results
+					Benchmark Native Results
 				</h1>
 
 				<p className="text-gray-600 mb-8 text-base">

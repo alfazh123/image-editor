@@ -245,6 +245,9 @@ export function AdjustLight({ lightItem, windowSize }: AdjustLightProps) {
 export function BenchmarkMenu(props: BenchmarkTestProps) {
 	const testAttempts = props.testAttempts;
 	const latency = Number(props.resultSpeed?.latency.toFixed(2));
+	const downloadSpeed =
+		Number(props.resultSpeed?.downloadSpeed.toFixed(2)) ?? 0;
+	const uploadSpeed = Number(props.resultSpeed?.uploadSpeed.toFixed(2)) ?? 0;
 
 	function isCanSubmit(): boolean {
 		return (
@@ -275,7 +278,9 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 				{!props.startBenchmark && !props.isLoading && !props.isFinished && (
 					<div className="text-sm text-gray-500">
 						<div className="flex justify-center items-center gap-4 mb-4">
-							<p>Enable this option to display latency records per action.</p>
+							<p className="text-black">
+								Enable this option to display latency records per action.
+							</p>
 							<Switch onClick={props.changeUseLatency} />
 						</div>
 						<Button
@@ -307,7 +312,11 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 						<BenchmarkSegmen
 							data={testAttempts}
 							type={props.useLatency}
-							latency={latency}
+							internetSpeed={{
+								downloadSpeed,
+								uploadSpeed,
+								latency,
+							}}
 						/>
 						<span className="flex gap-2">
 							<Button
@@ -331,11 +340,15 @@ export function BenchmarkMenu(props: BenchmarkTestProps) {
 function BenchmarkSegmen({
 	data,
 	type,
-	latency,
+	internetSpeed,
 }: {
 	data: TestAttemptsProps;
 	type: boolean;
-	latency?: number;
+	internetSpeed?: {
+		downloadSpeed: number;
+		uploadSpeed: number;
+		latency: number;
+	};
 }) {
 	const testDataCount = [
 		{ label: "Color Transfer", key: "colorTransfer", minVal: 5 },
@@ -348,7 +361,13 @@ function BenchmarkSegmen({
 	];
 	return (
 		<div>
-			{type && <p>latency: {latency} ms</p>}
+			{type && (
+				<div>
+					<p>latency: {internetSpeed?.latency} ms</p>
+					<p>downloadSpeed: {internetSpeed?.downloadSpeed} ms</p>
+					<p>uploadSpeed: {internetSpeed?.uploadSpeed} ms</p>
+				</div>
+			)}
 			<span className="text-sm w-full flex flex-col my-4">
 				{testDataCount.map(({ label, key, minVal }) => (
 					<span key={key} className="flex w-72 justify-between mx-auto">
