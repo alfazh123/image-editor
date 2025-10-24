@@ -45,7 +45,6 @@ interface SizeImage {
 }
 
 export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
-	let sizeImage: SizeImage = { width: 0, height: 0 };
 	const formData = new FormData();
 	formData.append("image_source", imageSource);
 
@@ -56,7 +55,7 @@ export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
 		});
 		if (response.ok) {
 			const json = await response.json();
-			sizeImage = { width: json.width, height: json.height };
+			let sizeImage = { width: json.width, height: json.height };
 			return sizeImage;
 		} else {
 			const errorText = await response.text();
@@ -71,7 +70,7 @@ export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
 		}
 	} catch (error) {
 		console.error("Error during color transfer:", error);
-		return sizeImage;
+		return { width: 0, height: 0 };
 	}
 }
 

@@ -112,6 +112,7 @@ export const useNativeHook = (
 		imageData: Uint8Array,
 		refSize: { width: number; height: number }
 	) => {
+		console.log(refSize);
 		TransferColorProvidedNative(hook, benchmarkHook, imageData, refSize);
 	};
 

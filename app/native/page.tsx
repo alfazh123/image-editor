@@ -232,13 +232,12 @@ export default function Native() {
 				const response = await fetch(item.imgUrl);
 				const blob = await response.blob();
 				const buffer = await blob.arrayBuffer();
-				const refImageFile = new Blob([new Uint8Array(buffer)], {
-					type: "image/png",
+				// hook.setRefSize({ width: item.width, height: item.height });
+				// console.log(hook.refSize);
+				nativeHook.functionFilterNative(new Uint8Array(buffer), {
+					width: item.width,
+					height: item.height,
 				});
-				const sizeImage = await getSizeNative(refImageFile);
-				hook.setRefSize({ width: sizeImage.width, height: sizeImage.height });
-				nativeHook.functionFilterNative(new Uint8Array(buffer), hook.refSize);
-				console.log(hook.refSize);
 			},
 			color: item.backgroundColor,
 			backgroundImage: item.imgUrl || null,

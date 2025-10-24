@@ -6,6 +6,7 @@ import Link from "next/link";
 import BenchmarkChart from "@/components/benchmark-chart";
 import FeatureCard from "@/components/feature-card";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/navbar";
 
 const features = [
 	{
@@ -43,14 +44,12 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
+			<Navbar />
 			<header className="flex flex-col w-full h-80 justify-center relative mb-10">
 				<div className="flex flex-col gap-4 lg:max-w-1/2">
 					<h1 className="md:text-6xl text-4xl font-bold">
 						Image editor with Rust Benchmarks
 					</h1>
-					<Button>
-						<Link href={"/benchmark-result"}>Go to benchmark page</Link>
-					</Button>
 				</div>
 				<Image
 					src={"tools.svg"}
@@ -89,7 +88,7 @@ export default function Home() {
 								height={16}
 								className="inline w-4 h-4"
 								src="./actix.svg"
-								alt="WASM"
+								alt="Actix web"
 							/>
 							Actix web
 						</Badge>
