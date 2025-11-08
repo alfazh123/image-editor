@@ -182,7 +182,7 @@ export default function Native() {
 				id: "tint-slider",
 				onChange: handleTint,
 				className:
-					"bg-gradient-to-r from-green-400 via-slate-200 to-fuchsia-400",
+					"bg-gradient-to-l from-green-400 via-slate-200 to-fuchsia-400",
 			},
 		],
 	};

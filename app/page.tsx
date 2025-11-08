@@ -36,39 +36,33 @@ const features = [
 ];
 
 export default function Home() {
-	// setInterval(() => {
-	// 	const perf = performance.now(); // timestamp high-res
-	// 	// bisa dipakai untuk mengukur lamanya event loop "delay" / blocking
-	// 	console.log("Timestamp:", perf);
-	// }, 1000);
-
 	return (
-		<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
-			<Navbar />
-			<header className="flex flex-col w-full h-80 justify-center relative mb-10">
-				<div className="flex flex-col gap-4 lg:max-w-1/2">
-					<h1 className="md:text-6xl text-4xl font-bold">
-						Image editor with Rust Benchmarks
-					</h1>
-				</div>
-				<Image
-					src={"tools.svg"}
-					alt="app screenshot"
-					width={800}
-					height={600}
-					className="w-96 rounded-xl p-1 lg:block hidden absolute -right-20 top-10 mask-r-from-40% mask-r-to-90%"
-				/>
-			</header>
+		<div>
+			<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
+				<Navbar />
+				<header className="flex flex-col w-full h-80 justify-center relative mb-10">
+					<div className="flex flex-col gap-4 lg:max-w-1/2">
+						<h1 className="md:text-6xl text-4xl font-bold">
+							Image editor with Rust Benchmarks
+						</h1>
+					</div>
+					<Image
+						src={"tools.svg"}
+						alt="app screenshot"
+						width={800}
+						height={600}
+						className="w-96 rounded-xl p-1 lg:block hidden absolute -right-20 top-10 mask-r-from-40% mask-r-to-90%"
+					/>
+				</header>
 
-			{/* Main goal */}
-			<div id="info" className="flex flex-col gap-4 mt-8">
-				<h2 className="md:text-2xl text-lg font-semibold">
-					Goal of this Application
-				</h2>
-				<p className="md:text-lg text-sm">
-					This image editor page provides two different implementations of image
-					processing written in Rust, one using
-					<Link href={"/wasm"}>
+				{/* Main goal */}
+				<div id="info" className="flex flex-col gap-4 mt-8">
+					<h2 className="md:text-2xl text-lg font-semibold">
+						Goal of this Application
+					</h2>
+					<p className="md:text-lg text-sm">
+						This image editor page provides two different implementations of
+						image processing written in Rust, one using
 						<Badge className="bg-[#644FF0]">
 							<Image
 								width={16}
@@ -79,9 +73,7 @@ export default function Home() {
 							/>
 							WebAssembly (WASM)
 						</Badge>
-					</Link>{" "}
-					and the other using{" "}
-					<Link href={"/native"}>
+						and the other using{" "}
 						<Badge className="bg-[#F75208]">
 							<Image
 								width={16}
@@ -92,60 +84,60 @@ export default function Home() {
 							/>
 							Actix web
 						</Badge>
-					</Link>
-					<br />
-					This page allows you to compare the performance of these two
-					implementations by applying image filters and compare time execution
-					of each implementation.
-				</p>
-			</div>
-			<div className="flex flex-col gap-4 relative mt-12">
-				{/* <Badge
+						<br />
+						This page allows you to compare the performance of these two
+						implementations by applying image filters and compare time execution
+						of each implementation.
+					</p>
+				</div>
+				<div className="flex flex-col gap-4 relative mt-12">
+					{/* <Badge
 					variant={"default"}
 					className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
 					Application overview
 				</Badge> */}
-				{/* <Image
+					{/* <Image
 					src={"app.png"}
 					alt="app screenshot"
 					width={800}
 					height={600}
 					className="w-full rounded-xl border-2 border-gray-200 p-1 shadow-lg"
 				/> */}
-			</div>
-			<div className="flex flex-col gap-4 mt-12">
-				<h2 className="md:text-2xl text-lg font-semibold">Features</h2>
-				<p>
-					Explore the various features of this image editor, powered by Rust and
-					WebAssembly.
-				</p>
-				<div className="mx-auto w-full grid sm:grid-cols-2 gap-4 items-center justify-center">
-					{features.map((feat, index) => (
-						<FeatureCard key={index} {...feat} />
-					))}
 				</div>
+				<div className="flex flex-col gap-4 mt-12">
+					<h2 className="md:text-2xl text-lg font-semibold">Features</h2>
+					<p>
+						Explore the various features of this image editor, powered by Rust
+						and WebAssembly.
+					</p>
+					<div className="mx-auto w-full grid sm:grid-cols-2 gap-4 items-center justify-center">
+						{features.map((feat, index) => (
+							<FeatureCard key={index} {...feat} />
+						))}
+					</div>
+				</div>
+				<div className="flex flex-col gap-4 mt-12" id="benchmark">
+					<BenchmarkChart />
+					<Button variant="outline" className="w-full">
+						Run Benchmark
+					</Button>
+				</div>
+				<footer className="flex w-full justify-between mt-8 h-20">
+					<span className="text-sm">
+						Created by{" "}
+						<Link href="https://github.com/alfazh123" target="_blank">
+							Alfazh
+						</Link>
+					</span>
+					<span className="text-sm">
+						<Link
+							href="https://github.com/alfazh123/image-editor"
+							target="_blank">
+							Github Repo
+						</Link>
+					</span>
+				</footer>
 			</div>
-			<div className="flex flex-col gap-4 mt-12" id="benchmark">
-				<BenchmarkChart />
-				<Button variant="outline" className="w-full">
-					Run Benchmark
-				</Button>
-			</div>
-			<footer className="flex w-full justify-between mt-8 h-20">
-				<span className="text-sm">
-					Created by{" "}
-					<Link href="https://github.com/alfazh123" target="_blank">
-						Alfazh
-					</Link>
-				</span>
-				<span className="text-sm">
-					<Link
-						href="https://github.com/alfazh123/image-editor"
-						target="_blank">
-						Github Repo
-					</Link>
-				</span>
-			</footer>
 		</div>
 	);
 }

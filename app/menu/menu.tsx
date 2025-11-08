@@ -373,15 +373,17 @@ function BenchmarkSegmen({
 					<span key={key} className="flex w-72 justify-between mx-auto">
 						<p>{label} Attempt </p>
 						<div className="flex gap-1">
-							<p className="w-8 justify-center items-center flex">
+							<div className="w-16 justify-center items-center flex">
 								{data[key as keyof typeof data] >= minVal ? (
 									<Badge className={`bg-blue-500`}>
 										<CheckCheck />
 									</Badge>
 								) : (
-									data[key as keyof typeof data]
+									<p>
+										{data[key as keyof typeof data]} / {minVal}
+									</p>
 								)}
-							</p>
+							</div>
 						</div>
 					</span>
 				))}

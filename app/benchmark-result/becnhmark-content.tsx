@@ -224,15 +224,29 @@ export default function BenchmarkContent() {
 												{benchmark.mean.toFixed(2)} seconds
 											</span>
 											<br />
-											{((benchmark.data.length > 0 &&
+											{((benchmark.data[0].latency &&
 												benchmark.data[0].latency !== undefined) ||
 												benchmark.data[0].latency > 0) && (
-												<span>
-													Latency:
-													<span className="font-semibold text-blue-700">
-														{benchmark.data[0].latency.toFixed(2)} ms
+												<div className="flex flex-col gap-2">
+													<span>
+														Latency:
+														<span className="font-semibold text-blue-700">
+															{benchmark.data[0].latency.toFixed(2)} ms
+														</span>
 													</span>
-												</span>
+													<span>
+														Download:
+														<span className="font-semibold text-blue-700">
+															{benchmark.data[0].downloadSpeed.toFixed(2)} MB
+														</span>
+													</span>
+													<span>
+														Upload:
+														<span className="font-semibold text-blue-700">
+															{benchmark.data[0].uploadSpeed.toFixed(2)} MB
+														</span>
+													</span>
+												</div>
 											)}
 										</CardDescription>
 									</CardHeader>
@@ -341,15 +355,29 @@ export default function BenchmarkContent() {
 												{benchmark.mean.toFixed(2)} seconds
 											</span>
 											<br />
-											{((benchmark.data.length > 0 &&
+											{((benchmark.data[0].latency &&
 												benchmark.data[0].latency !== undefined) ||
 												benchmark.data[0].latency > 0) && (
-												<span>
-													Latency:
-													<span className="font-semibold text-blue-700">
-														{benchmark.data[0].latency.toFixed(2)} ms
+												<div className="flex flex-col gap-2">
+													<span>
+														Latency:
+														<span className="font-semibold text-blue-700">
+															{benchmark.data[0].latency.toFixed(2)} ms
+														</span>
 													</span>
-												</span>
+													<span>
+														Download:
+														<span className="font-semibold text-blue-700">
+															{benchmark.data[0].downloadSpeed.toFixed(2)} MB
+														</span>
+													</span>
+													<span>
+														Upload:
+														<span className="font-semibold text-blue-700">
+															{benchmark.data[0].uploadSpeed.toFixed(2)} MB
+														</span>
+													</span>
+												</div>
 											)}
 										</CardDescription>
 									</CardHeader>
