@@ -1,17 +1,6 @@
 'use client';
 
-import {
-	Bar,
-	BarChart,
-	CartesianGrid,
-	XAxis,
-	LabelList,
-	Area,
-	AreaChart,
-	YAxis,
-	LineChart,
-	Line,
-} from "recharts";
+import { CartesianGrid, XAxis, YAxis, LineChart, Line } from "recharts";
 
 import {
 	ChartConfig,
@@ -25,100 +14,9 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/select";
-import { useState } from "react";
-
-const benchmarkData = [
-	{
-		process: "Transfer Color",
-		wasm: 0.32,
-		native: 0.21,
-		benchmarkType: "time-execute",
-	},
-	{
-		process: "Sharpness",
-		wasm: 0.28,
-		native: 0.19,
-		benchmarkType: "time-execute",
-	},
-	{
-		process: "Saturation",
-		wasm: 0.35,
-		native: 0.23,
-		benchmarkType: "time-execute",
-	},
-	{
-		process: "Temperature",
-		wasm: 0.3,
-		native: 0.2,
-		benchmarkType: "time-execute",
-	},
-	{ process: "Tint", wasm: 0.27, native: 0.18, benchmarkType: "time-execute" },
-	{
-		process: "Contrast",
-		wasm: 0.33,
-		native: 0.22,
-		benchmarkType: "time-execute",
-	},
-	{
-		process: "Exposure",
-		wasm: 0.29,
-		native: 0.2,
-		benchmarkType: "time-execute",
-	},
-	{
-		process: "Transfer Color",
-		wasm: 0.45,
-		native: 0.31,
-		benchmarkType: "time-execute-internet",
-	},
-	{
-		process: "Sharpness",
-		wasm: 0.41,
-		native: 0.29,
-		benchmarkType: "time-execute-internet",
-	},
-	{
-		process: "Saturation",
-		wasm: 0.48,
-		native: 0.34,
-		benchmarkType: "time-execute-internet",
-	},
-	{
-		process: "Temperature",
-		wasm: 0.43,
-		native: 0.3,
-		benchmarkType: "time-execute-internet",
-	},
-	{
-		process: "Tint",
-		wasm: 0.39,
-		native: 0.27,
-		benchmarkType: "time-execute-internet",
-	},
-	{
-		process: "Contrast",
-		wasm: 0.46,
-		native: 0.32,
-		benchmarkType: "time-execute-internet",
-	},
-	{
-		process: "Exposure",
-		wasm: 0.42,
-		native: 0.28,
-		benchmarkType: "time-execute-internet",
-	},
-];
 
 const benchmarkCPUData = [
 	{ wasm: 42.7, native: 51.5, server: 96.3 },

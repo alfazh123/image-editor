@@ -55,7 +55,7 @@ export async function getSizeNative(imageSource: Blob): Promise<SizeImage> {
 		});
 		if (response.ok) {
 			const json = await response.json();
-			let sizeImage = { width: json.width, height: json.height };
+			const sizeImage = { width: json.width, height: json.height };
 			return sizeImage;
 		} else {
 			const errorText = await response.text();
