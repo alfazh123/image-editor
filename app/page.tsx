@@ -36,6 +36,7 @@ const features = [
 ];
 
 export default function Home() {
+	console.log("tes");
 	return (
 		<div>
 			<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
