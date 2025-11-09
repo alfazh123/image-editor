@@ -76,7 +76,7 @@ jobs:
       - name: Build with Next.js
         # run: ${{ steps.detect-package-manager.outputs.runner }} next build
         run: npm run build
-        environment:
+        env:
           NEXT_PUBLIC_API: ${{ secrets.NEXT_PUBLIC_API }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
