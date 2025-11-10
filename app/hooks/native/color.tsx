@@ -42,6 +42,7 @@ export async function SaturationNative(
 				date: date.toLocaleTimeString(),
 			},
 		]);
+		console.log(benchmarkHook.benchmarkNative);
 		benchmarkHook.setTestAttempts((prev) => ({
 			...prev,
 			saturation: prev.saturation + 1,
