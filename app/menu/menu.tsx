@@ -364,8 +364,8 @@ function BenchmarkSegmen({
 			{type && (
 				<div>
 					<p>latency: {internetSpeed?.latency} ms</p>
-					<p>downloadSpeed: {internetSpeed?.downloadSpeed} ms</p>
-					<p>uploadSpeed: {internetSpeed?.uploadSpeed} ms</p>
+					<p>downloadSpeed: {internetSpeed?.downloadSpeed} Mb</p>
+					<p>uploadSpeed: {internetSpeed?.uploadSpeed} Mb</p>
 				</div>
 			)}
 			<span className="text-sm w-full flex flex-col my-4">

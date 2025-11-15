@@ -330,9 +330,9 @@ export default function Native() {
 									height={hook.imageSize.height}
 								/>
 
-								<BenchmarkMenu {...benchmarkProps} />
-
 								<DownloadImage url={hook.imgUrl} />
+
+								<BenchmarkMenu {...benchmarkProps} />
 							</div>
 						</nav>
 					</div>
