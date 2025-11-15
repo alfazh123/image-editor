@@ -11,6 +11,7 @@ import {
 	adjust_temperature_image,
 	adjust_tint_image,
 	adjust_color_image,
+	extend_size_image,
 } from "rust-editor";
 
 export function fixSize(img: Uint8Array): Uint8Array {
@@ -22,6 +23,19 @@ export function fixSize(img: Uint8Array): Uint8Array {
 	} catch (error) {
 		console.error("Error fixing image size:", error);
 		throw error; // Re-throw the error for further handling if needed
+	}
+}
+
+export function extendSize(
+	img: Uint8Array,
+	sizeType: string = "FHD"
+): Uint8Array {
+	try {
+		const extendedImage = extend_size_image(img, sizeType);
+		return extendedImage;
+	} catch (error) {
+		console.error("Error extending image size:", error);
+		throw error;
 	}
 }
 
@@ -232,6 +246,35 @@ export async function inputImage(
 			return {
 				imgUrl: imageUrl,
 				imgArr: fixSizeImg,
+			};
+		}
+	} catch (error) {
+		console.error("Error reading image file:", error);
+	}
+	return {
+		imgUrl: "",
+		imgArr: new Uint8Array(),
+	};
+}
+
+// Extended function with no limitation on image size
+export async function inputImageExtend(
+	e: React.ChangeEvent<HTMLInputElement>,
+	sizeType: string = "FHD"
+): Promise<OutputInputImage> {
+	try {
+		const file = e.target.files?.[0];
+		if (file) {
+			const extendedSizeImg = extendSize(
+				new Uint8Array(await file.arrayBuffer()),
+				sizeType
+			);
+			const imageUrl = URL.createObjectURL(
+				new Blob([new Uint8Array(extendedSizeImg)], { type: "image/png" })
+			);
+			return {
+				imgUrl: imageUrl,
+				imgArr: extendedSizeImg,
 			};
 		}
 	} catch (error) {

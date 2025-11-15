@@ -39,6 +39,26 @@ export async function fixSizeNative(imageSource: File): Promise<Uint8Array> {
 	return result;
 }
 
+export async function extendSizeNative(
+	imageSource: File,
+	sizeType: string
+): Promise<Uint8Array> {
+	const sizeTypeJson = {
+		factor: sizeType,
+	};
+
+	const factorBlob = new Blob([JSON.stringify(sizeTypeJson)], {
+		type: "application/json",
+	});
+
+	const formData = new FormData();
+	formData.append("image_source", imageSource);
+	formData.append("size_type", factorBlob);
+
+	const result = await processImage("extend_size", formData);
+	return result;
+}
+
 interface SizeImage {
 	width: number;
 	height: number;
@@ -223,6 +243,32 @@ export async function inputImage(
 		const file = e.target.files?.[0];
 		if (file) {
 			const fixSizeArr = await fixSizeNative(file);
+			const imageUrl = URL.createObjectURL(
+				new Blob([new Uint8Array(fixSizeArr)], { type: "image/png" })
+			);
+			return {
+				imgUrl: imageUrl,
+				imgArr: fixSizeArr,
+			};
+		}
+	} catch (error) {
+		console.error("Error reading image file:", error);
+	}
+	return {
+		imgUrl: "",
+		imgArr: new Uint8Array(),
+	};
+}
+
+// Extended function with no limitation on image size
+export async function inputImageExtend(
+	e: React.ChangeEvent<HTMLInputElement>,
+	sizeType: string = "FHD"
+): Promise<OutputInputImage> {
+	try {
+		const file = e.target.files?.[0];
+		if (file) {
+			const fixSizeArr = await extendSizeNative(file, sizeType);
 			const imageUrl = URL.createObjectURL(
 				new Blob([new Uint8Array(fixSizeArr)], { type: "image/png" })
 			);
