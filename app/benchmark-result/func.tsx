@@ -207,30 +207,108 @@ export function getBenchmarkDataMerge(
 		{
 			name: "Color Transfer",
 			data: ctMerge,
+			wasmMean:
+				wasmCT.reduce((acc, item) => acc + item.time, 0) / wasmCT.length / 1000,
+			nativeMean:
+				nativeCT.reduce((acc, item) => acc + item.time, 0) /
+				nativeCT.length /
+				1000,
 		},
 		{
 			name: "Sharpness",
 			data: sharpMerge,
+			wasmMean:
+				wasmDataRaw
+					.filter((item) => item.method === "sharp")
+					.reduce((acc, item) => acc + item.time, 0) /
+				wasmDataRaw.filter((item) => item.method === "sharp").length /
+				1000,
+			nativeMean:
+				nativeDataRaw
+					.filter((item) => item.method === "sharp")
+					.reduce((acc, item) => acc + item.time, 0) /
+				nativeDataRaw.filter((item) => item.method === "sharp").length /
+				1000,
 		},
 		{
 			name: "Saturation",
 			data: saturationMerge,
+			wasmMean:
+				wasmDataRaw
+					.filter((item) => item.method === "saturation")
+					.reduce((acc, item) => acc + item.time, 0) /
+				wasmDataRaw.filter((item) => item.method === "saturation").length /
+				1000,
+			nativeMean:
+				nativeDataRaw
+					.filter((item) => item.method === "saturation")
+					.reduce((acc, item) => acc + item.time, 0) /
+				nativeDataRaw.filter((item) => item.method === "saturation").length /
+				1000,
 		},
 		{
 			name: "Temperature",
 			data: temperatureMerge,
+			wasmMean:
+				wasmDataRaw
+					.filter((item) => item.method === "temperature")
+					.reduce((acc, item) => acc + item.time, 0) /
+				wasmDataRaw.filter((item) => item.method === "temperature").length /
+				1000,
+			nativeMean:
+				nativeDataRaw
+					.filter((item) => item.method === "temperature")
+					.reduce((acc, item) => acc + item.time, 0) /
+				nativeDataRaw.filter((item) => item.method === "temperature").length /
+				1000,
 		},
 		{
 			name: "Tint",
 			data: tintMerge,
+			wasmMean:
+				wasmDataRaw
+					.filter((item) => item.method === "tint")
+					.reduce((acc, item) => acc + item.time, 0) /
+				wasmDataRaw.filter((item) => item.method === "tint").length /
+				1000,
+			nativeMean:
+				nativeDataRaw
+					.filter((item) => item.method === "tint")
+					.reduce((acc, item) => acc + item.time, 0) /
+				nativeDataRaw.filter((item) => item.method === "tint").length /
+				1000,
 		},
 		{
 			name: "Contrast",
 			data: contrastMerge,
+			wasmMean:
+				wasmDataRaw
+					.filter((item) => item.method === "contrast")
+					.reduce((acc, item) => acc + item.time, 0) /
+				wasmDataRaw.filter((item) => item.method === "contrast").length /
+				1000,
+			nativeMean:
+				nativeDataRaw
+					.filter((item) => item.method === "contrast")
+					.reduce((acc, item) => acc + item.time, 0) /
+				nativeDataRaw.filter((item) => item.method === "contrast").length /
+				1000,
 		},
 		{
 			name: "Exposure",
 			data: exposureMerge,
+			wasmMean:
+				wasmDataRaw
+					.filter((item) => item.method === "exposure")
+					.reduce((acc, item) => acc + item.time, 0) /
+				wasmDataRaw.filter((item) => item.method === "exposure").length /
+				1000,
+			nativeMean:
+				nativeDataRaw
+					.filter((item) => item.method === "exposure")
+					.reduce((acc, item) => acc + item.time, 0) /
+				nativeDataRaw.filter((item) => item.method === "exposure").length /
+				1000,
 		},
 	];
 	return { mergeData };

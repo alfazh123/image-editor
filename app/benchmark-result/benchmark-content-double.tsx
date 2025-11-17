@@ -157,189 +157,226 @@ export default function BenchmarkContentDouble() {
         } satisfies ChartConfig;
 
         return (
-            <div className="max-w-6xl mx-auto">
-                <Navbar />
-                <div className="p-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-xl shadow-lg border border-blue-200">
-                    <div>
-                        <h1 className="text-4xl font-extrabold mb-4 text-blue-800 tracking-tight drop-shadow">
-                            Benchmark WASM Results
-                        </h1>
-                        <p className="text-gray-600 mb-8 text-base">
-                            You can save this page as a complete webpage to keep the result
-                            with
-                            <span className="font-semibold text-blue-700"> CTRL + S</span>.
-                            <br /> This result is based on benchmark image with size{" "}
-                            <span className="font-semibold text-blue-700">
-                                {sizeWasm.width}px X {sizeWasm.height}px
-                            </span>
-                            .
-                        </p>
-                        <div className="flex flex-col gap-8 mb-10">
-                            {mergeData &&
-                                mergeData.map((benchmark, id) => (
-                                    <Card
-                                        key={id}
-                                        className="border border-blue-200 shadow-md bg-white/80 hover:shadow-lg transition-shadow">
-                                        <CardHeader>
-                                            <CardTitle className="text-2xl font-bold text-blue-700">
-                                                Benchmark {benchmark.name}
-                                            </CardTitle>
-                                            <CardDescription className="text-gray-500">
-                                                This process had an average execution time of{" "}
-                                                <div className="flex justify-between">
-                                                    {benchmark.data[0].internetNative?.downloadSpeed !== 0 ? 
-                                                        ((benchmark.data[0].internetWasm &&
-                                                            benchmark.data[0].internetWasm.latency !== undefined) ||
-                                                            benchmark.data[0].internetWasm.latency > 0) && (
-                                                            <div className="flex flex-col gap-2">
-                                                                <p>Internet Speed WASM</p>
-                                                                <span>
-                                                                    Latency:
-                                                                    <span className="font-semibold text-blue-700">
-                                                                        {benchmark.data[0].internetWasm.latency.toFixed(2)} ms
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    Download:
-                                                                    <span className="font-semibold text-blue-700">
-                                                                        {benchmark.data[0].internetWasm.downloadSpeed.toFixed(2)}{" "}
-                                                                        MB
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    Upload:
-                                                                    <span className="font-semibold text-blue-700">
-                                                                        {benchmark.data[0].internetWasm.uploadSpeed.toFixed(2)} MB
-                                                                    </span>
-                                                                </span>
-                                                            </div>
-                                                        ) : null
-                                                    } 
-                                                    {benchmark.data[0].internetNative?.downloadSpeed !== 0 ? 
-                                                        ((benchmark.data[0].internetNative &&
-                                                            benchmark.data[0].internetNative?.downloadSpeed !== 0) ||
-                                                            benchmark.data[0].internetNative?.latency !== null ||
-                                                            benchmark.data[0].internetNative?.downloadSpeed !== undefined) && (
-                                                                
-                                                            <div className="flex flex-col gap-2 text-right">
-                                                                <p>Internet Speed Native</p>
-                                                                <span>
-                                                                    Latency:
-                                                                    <span className="font-semibold text-blue-700">
-                                                                        {benchmark.data[0].internetNative?.latency.toFixed(2)} ms
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    Download:
-                                                                    <span className="font-semibold text-blue-700">
-                                                                        {benchmark.data[0].internetNative?.downloadSpeed.toFixed(2)}{" "}
-                                                                        MB
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    Upload:
-                                                                    <span className="font-semibold text-blue-700">
-                                                                        {benchmark.data[0].internetNative?.uploadSpeed.toFixed(2)} MB
-                                                                    </span>
-                                                                </span>
-                                                            </div>
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <ChartContainer
-                                                config={benchmarkConfig}
-                                                className="h-full w-full">
-                                                <BarChart
-                                                    accessibilityLayer
-                                                    data={benchmark.data}
-                                                    outerRadius={10}
-                                                    innerRadius={10}
-                                                    margin={{
-                                                        top: 20,
-                                                        right: 30,
-                                                        left: 20,
-                                                        bottom: 20,
-                                                    }}>
-                                                    <CartesianGrid
-                                                        vertical={false}
-                                                        strokeDasharray="3 3"
-                                                    />
-                                                    <ChartTooltip content={<ChartTooltipContent />} />
-                                                    <XAxis
-                                                        dataKey={`${
-                                                            benchmark.name === "Color Transfer"
-                                                                ? "referenceSize"
-                                                                : "label"
-                                                        }`}
-                                                        axisLine={false}
-                                                        tickLine={false}
-                                                        tickMargin={10}
-                                                        className="text-gray-700 font-medium"
-                                                        label={{
-                                                            value: `${
-                                                                benchmark.name === "Color Transfer"
-                                                                    ? "Image Reference Size"
-                                                                    : "Iteration"
-                                                            }`,
-                                                            position: "insideBottom",
-                                                            offset: -10,
-                                                            fill: "var(--muted-foreground)",
-                                                            fontWeight: 600,
-                                                        }}
-                                                    />
-                                                    <YAxis
-                                                        dataKey={"time"}
-                                                        axisLine={false}
-                                                        tickLine={false}
-                                                        tickMargin={10}
-                                                        className="text-gray-700 font-medium"
-                                                        label={{
-                                                            value: "Time (seconds)",
-                                                            angle: -90,
-                                                            position: "insideLeft",
-                                                            offset: 10,
-                                                            fill: "var(--muted-foreground)",
-                                                            fontWeight: 600,
-                                                        }}
-                                                    />
-                                                    <Bar
-                                                        dataKey="wasmTime"
-                                                        fill={`var(--color-wasm)`}
-                                                        radius={6}>
-                                                        <LabelList
-                                                            position="top"
-                                                            offset={12}
-                                                            className="fill-foreground"
-                                                            fontSize={12}
-                                                        />
-                                                    </Bar>
-                                                    <Bar
-                                                        dataKey="nativeTime"
-                                                        fill={`var(--color-native)`}
-                                                        radius={6}>
-                                                        <LabelList
-                                                            position="top"
-                                                            offset={12}
-                                                            className="fill-foreground"
-                                                            fontSize={12}
-                                                        />
-                                                    </Bar>
-                                                </BarChart>
-                                            </ChartContainer>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                        </div>
+					<div className="max-w-6xl mx-auto">
+						<Navbar />
+						<div className="p-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-xl shadow-lg border border-blue-200">
+							<div>
+								<h1 className="text-4xl font-extrabold mb-4 text-blue-800 tracking-tight drop-shadow">
+									Benchmark WASM Results
+								</h1>
+								<p className="text-gray-600 mb-8 text-base">
+									You can save this page as a complete webpage to keep the
+									result with
+									<span className="font-semibold text-blue-700"> CTRL + S</span>
+									.
+									<br /> This result is based on benchmark image with size{" "}
+									<span className="font-semibold text-blue-700">
+										{sizeWasm.width}px X {sizeWasm.height}px
+									</span>
+									.
+								</p>
+								<div className="flex flex-col gap-8 mb-10">
+									{mergeData &&
+										mergeData.map((benchmark, id) => (
+											<Card
+												key={id}
+												className="border border-blue-200 shadow-md bg-white/80 hover:shadow-lg transition-shadow">
+												<CardHeader>
+													<CardTitle className="text-2xl font-bold text-blue-700">
+														Benchmark {benchmark.name}
+													</CardTitle>
+													<CardDescription className="text-gray-500">
+														<div className="flex justify-between text-lg">
+															<p>
+																Mean time execute{" "}
+																<span className="font-semibold text-blue-700">
+																	{benchmark.wasmMean.toFixed(2)}s
+																</span>
+																(WASM)
+															</p>
+															<p>
+																<span className="font-semibold text-blue-700">
+																	{benchmark.nativeMean.toFixed(2)}s
+																</span>
+																(Native)
+															</p>
+														</div>
+														<div className="flex justify-between text-lg">
+															{benchmark.data[0].internetNative
+																?.downloadSpeed !== 0
+																? ((benchmark.data[0].internetWasm &&
+																		benchmark.data[0].internetWasm.latency !==
+																			undefined) ||
+																		benchmark.data[0].internetWasm.latency >
+																			0) && (
+																		<div className="flex flex-col gap-2">
+																			<p>Internet Speed WASM</p>
+																			<span>
+																				Latency:
+																				<span className="font-semibold text-blue-700">
+																					{benchmark.data[0].internetWasm.latency.toFixed(
+																						2
+																					)}{" "}
+																					ms
+																				</span>
+																			</span>
+																			<span>
+																				Download:
+																				<span className="font-semibold text-blue-700">
+																					{benchmark.data[0].internetWasm.downloadSpeed.toFixed(
+																						2
+																					)}{" "}
+																					MB
+																				</span>
+																			</span>
+																			<span>
+																				Upload:
+																				<span className="font-semibold text-blue-700">
+																					{benchmark.data[0].internetWasm.uploadSpeed.toFixed(
+																						2
+																					)}{" "}
+																					MB
+																				</span>
+																			</span>
+																		</div>
+																  )
+																: null}
+															{benchmark.data[0].internetNative
+																?.downloadSpeed !== 0
+																? ((benchmark.data[0].internetNative &&
+																		benchmark.data[0].internetNative
+																			?.downloadSpeed !== 0) ||
+																		benchmark.data[0].internetNative
+																			?.latency !== null ||
+																		benchmark.data[0].internetNative
+																			?.downloadSpeed !== undefined) && (
+																		<div className="flex flex-col gap-2 text-right">
+																			<p>Internet Speed Native</p>
+																			<span>
+																				Latency:
+																				<span className="font-semibold text-blue-700">
+																					{benchmark.data[0].internetNative?.latency.toFixed(
+																						2
+																					)}{" "}
+																					ms
+																				</span>
+																			</span>
+																			<span>
+																				Download:
+																				<span className="font-semibold text-blue-700">
+																					{benchmark.data[0].internetNative?.downloadSpeed.toFixed(
+																						2
+																					)}{" "}
+																					MB
+																				</span>
+																			</span>
+																			<span>
+																				Upload:
+																				<span className="font-semibold text-blue-700">
+																					{benchmark.data[0].internetNative?.uploadSpeed.toFixed(
+																						2
+																					)}{" "}
+																					MB
+																				</span>
+																			</span>
+																		</div>
+																  )
+																: null}
+														</div>
+													</CardDescription>
+												</CardHeader>
+												<CardContent>
+													<ChartContainer
+														config={benchmarkConfig}
+														className="h-full w-full">
+														<BarChart
+															accessibilityLayer
+															data={benchmark.data}
+															outerRadius={10}
+															innerRadius={10}
+															margin={{
+																top: 20,
+																right: 30,
+																left: 20,
+																bottom: 20,
+															}}>
+															<CartesianGrid
+																vertical={false}
+																strokeDasharray="3 3"
+															/>
+															<ChartTooltip content={<ChartTooltipContent />} />
+															<XAxis
+																dataKey={`${
+																	benchmark.name === "Color Transfer"
+																		? "referenceSize"
+																		: "label"
+																}`}
+																axisLine={false}
+																tickLine={false}
+																tickMargin={10}
+																className="text-gray-700 font-medium"
+																label={{
+																	value: `${
+																		benchmark.name === "Color Transfer"
+																			? "Image Reference Size"
+																			: "Iteration"
+																	}`,
+																	position: "insideBottom",
+																	offset: -10,
+																	fill: "var(--muted-foreground)",
+																	fontWeight: 600,
+																}}
+															/>
+															<YAxis
+																dataKey={"time"}
+																axisLine={false}
+																tickLine={false}
+																tickMargin={10}
+																className="text-gray-700 font-medium"
+																label={{
+																	value: "Time (seconds)",
+																	angle: -90,
+																	position: "insideLeft",
+																	offset: 10,
+																	fill: "var(--muted-foreground)",
+																	fontWeight: 600,
+																}}
+															/>
+															<Bar
+																dataKey="wasmTime"
+																fill={`var(--color-wasm)`}
+																radius={6}>
+																<LabelList
+																	position="top"
+																	offset={12}
+																	className="fill-foreground"
+																	fontSize={12}
+																/>
+															</Bar>
+															<Bar
+																dataKey="nativeTime"
+																fill={`var(--color-native)`}
+																radius={6}>
+																<LabelList
+																	position="top"
+																	offset={12}
+																	className="fill-foreground"
+																	fontSize={12}
+																/>
+															</Bar>
+														</BarChart>
+													</ChartContainer>
+												</CardContent>
+											</Card>
+										))}
+								</div>
 
-                        {/* <div className="mt-8 bg-white rounded-lg shadow border border-blue-100 p-4">
+								{/* <div className="mt-8 bg-white rounded-lg shadow border border-blue-100 p-4">
                             <LogTable columns={columns} data={parsedDataWasm} />
                         </div> */}
-                    </div>
-                </div>
-            </div>
-        );
+							</div>
+						</div>
+					</div>
+				);
     }
 }
