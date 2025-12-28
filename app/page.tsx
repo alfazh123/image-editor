@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import FeatureCard from "@/components/feature-card";
-import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar";
 import { Github } from "lucide-react";
 
