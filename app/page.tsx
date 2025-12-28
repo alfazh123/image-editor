@@ -3,10 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import BenchmarkChart from "@/components/benchmark-chart";
 import FeatureCard from "@/components/feature-card";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar";
+import { Github } from "lucide-react";
 
 const features = [
 	{
@@ -44,7 +44,7 @@ export default function Home() {
 				<header className="flex flex-col w-full h-80 justify-center relative mb-10">
 					<div className="flex flex-col gap-4 lg:max-w-1/2">
 						<h1 className="md:text-6xl text-4xl font-bold">
-							Image editor with Rust Benchmarks
+							Image editor with WASM
 						</h1>
 					</div>
 					<Image
@@ -62,48 +62,23 @@ export default function Home() {
 						Goal of this Application
 					</h2>
 					<p className="md:text-lg text-sm">
-						This image editor page provides two different implementations of
-						image processing written in Rust, one using
-						<Badge className="bg-[#644FF0]">
-							<Image
-								width={16}
-								height={16}
-								className="inline w-4 h-4"
-								src="./wasm.svg"
-								alt="WASM"
-							/>
-							WebAssembly (WASM)
-						</Badge>
-						and the other using{" "}
-						<Badge className="bg-[#F75208]">
-							<Image
-								width={16}
-								height={16}
-								className="inline w-4 h-4"
-								src="./actix.svg"
-								alt="Actix web"
-							/>
-							Actix web
-						</Badge>
-						<br />
-						This page allows you to compare the performance of these two
-						implementations by applying image filters and compare time execution
-						of each implementation.
+						This image editor application is built to demonstrate the power of
+						Rust and WebAssembly (WASM) in web development. <br />
 					</p>
 				</div>
 				<div className="flex flex-col gap-4 relative mt-12">
-					{/* <Badge
-					variant={"default"}
-					className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
-					Application overview
-				</Badge> */}
-					{/* <Image
-					src={"app.png"}
-					alt="app screenshot"
-					width={800}
-					height={600}
-					className="w-full rounded-xl border-2 border-gray-200 p-1 shadow-lg"
-				/> */}
+					<Badge
+						variant={"default"}
+						className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
+						Application overview
+					</Badge>
+					<Image
+						src={"app.png"}
+						alt="app screenshot"
+						width={800}
+						height={600}
+						className="w-full rounded-xl border-2 border-gray-200 p-1 shadow-lg"
+					/>
 				</div>
 				<div className="flex flex-col gap-4 mt-12">
 					<h2 className="md:text-2xl text-lg font-semibold">Features</h2>
@@ -117,12 +92,6 @@ export default function Home() {
 						))}
 					</div>
 				</div>
-				<div className="flex flex-col gap-4 mt-12" id="benchmark">
-					<BenchmarkChart />
-					<Button variant="outline" className="w-full">
-						Run Benchmark
-					</Button>
-				</div>
 				<footer className="flex w-full justify-between mt-8 h-20">
 					<span className="text-sm">
 						Created by{" "}
@@ -134,7 +103,7 @@ export default function Home() {
 						<Link
 							href="https://github.com/alfazh123/image-editor"
 							target="_blank">
-							Github Repo
+							<Github />
 						</Link>
 					</span>
 				</footer>
