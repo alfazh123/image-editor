@@ -14,7 +14,6 @@ import {
 	DisplaySize,
 	DownloadImage,
 	Sharp,
-	BenchmarkMenu,
 	AdjustColor,
 	AdjustLight,
 } from "../menu/menu";
@@ -25,16 +24,10 @@ import init from "rust-editor";
 import { getSizeImgWASM, inputImage } from "../hooks/wasm/func";
 import { filterMenuItems } from "../data";
 
-import {
-	AdjustColorProps,
-	AdjustLightProps,
-	BenchmarkTestProps,
-} from "../menu/type";
+import { AdjustColorProps, AdjustLightProps } from "../menu/type";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { ZoomControls } from "@/components/zoom-controls";
 import { useWasmHook } from "../hooks/useWasmEditor";
-import { useBenchmarkHook } from "../hooks/useBenchmark";
-import { useRouter } from "next/navigation";
 
 export default function Wasm() {
 	const [itemPosition, setItemPosition] = useState({ x: 0, y: 0 });
@@ -43,13 +36,10 @@ export default function Wasm() {
 	const [isAvailable, setIsAvailable] = useState(false);
 
 	const hook = useImageEditor();
-	const benchmarkHook = useBenchmarkHook();
-	const wasmHooks = useWasmHook(hook, benchmarkHook);
+	const wasmHooks = useWasmHook(hook);
 
 	const [wasmInitialized, setWasmInitialized] = useState(false);
 	const [wasmError, setWasmError] = useState<string | null>(null);
-
-	const route = useRouter();
 
 	// Initialize WASM in useEffect
 	useEffect(() => {
@@ -99,7 +89,7 @@ export default function Wasm() {
 
 	// Function to process transfer color with WASM
 	async function handleTransferColor() {
-		wasmHooks.transferColor(hook.refSize);
+		wasmHooks.transferColor();
 	}
 
 	filterMenuItems.map((item) => {
@@ -109,10 +99,7 @@ export default function Wasm() {
 				const response = await fetch(item.imgUrl);
 				const blob = await response.blob();
 				const buffer = await blob.arrayBuffer();
-				wasmHooks.functionFilter(new Uint8Array(buffer), {
-					width: item.width,
-					height: item.height,
-				});
+				wasmHooks.functionFilter(new Uint8Array(buffer));
 			},
 			color: item.backgroundColor,
 			backgroundImage: item.imgUrl,
@@ -252,41 +239,6 @@ export default function Wasm() {
 		],
 	};
 
-	function submitBenchmark() {
-		localStorage.removeItem("benchmarkWASM");
-		const ct = localStorage.getItem("transferColorAttemp");
-		const ctJSON = ct ? JSON.parse(ct) : [];
-		const ctFiltered = ctJSON.filter(
-			(item: { type: string }) => item.type === "NATIVE"
-		);
-		const updatedCT = [...ctFiltered, ...benchmarkHook.transferColorAttemp];
-		localStorage.setItem(
-			"benchmarkWASM",
-			JSON.stringify(benchmarkHook.benchmarkWASM)
-		);
-		localStorage.setItem("transferColorAttemp", JSON.stringify(updatedCT));
-		route.push("/benchmark-result");
-	}
-
-	const type = "wasm";
-
-	const benchmarkProps: BenchmarkTestProps = {
-		runSpeedTest: benchmarkHook.runSpeedTest,
-		isLoading: benchmarkHook.isLoading,
-		isFinished: benchmarkHook.isFinished,
-		resultSpeed: benchmarkHook.resultSpeed,
-		error: benchmarkHook.error,
-		windowSize: hook.windowSize,
-		testAttempts: benchmarkHook.testAttempts,
-		// testAttemptsLatency: benchmarkHook.testAttemptsLatency,
-		type: type, // Explicitly set as string literal type
-		submitResult: submitBenchmark,
-		startBenchmark: benchmarkHook.startBenchmark,
-		useLatency: benchmarkHook.useLatency,
-		changeUseLatency: benchmarkHook.changeUseLatency,
-		setStartBenchmark: benchmarkHook.setStartBenchmark,
-	};
-
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
@@ -337,7 +289,7 @@ export default function Wasm() {
 
 								<DownloadImage url={hook.imgUrl} />
 
-								<BenchmarkMenu {...benchmarkProps} />
+								{/* <BenchmarkMenu {...benchmarkProps} /> */}
 							</div>
 						</nav>
 					</div>
