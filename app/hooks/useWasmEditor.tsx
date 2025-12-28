@@ -1,24 +1,20 @@
 import { MenuFilter } from "../menu/type";
 import { grayscaleImage } from "./wasm/func";
 import { useImageEditor } from "./useImageEditor";
-import { useBenchmarkHook } from "./useBenchmark";
 import { useRef } from "react";
 import { Saturation, Temperature, Tint } from "./wasm/color";
 import { TranferColor, TransferColorProvided } from "./wasm/transfer-color";
 import { Sharp } from "./wasm/sharp";
 import { Contrast, Exposure } from "./wasm/light";
 
-export const useWasmHook = (
-	hook: ReturnType<typeof useImageEditor>,
-	benchmarkHook: ReturnType<typeof useBenchmarkHook>
-) => {
+export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	const transferColor = async (refSize: { width: number; height: number }) => {
+	const transferColor = async () => {
 		hook.setIsLoading(true);
 
 		if (hook.editedImgArr.length > 0 && hook.refImgArr.length > 0) {
-			TranferColor(hook, benchmarkHook, refSize);
+			TranferColor(hook);
 		} else {
 			hook.setIsLoading(false);
 			alert("No image data available for transfer color");
@@ -31,7 +27,7 @@ export const useWasmHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Sharp(hook, benchmarkHook, value);
+			Sharp(hook, value);
 		}, 300);
 	};
 
@@ -44,7 +40,7 @@ export const useWasmHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Saturation(hook, benchmarkHook, value);
+			Saturation(hook, value);
 		}, 300);
 	};
 
@@ -57,7 +53,7 @@ export const useWasmHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Temperature(hook, benchmarkHook, value);
+			Temperature(hook, value);
 		}, 300);
 	};
 
@@ -70,7 +66,7 @@ export const useWasmHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Tint(hook, benchmarkHook, value);
+			Tint(hook, value);
 		}, 300);
 	};
 
@@ -84,7 +80,7 @@ export const useWasmHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Exposure(hook, benchmarkHook, value);
+			Exposure(hook, value);
 		}, 300);
 	};
 
@@ -98,7 +94,7 @@ export const useWasmHook = (
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Contrast(hook, benchmarkHook, value);
+			Contrast(hook, value);
 		}, 300);
 	};
 
@@ -122,15 +118,12 @@ export const useWasmHook = (
 		hook.setIsLoading(false);
 	};
 
-	const functionFilter = async (
-		imageData: Uint8Array,
-		refSize: { width: number; height: number }
-	) => {
+	const functionFilter = async (imageData: Uint8Array) => {
 		console.time("Filter apply finish in");
 		hook.setIsLoading(true);
 		// Do not log isLoading here, as it won't reflect the updated value immediately
 		if (hook.editedImgArr.length > 0 && imageData.length > 0) {
-			TransferColorProvided(hook, benchmarkHook, imageData, refSize);
+			TransferColorProvided(hook, imageData);
 		} else {
 			hook.setIsLoading(false);
 			alert("No image data available for transfer color");
