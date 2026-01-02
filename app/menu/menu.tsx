@@ -242,152 +242,152 @@ export function AdjustLight({ lightItem, windowSize }: AdjustLightProps) {
 	);
 }
 
-export function BenchmarkMenu(props: BenchmarkTestProps) {
-	const testAttempts = props.testAttempts;
-	const latency = Number(props.resultSpeed?.latency.toFixed(2));
-	const downloadSpeed =
-		Number(props.resultSpeed?.downloadSpeed.toFixed(2)) ?? 0;
-	const uploadSpeed = Number(props.resultSpeed?.uploadSpeed.toFixed(2)) ?? 0;
+// export function BenchmarkMenu(props: BenchmarkTestProps) {
+// 	const testAttempts = props.testAttempts;
+// 	const latency = Number(props.resultSpeed?.latency.toFixed(2));
+// 	const downloadSpeed =
+// 		Number(props.resultSpeed?.downloadSpeed.toFixed(2)) ?? 0;
+// 	const uploadSpeed = Number(props.resultSpeed?.uploadSpeed.toFixed(2)) ?? 0;
 
-	function isCanSubmit(): boolean {
-		return (
-			testAttempts.colorTransfer >= 5 &&
-			testAttempts.sharpness >= 10 &&
-			testAttempts.saturation >= 10 &&
-			testAttempts.temperature >= 10 &&
-			testAttempts.tint >= 10 &&
-			testAttempts.exposure >= 10 &&
-			testAttempts.contrast >= 10
-		);
-	}
+// 	function isCanSubmit(): boolean {
+// 		return (
+// 			testAttempts.colorTransfer >= 5 &&
+// 			testAttempts.sharpness >= 10 &&
+// 			testAttempts.saturation >= 10 &&
+// 			testAttempts.temperature >= 10 &&
+// 			testAttempts.tint >= 10 &&
+// 			testAttempts.exposure >= 10 &&
+// 			testAttempts.contrast >= 10
+// 		);
+// 	}
 
-	function startBenchmarkWithLatency() {
-		console.log("Starting benchmark with latency...");
-		// props.startBenchmarkFunc;
-		props.runSpeedTest();
-		props.setStartBenchmark(true);
-		console.log("Running speed test...");
-	}
+// 	function startBenchmarkWithLatency() {
+// 		console.log("Starting benchmark with latency...");
+// 		// props.startBenchmarkFunc;
+// 		props.runSpeedTest();
+// 		props.setStartBenchmark(true);
+// 		console.log("Running speed test...");
+// 	}
 
-	return (
-		<MenuItem
-			icon={<NotebookPen className="md:w-12 w-6" />}
-			label="Benchmark"
-			windowSize={props.windowSize}>
-			<div className="flex flex-col w-full my-2 rounded-2xl gap-4">
-				{!props.startBenchmark && !props.isLoading && !props.isFinished && (
-					<div className="text-sm text-gray-500">
-						<div className="flex justify-center items-center gap-4 mb-4">
-							<p className="text-black">
-								Enable this option to display latency records per action.
-							</p>
-							<Switch onClick={props.changeUseLatency} />
-						</div>
-						<Button
-							className="mb-4 w-full flex items-center justify-center"
-							onClick={
-								props.useLatency
-									? startBenchmarkWithLatency
-									: () => props.setStartBenchmark(true)
-							}>
-							<span className="text-sm">Start Benchmark</span>
-						</Button>
-					</div>
-				)}
-				{!props.isLoading &&
-					!props.isFinished &&
-					props.startBenchmark &&
-					props.useLatency && (
-						<Button
-							className="w-full flex items-center justify-center"
-							onClick={props.runSpeedTest}>
-							<span className="text-sm">Setup Benchmark</span>
-						</Button>
-					)}
-				{props.isLoading && (
-					<span className="text-sm text-gray-500">Setup Environment...</span>
-				)}
-				{!props.isLoading && props.startBenchmark && (
-					<>
-						<BenchmarkSegmen
-							data={testAttempts}
-							type={props.useLatency}
-							internetSpeed={{
-								downloadSpeed,
-								uploadSpeed,
-								latency,
-							}}
-						/>
-						<span className="flex gap-2">
-							<Button
-								onClick={props.submitResult}
-								className={`flex-1 ${
-									isCanSubmit() ? "" : "opacity-50 cursor-not-allowed"
-								}`}>
-								See Result
-							</Button>
-						</span>
-					</>
-				)}
-				{props.error && !props.isLoading && (
-					<span className="text-sm text-red-500">{props.error}</span>
-				)}
-			</div>
-		</MenuItem>
-	);
-}
+// 	return (
+// 		<MenuItem
+// 			icon={<NotebookPen className="md:w-12 w-6" />}
+// 			label="Benchmark"
+// 			windowSize={props.windowSize}>
+// 			<div className="flex flex-col w-full my-2 rounded-2xl gap-4">
+// 				{!props.startBenchmark && !props.isLoading && !props.isFinished && (
+// 					<div className="text-sm text-gray-500">
+// 						<div className="flex justify-center items-center gap-4 mb-4">
+// 							<p className="text-black">
+// 								Enable this option to display latency records per action.
+// 							</p>
+// 							<Switch onClick={props.changeUseLatency} />
+// 						</div>
+// 						<Button
+// 							className="mb-4 w-full flex items-center justify-center"
+// 							onClick={
+// 								props.useLatency
+// 									? startBenchmarkWithLatency
+// 									: () => props.setStartBenchmark(true)
+// 							}>
+// 							<span className="text-sm">Start Benchmark</span>
+// 						</Button>
+// 					</div>
+// 				)}
+// 				{!props.isLoading &&
+// 					!props.isFinished &&
+// 					props.startBenchmark &&
+// 					props.useLatency && (
+// 						<Button
+// 							className="w-full flex items-center justify-center"
+// 							onClick={props.runSpeedTest}>
+// 							<span className="text-sm">Setup Benchmark</span>
+// 						</Button>
+// 					)}
+// 				{props.isLoading && (
+// 					<span className="text-sm text-gray-500">Setup Environment...</span>
+// 				)}
+// 				{!props.isLoading && props.startBenchmark && (
+// 					<>
+// 						<BenchmarkSegmen
+// 							data={testAttempts}
+// 							type={props.useLatency}
+// 							internetSpeed={{
+// 								downloadSpeed,
+// 								uploadSpeed,
+// 								latency,
+// 							}}
+// 						/>
+// 						<span className="flex gap-2">
+// 							<Button
+// 								onClick={props.submitResult}
+// 								className={`flex-1 ${
+// 									isCanSubmit() ? "" : "opacity-50 cursor-not-allowed"
+// 								}`}>
+// 								See Result
+// 							</Button>
+// 						</span>
+// 					</>
+// 				)}
+// 				{props.error && !props.isLoading && (
+// 					<span className="text-sm text-red-500">{props.error}</span>
+// 				)}
+// 			</div>
+// 		</MenuItem>
+// 	);
+// }
 
-function BenchmarkSegmen({
-	data,
-	type,
-	internetSpeed,
-}: {
-	data: TestAttemptsProps;
-	type: boolean;
-	internetSpeed?: {
-		downloadSpeed: number;
-		uploadSpeed: number;
-		latency: number;
-	};
-}) {
-	const testDataCount = [
-		{ label: "Color Transfer", key: "colorTransfer", minVal: 5 },
-		{ label: "Sharpness", key: "sharpness", minVal: 10 },
-		{ label: "Saturation", key: "saturation", minVal: 10 },
-		{ label: "Temperature", key: "temperature", minVal: 10 },
-		{ label: "Tint", key: "tint", minVal: 10 },
-		{ label: "Exposure", key: "exposure", minVal: 10 },
-		{ label: "Contrasts", key: "contrast", minVal: 10 },
-	];
-	return (
-		<div>
-			{type && (
-				<div>
-					<p>latency: {internetSpeed?.latency} ms</p>
-					<p>downloadSpeed: {internetSpeed?.downloadSpeed} Mb</p>
-					<p>uploadSpeed: {internetSpeed?.uploadSpeed} Mb</p>
-				</div>
-			)}
-			<span className="text-sm w-full flex flex-col my-4">
-				{testDataCount.map(({ label, key, minVal }) => (
-					<span key={key} className="flex w-72 justify-between mx-auto">
-						<p>{label} Attempt </p>
-						<div className="flex gap-1">
-							<div className="w-16 justify-center items-center flex">
-								{data[key as keyof typeof data] >= minVal ? (
-									<Badge className={`bg-blue-500`}>
-										<CheckCheck />
-									</Badge>
-								) : (
-									<p>
-										{data[key as keyof typeof data]} / {minVal}
-									</p>
-								)}
-							</div>
-						</div>
-					</span>
-				))}
-			</span>
-		</div>
-	);
-}
+// function BenchmarkSegmen({
+// 	data,
+// 	type,
+// 	internetSpeed,
+// }: {
+// 	data: TestAttemptsProps;
+// 	type: boolean;
+// 	internetSpeed?: {
+// 		downloadSpeed: number;
+// 		uploadSpeed: number;
+// 		latency: number;
+// 	};
+// }) {
+// 	const testDataCount = [
+// 		{ label: "Color Transfer", key: "colorTransfer", minVal: 5 },
+// 		{ label: "Sharpness", key: "sharpness", minVal: 10 },
+// 		{ label: "Saturation", key: "saturation", minVal: 10 },
+// 		{ label: "Temperature", key: "temperature", minVal: 10 },
+// 		{ label: "Tint", key: "tint", minVal: 10 },
+// 		{ label: "Exposure", key: "exposure", minVal: 10 },
+// 		{ label: "Contrasts", key: "contrast", minVal: 10 },
+// 	];
+// 	return (
+// 		<div>
+// 			{type && (
+// 				<div>
+// 					<p>latency: {internetSpeed?.latency} ms</p>
+// 					<p>downloadSpeed: {internetSpeed?.downloadSpeed} Mb</p>
+// 					<p>uploadSpeed: {internetSpeed?.uploadSpeed} Mb</p>
+// 				</div>
+// 			)}
+// 			<span className="text-sm w-full flex flex-col my-4">
+// 				{testDataCount.map(({ label, key, minVal }) => (
+// 					<span key={key} className="flex w-72 justify-between mx-auto">
+// 						<p>{label} Attempt </p>
+// 						<div className="flex gap-1">
+// 							<div className="w-16 justify-center items-center flex">
+// 								{data[key as keyof typeof data] >= minVal ? (
+// 									<Badge className={`bg-blue-500`}>
+// 										<CheckCheck />
+// 									</Badge>
+// 								) : (
+// 									<p>
+// 										{data[key as keyof typeof data]} / {minVal}
+// 									</p>
+// 								)}
+// 							</div>
+// 						</div>
+// 					</span>
+// 				))}
+// 			</span>
+// 		</div>
+// 	);
+// }
