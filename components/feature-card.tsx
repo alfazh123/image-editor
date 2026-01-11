@@ -67,7 +67,7 @@ export default function FeatureCard() {
 									<Dialog>
 										<DialogTrigger asChild>
 											<h3
-												className={`lg:text-5xl md:text-3xl text-xl font-semibold w-[96%] opacity-60`}>
+												className={`lg:text-5xl md:text-3xl text-xl font-semibold w-[96%] opacity-60 hover:underline underline-offset-1`}>
 												{feat.title}
 											</h3>
 										</DialogTrigger>

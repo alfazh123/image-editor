@@ -13,12 +13,12 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 	const transferColor = async () => {
 		hook.setIsLoading(true);
 
-		if (hook.editedImgArr.length > 0 && hook.refImgArr.length > 0) {
-			TranferColor(hook);
-		} else {
-			hook.setIsLoading(false);
-			alert("No image data available for transfer color");
-		}
+		TranferColor(hook);
+		hook.setIsLoading(false);
+		// if (hook.editedImgArr.length > 0 && hook.refImgArr.length > 0) {
+		// } else {
+		// 	alert("No image data available for transfer color");
+		// }
 	};
 
 	const sharp = async (value: number[]) => {
@@ -101,10 +101,10 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 	const grayscale = async () => {
 		console.time("Grayscale finish in");
 		hook.setIsLoading(true);
-		if (hook.editedImgArr.length == 0) {
-			hook.setIsLoading(false);
-			alert("No image data available for grayscaling");
-		}
+		// if (hook.editedImgArr.length == 0) {
+		// 	hook.setIsLoading(false);
+		// 	alert("No image data available for grayscaling");
+		// }
 		const result = grayscaleImage(hook.editedImgArr);
 		hook.setEditedImgArr(await result);
 		hook.setImgUrl(hook.ArrToURL(await result));
@@ -122,12 +122,12 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 		console.time("Filter apply finish in");
 		hook.setIsLoading(true);
 		// Do not log isLoading here, as it won't reflect the updated value immediately
-		if (hook.editedImgArr.length > 0 && imageData.length > 0) {
-			TransferColorProvided(hook, imageData);
-		} else {
-			hook.setIsLoading(false);
-			alert("No image data available for transfer color");
-		}
+		TransferColorProvided(hook, imageData);
+		hook.setIsLoading(false);
+		// if (hook.editedImgArr.length > 0 && imageData.length > 0) {
+		// } else {
+		// 	alert("No image data available for transfer color");
+		// }
 	};
 
 	const filterMenu: MenuFilter[] = [

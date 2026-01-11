@@ -1,12 +1,26 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import FeatureCard from "@/components/feature-card";
-import Navbar from "@/components/navbar";
 import { Github } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+
+const footerImg = [
+	{
+		src: "footer-1.png",
+		class: "-rotate-6 z-0",
+	},
+	{
+		src: "footer-2.png",
+		class: "z-10",
+	},
+	{
+		src: "footer-3.png",
+		class: "rotate-6 z-0",
+	},
+];
 
 export default function Home() {
 	const [imgIndex, setImgIndex] = useState(0);
@@ -66,15 +80,18 @@ export default function Home() {
 
 	return (
 		<div>
-			<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4">
-				<Navbar />
+			<div className="flex flex-col xl:w-1/2 sm:w-3/4 w-full mx-auto sm:px-8 px-4 gap-20">
+				{/* <Navbar /> */}
 				<header
 					ref={header}
-					className="flex flex-col w-full h-80 justify-center relative mb-10">
+					className="flex flex-col w-full h-80 justify-center relative mb-10 mt-30">
 					<div className="flex flex-col gap-4 lg:max-w-1/2">
 						<h1 className="md:text-6xl text-4xl font-bold">
 							Image editor with WASM
 						</h1>
+						<Button className="rounded-full w-fit" variant={"outline"}>
+							<Link href={"/wasm"}>Let's Edit</Link>
+						</Button>
 					</div>
 					<Image
 						src={imageSrc}
@@ -88,7 +105,7 @@ export default function Home() {
 				{/* Feature */}
 				<div className="flex lg:flex-row flex-col gap-4 mt-12 items-center">
 					<div>
-						<h2 className="text-4xl font-semibold">Features</h2>
+						<h2 className="text-4xl font-bold">Features</h2>
 						<p>
 							Explore the various features of this image editor, powered by Rust
 							and WebAssembly.
@@ -98,28 +115,33 @@ export default function Home() {
 				</div>
 
 				{/* Main goal */}
-				<div id="info" className="flex flex-col gap-4 mt-8">
-					<h2 className="md:text-2xl text-lg font-semibold">
-						Goal of this Application
-					</h2>
-					<p className="md:text-lg text-sm">
-						This image editor application is built to demonstrate the power of
-						Rust and WebAssembly (WASM) in web development. <br />
+				<div
+					id="info"
+					className="flex flex-col text-center items-center gap-4 mt-8">
+					<h1 className="text-4xl font-bold">
+						Rust + WASM: A Simple Implementation
+					</h1>
+					<p className="text-gray-500">
+						This project is a technical exploration of how Rust can be
+						integrated into web environments using WebAssembly. It serves as a
+						hands-on implementation to understand the workflow of processing
+						images outside of the JavaScript thread
 					</p>
-				</div>
-				<div className="flex flex-col gap-4 relative mt-12">
-					<Badge
-						variant={"default"}
-						className="absolute top-2 md:-left-10 -left-4 -rotate-30 md:text-[14px] text-[10px]">
-						Application overview
-					</Badge>
-					<Image
-						src={"app.png"}
-						alt="app screenshot"
-						width={800}
-						height={600}
-						className="w-full rounded-xl border-2 border-gray-200 p-1 shadow-lg"
-					/>
+					<Button className="rounded-full w-fit" variant={"outline"}>
+						<Link href={"/wasm"}>Wanna Try ?</Link>
+					</Button>
+					<div className="flex flex-row justify-center ">
+						{footerImg.map((item, id) => (
+							<Image
+								key={id}
+								src={item.src}
+								alt="app screenshot"
+								width={800}
+								height={600}
+								className={`w-52 rounded-xl border-2 border-gray-200 bg-gray-50 p-1 shadow-lg ${item.class}`}
+							/>
+						))}
+					</div>
 				</div>
 
 				{/* Footer */}
