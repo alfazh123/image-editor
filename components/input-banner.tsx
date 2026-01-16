@@ -1,7 +1,8 @@
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import Image from "next/image";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 interface InputBannerProps {
 	imageSize: { width: number; height: number };
@@ -12,6 +13,7 @@ interface InputBannerProps {
 	inputImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	style?: React.CSSProperties;
 	isUploadImage?: boolean;
+	removeImage: () => void;
 }
 
 export function InputBanner({
@@ -22,6 +24,7 @@ export function InputBanner({
 	inputImage,
 	style,
 	isUploadImage,
+	removeImage,
 }: InputBannerProps) {
 	return (
 		<>
@@ -53,7 +56,7 @@ export function InputBanner({
 					/>
 				</div>
 			)}
-			{imgUrl && (
+			{imgUrl && !isLoading && (
 				<div className={`relative flex items-center justify-center w-full`}>
 					<Image
 						id="image-item"
@@ -73,6 +76,12 @@ export function InputBanner({
 							</div>
 						)}
 					</div>
+					<Button
+						variant={"outline"}
+						className="absolute -top-4 -right-4 rounded-full py-1"
+						onClick={removeImage}>
+						<X />
+					</Button>
 				</div>
 			)}
 		</>

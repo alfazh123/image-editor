@@ -14,7 +14,6 @@ import {
 	DisplaySize,
 	DownloadImage,
 	Sharp,
-	BenchmarkMenu,
 	AdjustColor,
 	AdjustLight,
 } from "../menu/menu";
@@ -25,16 +24,11 @@ import init from "rust-editor";
 import { getSizeImgWASM, inputImage } from "../hooks/wasm/func";
 import { filterMenuItems } from "../data";
 
-import {
-	AdjustColorProps,
-	AdjustLightProps,
-	BenchmarkTestProps,
-} from "../menu/type";
+import { AdjustColorProps, AdjustLightProps } from "../menu/type";
 import { useImageEditor } from "../hooks/useImageEditor";
 import { ZoomControls } from "@/components/zoom-controls";
 import { useWasmHook } from "../hooks/useWasmEditor";
-import { useBenchmarkHook } from "../hooks/useBenchmark";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Wasm() {
 	const [itemPosition, setItemPosition] = useState({ x: 0, y: 0 });
@@ -43,13 +37,10 @@ export default function Wasm() {
 	const [isAvailable, setIsAvailable] = useState(false);
 
 	const hook = useImageEditor();
-	const benchmarkHook = useBenchmarkHook();
-	const wasmHooks = useWasmHook(hook, benchmarkHook);
+	const wasmHooks = useWasmHook(hook);
 
 	const [wasmInitialized, setWasmInitialized] = useState(false);
 	const [wasmError, setWasmError] = useState<string | null>(null);
-
-	const route = useRouter();
 
 	// Initialize WASM in useEffect
 	useEffect(() => {
@@ -59,6 +50,14 @@ export default function Wasm() {
 				await init(); // Initialize WASM asynchronously
 				setWasmInitialized(true);
 				console.timeEnd("WASM initialization successful in");
+				const imgUrl = localStorage.getItem("imgUrl");
+				const imgArrString = localStorage.getItem("imgArr");
+				if (imgUrl && imgArrString) {
+					const imgArr = new Uint8Array(JSON.parse(imgArrString as string));
+					hook.setImgUrl(imgUrl);
+					hook.setOriginalImgArr(imgArr);
+					setIsAvailable(true);
+				}
 			} catch (error) {
 				setWasmError(
 					error instanceof Error ? error.message : "Unknown WASM error"
@@ -75,12 +74,15 @@ export default function Wasm() {
 			return;
 		} else {
 			const { imgUrl, imgArr } = await inputImage(e);
+			console.log("Input Image Array:", imgArr);
+			// localStorage.setItem("imgUrl", imgUrl);
+			// localStorage.setItem("imgArr", JSON.stringify(Array.from(imgArr)));
 			console.log("Image URL:", imgUrl);
 			hook.setImgUrl(imgUrl);
 			hook.setOriginalImgArr(imgArr);
-			hook.setEditedImgArr(imgArr);
+			// hook.setEditedImgArr(imgArr);
 			setIsAvailable(true);
-			hook.setImageSize(await getSizeImgWASM(imgArr));
+			hook.setImageSize(getSizeImgWASM(imgArr));
 		}
 	}
 
@@ -93,13 +95,13 @@ export default function Wasm() {
 			hook.setImgRefUrl(imgUrl);
 			console.log("Reference Image URL:", imgUrl);
 			hook.setRefImgArr(imgArr);
-			hook.setRefSize(await getSizeImgWASM(imgArr));
+			hook.setRefSize(getSizeImgWASM(imgArr));
 		}
 	}
 
 	// Function to process transfer color with WASM
 	async function handleTransferColor() {
-		wasmHooks.transferColor(hook.refSize);
+		wasmHooks.transferColor();
 	}
 
 	filterMenuItems.map((item) => {
@@ -109,10 +111,7 @@ export default function Wasm() {
 				const response = await fetch(item.imgUrl);
 				const blob = await response.blob();
 				const buffer = await blob.arrayBuffer();
-				wasmHooks.functionFilter(new Uint8Array(buffer), {
-					width: item.width,
-					height: item.height,
-				});
+				wasmHooks.functionFilter(new Uint8Array(buffer));
 			},
 			color: item.backgroundColor,
 			backgroundImage: item.imgUrl,
@@ -252,39 +251,22 @@ export default function Wasm() {
 		],
 	};
 
-	function submitBenchmark() {
-		localStorage.removeItem("benchmarkWASM");
-		const ct = localStorage.getItem("transferColorAttemp");
-		const ctJSON = ct ? JSON.parse(ct) : [];
-		const ctFiltered = ctJSON.filter(
-			(item: { type: string }) => item.type === "NATIVE"
-		);
-		const updatedCT = [...ctFiltered, ...benchmarkHook.transferColorAttemp];
-		localStorage.setItem(
-			"benchmarkWASM",
-			JSON.stringify(benchmarkHook.benchmarkWASM)
-		);
-		localStorage.setItem("transferColorAttemp", JSON.stringify(updatedCT));
-		route.push("/benchmark-result");
-	}
-
-	const type = "wasm";
-
-	const benchmarkProps: BenchmarkTestProps = {
-		runSpeedTest: benchmarkHook.runSpeedTest,
-		isLoading: benchmarkHook.isLoading,
-		isFinished: benchmarkHook.isFinished,
-		resultSpeed: benchmarkHook.resultSpeed,
-		error: benchmarkHook.error,
-		windowSize: hook.windowSize,
-		testAttempts: benchmarkHook.testAttempts,
-		// testAttemptsLatency: benchmarkHook.testAttemptsLatency,
-		type: type, // Explicitly set as string literal type
-		submitResult: submitBenchmark,
-		startBenchmark: benchmarkHook.startBenchmark,
-		useLatency: benchmarkHook.useLatency,
-		changeUseLatency: benchmarkHook.changeUseLatency,
-		setStartBenchmark: benchmarkHook.setStartBenchmark,
+	const removeImage = () => {
+		hook.setIsLoading(true);
+		try {
+			hook.setImgUrl(null);
+			hook.setEditedImgArr(new Uint8Array());
+			hook.setOriginalImgArr(new Uint8Array());
+			hook.setImageSize({ width: 0, height: 0 });
+			hook.setZoomLevel(1);
+			setIsAvailable(false);
+			localStorage.removeItem("imgUrl");
+			localStorage.removeItem("imgArr");
+		} catch (e) {
+			toast.error("Failed to remove image.");
+		} finally {
+			hook.setIsLoading(false);
+		}
 	};
 
 	return (
@@ -298,59 +280,61 @@ export default function Wasm() {
 				onDragEnd={handleDragEnd}>
 				{/* Toolbar */}
 				{hook.imgUrl && (
-					<div className="fixed flex flex-col items-center md:top-4 md:right-50 md:left-50 md:bottom-auto bottom-4 left-0 right-0 z-50 rounded-md justify-center">
-						<nav className="flex items-center z-50 bg-gray-200/40 backdrop-blur-3xl shadow-lg md:w-fit w-full md:m-4 rounded-md md:justify-center justify-between overflow-x-scroll scrollbar-hide">
-							<div className="flex w-full md:h-10 h-14">
-								{/* Transfer Color Tool */}
+					<>
+						<div className="fixed flex flex-col items-center md:top-4 md:right-50 md:left-50 md:bottom-auto bottom-4 left-0 right-0 z-50 rounded-md justify-center">
+							<nav className="flex items-center z-50 bg-gray-200/40 backdrop-blur-3xl shadow-lg md:w-fit w-full md:m-4 rounded-md md:justify-center justify-between overflow-x-scroll scrollbar-hide">
+								<div className="flex w-full md:h-10 h-14">
+									{/* Transfer Color Tool */}
 
-								<ColorTransfer
-									onClick={handleTransferColor}
-									onChange={inputRefImage}
-									imgRefUrl={hook.imgRefUrl}
-									menuFilter={wasmHooks.filterMenu}
-									windowSize={hook.windowSize}
-								/>
-								{/* Sharp Tool */}
-								<Sharp
-									value={hook.sharpVal}
-									id="sharp-slider"
-									onChange={handleSharpChange}
-									windowSize={hook.windowSize}
-								/>
+									<ColorTransfer
+										onClick={handleTransferColor}
+										onChange={inputRefImage}
+										imgRefUrl={hook.imgRefUrl}
+										menuFilter={wasmHooks.filterMenu}
+										windowSize={hook.windowSize}
+									/>
+									{/* Sharp Tool */}
+									<Sharp
+										value={hook.sharpVal}
+										id="sharp-slider"
+										onChange={handleSharpChange}
+										windowSize={hook.windowSize}
+									/>
 
-								{/* Blur Tool */}
-								<AdjustColor
-									colorItem={color.colorItem}
-									windowSize={hook.windowSize}
-								/>
+									{/* Blur Tool */}
+									<AdjustColor
+										colorItem={color.colorItem}
+										windowSize={hook.windowSize}
+									/>
 
-								<AdjustLight
-									lightItem={light.lightItem}
-									windowSize={hook.windowSize}
-								/>
+									<AdjustLight
+										lightItem={light.lightItem}
+										windowSize={hook.windowSize}
+									/>
 
-								<DisplaySize
-									width={hook.imageSize.width}
-									height={hook.imageSize.height}
-									windowSize={hook.windowSize}
-								/>
+									<DisplaySize
+										width={hook.imageSize.width}
+										height={hook.imageSize.height}
+										windowSize={hook.windowSize}
+									/>
 
-								<DownloadImage url={hook.imgUrl} />
+									<DownloadImage url={hook.imgUrl} />
 
-								<BenchmarkMenu {...benchmarkProps} />
-							</div>
-						</nav>
-					</div>
+									{/* <BenchmarkMenu {...benchmarkProps} /> */}
+								</div>
+							</nav>
+						</div>
+						<div className="fixed md:block hidden bottom-10 right-10 z-50">
+							<ZoomControls
+								zoomLevel={hook.zoomLevel}
+								onZoomReset={hook.handleZoomReset}
+								onZoomChange={hook.handleZoomChange}
+							/>
+						</div>
+					</>
 				)}
-				{hook.imgUrl && (
-					<div className="fixed md:block hidden bottom-10 right-10 z-50">
-						<ZoomControls
-							zoomLevel={hook.zoomLevel}
-							onZoomReset={hook.handleZoomReset}
-							onZoomChange={hook.handleZoomChange}
-						/>
-					</div>
-				)}
+				{/* {hook.imgUrl && (
+				)} */}
 
 				{/* Canvas Area */}
 				<div className="">
@@ -386,7 +370,7 @@ export default function Wasm() {
 							position={itemPosition}
 							windowSize={hook.windowSize}
 							isAvailable={isAvailable}>
-							{hook.welcomeOverlay && (
+							{hook.welcomeOverlay && !isAvailable && (
 								<div
 									className={`absolute md:-top-0 md:-right-40 -top-10 right-40 z-50 ${
 										hook.welcomeOverlay || !hook.imgUrl ? "flex" : "hidden"
@@ -404,8 +388,9 @@ export default function Wasm() {
 								isLoading={hook.isLoading}
 								isAvailable={isAvailable}
 								inputImage={inputImageTarget}
+								removeImage={removeImage}
 								style={{
-									maxHeight: `${
+									height: `${
 										((hook.windowSize.height < 800
 											? 600
 											: hook.windowSize.height) -

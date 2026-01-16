@@ -258,30 +258,30 @@ export async function inputImage(
 }
 
 // Extended function with no limitation on image size
-export async function inputImageExtend(
-	e: React.ChangeEvent<HTMLInputElement>,
-	sizeType: string = "FHD"
-): Promise<OutputInputImage> {
-	try {
-		const file = e.target.files?.[0];
-		if (file) {
-			const extendedSizeImg = extendSize(
-				new Uint8Array(await file.arrayBuffer()),
-				sizeType
-			);
-			const imageUrl = URL.createObjectURL(
-				new Blob([new Uint8Array(extendedSizeImg)], { type: "image/png" })
-			);
-			return {
-				imgUrl: imageUrl,
-				imgArr: extendedSizeImg,
-			};
-		}
-	} catch (error) {
-		console.error("Error reading image file:", error);
-	}
-	return {
-		imgUrl: "",
-		imgArr: new Uint8Array(),
-	};
-}
+// export async function inputImageExtend(
+// 	e: React.ChangeEvent<HTMLInputElement>,
+// 	sizeType: string = "FHD"
+// ): Promise<OutputInputImage> {
+// 	try {
+// 		const file = e.target.files?.[0];
+// 		if (file) {
+// 			const extendedSizeImg = extendSize(
+// 				new Uint8Array(await file.arrayBuffer()),
+// 				sizeType
+// 			);
+// 			const imageUrl = URL.createObjectURL(
+// 				new Blob([new Uint8Array(extendedSizeImg)], { type: "image/png" })
+// 			);
+// 			return {
+// 				imgUrl: imageUrl,
+// 				imgArr: extendedSizeImg,
+// 			};
+// 		}
+// 	} catch (error) {
+// 		console.error("Error reading image file:", error);
+// 	}
+// 	return {
+// 		imgUrl: "",
+// 		imgArr: new Uint8Array(),
+// 	};
+// }

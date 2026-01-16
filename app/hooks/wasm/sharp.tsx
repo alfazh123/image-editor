@@ -1,13 +1,10 @@
 import { sharpImageWASM } from "@/app/hooks/wasm/func";
-import { useBenchmarkHook } from "../useBenchmark";
 import { useImageEditor } from "../useImageEditor";
 
 export async function Sharp(
 	hook: ReturnType<typeof useImageEditor>,
-	benchmarkHook: ReturnType<typeof useBenchmarkHook>,
 	value: number[]
 ) {
-	const start = performance.now();
 	console.time("Sharp image finish in");
 	hook.setSharpVal(value[0]);
 	const result = await sharpImageWASM(hook.originalImgArr, value[0]);
@@ -15,27 +12,4 @@ export async function Sharp(
 	// setEditImgArr(result);
 	hook.setImgUrl(hook.ArrToURL(result));
 	console.timeEnd("Sharp image finish in");
-	const end = performance.now();
-	const time = end - start;
-	const date = new Date();
-
-	if (benchmarkHook.startBenchmark) {
-		benchmarkHook.setBenchmarkWASM((prev) => [
-			...prev,
-			{
-				latency: benchmarkHook.resultSpeed?.latency ?? 0,
-				downloadSpeed: benchmarkHook.resultSpeed?.downloadSpeed ?? 0,
-				uploadSpeed: benchmarkHook.resultSpeed?.uploadSpeed ?? 0,
-				method: "sharp",
-				time,
-				width: hook.imageSize.width,
-				height: hook.imageSize.height,
-				date: date.toLocaleTimeString(),
-			},
-		]);
-		benchmarkHook.setTestAttempts((prev) => ({
-			...prev,
-			sharpness: prev.sharpness + 1,
-		}));
-	}
 }
