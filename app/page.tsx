@@ -3,24 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import FeatureCard from "@/components/feature-card";
-import { Github } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-
-const footerImg = [
-	{
-		src: "footer-1.png",
-		class: "-rotate-6 z-0",
-	},
-	{
-		src: "footer-2.png",
-		class: "z-10",
-	},
-	{
-		src: "footer-3.png",
-		class: "rotate-6 z-0",
-	},
-];
+import FooterImage from "@/components/footer-image";
 
 export default function Home() {
 	const [imgIndex, setImgIndex] = useState(0);
@@ -130,22 +115,11 @@ export default function Home() {
 					<Button className="rounded-full w-fit" variant={"outline"}>
 						<Link href={"/wasm"}>Wanna Try ?</Link>
 					</Button>
-					<div className="flex flex-row justify-center ">
-						{footerImg.map((item, id) => (
-							<Image
-								key={id}
-								src={item.src}
-								alt="app screenshot"
-								width={800}
-								height={600}
-								className={`w-52 rounded-xl border-2 border-gray-200 bg-gray-50 p-1 shadow-lg ${item.class}`}
-							/>
-						))}
-					</div>
+					<FooterImage />
 				</div>
 
 				{/* Footer */}
-				<footer className="flex w-full justify-between mt-8 h-20">
+				{/* <footer className="flex w-full justify-between mt-8 h-20">
 					<span className="text-sm">
 						Created by{" "}
 						<Link href="https://github.com/alfazh123" target="_blank">
@@ -159,7 +133,7 @@ export default function Home() {
 							<Github />
 						</Link>
 					</span>
-				</footer>
+				</footer> */}
 			</div>
 		</div>
 	);
