@@ -1,7 +1,6 @@
 "use client";
 
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import Link from "next/link";
 import { DraggableComponent } from "./dnd/draggable-component";
 import { Droppable } from "./dnd/droppable";
 import { useEffect, useRef, useState } from "react";

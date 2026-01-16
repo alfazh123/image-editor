@@ -262,8 +262,8 @@ export default function Wasm() {
 			setIsAvailable(false);
 			localStorage.removeItem("imgUrl");
 			localStorage.removeItem("imgArr");
-		} catch (e) {
-			toast.error("Failed to remove image.");
+		} catch (e: any) {
+			toast.error("Failed to remove image.", e);
 		} finally {
 			hook.setIsLoading(false);
 		}

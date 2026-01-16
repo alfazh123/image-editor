@@ -23,11 +23,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
 import {
-	CheckCheck,
 	CircleSlash2,
 	Download,
 	Layers2,
-	NotebookPen,
 	Paintbrush,
 	Ruler,
 	Settings2,
@@ -38,14 +36,10 @@ import {
 	DownloadProps,
 	MenuItemFilterProps,
 	SliderMenuItemProps,
-	BenchmarkTestProps,
 	AdjustColorProps,
 	AdjustLightProps,
-	TestAttemptsProps,
 } from "./type";
 import { ApplyFilterButton, InputRefBanner } from "@/components/change-ref";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 
 export function ColorTransfer({
 	onClick,

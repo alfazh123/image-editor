@@ -19,14 +19,15 @@ export function DraggableComponent({ id, children, windowSize, position = { x: 0
         y: position.y + 170 > windowSize.height ? windowSize.height - 200 : position.y - 100 < -100 ? -100 : position.y,
     }
 
-    let style: React.CSSProperties
-    style = {
-        position: 'absolute',
-        left: position.x,
-        top: position.y,
-        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-        zIndex: isDragging ? 1000 : 1,
-    };
+    const style: React.CSSProperties = {
+			position: "absolute",
+			left: position.x,
+			top: position.y,
+			transform: transform
+				? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+				: undefined,
+			zIndex: isDragging ? 1000 : 1,
+		};
 
     return (
         <div 

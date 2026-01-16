@@ -26,6 +26,9 @@ export default function Home() {
 					if (nextIndex > 21) {
 						return 21;
 					}
+					if (imgIndex) {
+						console.log();
+					}
 					setImageSrc(`/animation/tools-${nextIndex}.svg`);
 					return nextIndex;
 				});
@@ -75,7 +78,7 @@ export default function Home() {
 							Image editor with WASM
 						</h1>
 						<Button className="rounded-full w-fit" variant={"outline"}>
-							<Link href={"/wasm"}>Let's Edit</Link>
+							<Link href={"/wasm"}>Let&apos;s Edit</Link>
 						</Button>
 					</div>
 					<Image
