@@ -29,7 +29,7 @@ export default function Home() {
 					if (imgIndex) {
 						console.log();
 					}
-					setImageSrc(`/animation/tools-${nextIndex}.svg`);
+					setImageSrc(`animation/tools-${nextIndex}.svg`);
 					return nextIndex;
 				});
 			}, 40);
@@ -43,10 +43,10 @@ export default function Home() {
 				setImgIndex((prev) => {
 					const nextIndex = prev - 1;
 					if (nextIndex >= 1) {
-						setImageSrc(`/animation/tools-${nextIndex}.svg`);
+						setImageSrc(`animation/tools-${nextIndex}.svg`);
 						return nextIndex;
 					} else if (prev <= 0) {
-						setImageSrc(`/animation/tools-1.svg`);
+						setImageSrc(`animation/tools-1.svg`);
 						return 1;
 					}
 					return nextIndex;
