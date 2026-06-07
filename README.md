@@ -40,12 +40,6 @@ then running the application:
 npm run dev
 ```
 
-## Links
-
-[rust-editor](https://npm.com/package/rust-editor/)
-[demo](https://alfazh123.github.io/image-editor/)
-[wasm](https://webassembly.org/)
-
 ## Reason of this application
 
 From the previous statement, the application aims for my final project in college, in the current project I only implemented WebAssembly as a runtime or executor of image processing carried out in the application. However, in this final project, the goal is to compare two technologies to find out the advantages and disadvantages of the architecture used, the technology I use besides using WebAssembly is [Actix Web] (https://actix.rs), in the application has several features including:
@@ -55,3 +49,28 @@ Speed ​​test: This speed test is used to obtain internet speed values ​​
 Finally, the Benchmark page provides an informative display of the test results. This page displays the lowest and highest average internet speeds, the internet speed (if used), and the time required for each interaction.
 
 For the current application, there is no longer an implementation on Actix Web, but if you are interested and want to try it, you can see the build release with the title [Benchmark Editor App](https://github.com/alfazh123/image-editor/releases/tag/benchmark-editor)
+
+## Demos
+
+### Color transfer
+
+<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/transfer-color.mp4" />
+
+### Sharpen
+
+<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/sharp.mp4" />
+
+### Color Adjuster
+
+<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/color.mp4" />
+
+### Lightness
+
+<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/light.mp4" />
+
+## Links
+- [Github Repository Web app](https://github.com/alfazh123/image-editor)
+- [Github Repository WebAssembly implementation](https://github.com/alfazh123/RustEditor)
+- [Github Repository Actix web implementation](https://github.com/alfazh123/actix-editor-img)
+- [Demo Website](https://alfazh123.github.io/image-editor/)
+- [wasm](https://webassembly.org/)
