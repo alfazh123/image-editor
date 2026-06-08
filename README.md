@@ -54,7 +54,7 @@ For the current application, there is no longer an implementation on Actix Web, 
 
 ### Color transfer
 
-<video src="https://alfazh123.github.io/image-editor/feature-demo/transfer-color.mp4 autoPlay muted loop playsInline controls width="100%"></video>
+<video src="https://alfazh123.github.io/image-editor/feature-demo/transfer-color.mp4" autoPlay muted loop playsInline controls width="100%"></video>
 
 ### Sharpen
 
