@@ -54,19 +54,19 @@ For the current application, there is no longer an implementation on Actix Web, 
 
 ### Color transfer
 
-<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/transfer-color.mp4" />
+<video src="https://alfazh123.github.io/image-editor/feature-demo/transfer-color.mp4 autoPlay muted loop playsInline controls width="100%"></video>
 
 ### Sharpen
 
-<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/sharp.mp4" />
+<video src="https://alfazh123.github.io/image-editor/feature-demo/sharp.mp4" autoPlay muted loop playsInline controls width="100%"></video>
 
 ### Color Adjuster
 
-<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/color.mp4" />
+<video src="https://alfazh123.github.io/image-editor/feature-demo/color.mp4" autoPlay muted loop playsInline controls width="100%"></video>
 
 ### Lightness
 
-<VideoDemo url="https://alfazh123.github.io/image-editor/feature-demo/light.mp4" />
+<video src="https://alfazh123.github.io/image-editor/feature-demo/light.mp4" autoPlay muted loop playsInline controls width="100%"></video>
 
 ## Links
 - [Github Repository Web app](https://github.com/alfazh123/image-editor)
