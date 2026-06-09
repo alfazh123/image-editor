@@ -1,13 +1,21 @@
+"use client";
+
 import { MenuFilter } from "../menu/type";
 import { grayscaleImage } from "./wasm/func";
 import { useImageEditor } from "./useImageEditor";
-import { useRef } from "react";
-import { Saturation, Temperature, Tint } from "./wasm/color";
+import { useEffect, useRef, useState } from "react";
 import { TranferColor, TransferColorProvided } from "./wasm/transfer-color";
-import { Sharp } from "./wasm/sharp";
-import { Contrast, Exposure } from "./wasm/light";
+import { useColorProcessing } from "./useColorProcess";
+import { useLightProcessing } from "./useLightProcess";
+import { useSharpPRocess } from "./useSharpProcess";
+import init from "rust-editor";
 
-export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
+export const useWasmHook = (
+	hook: ReturnType<typeof useImageEditor>,
+	sharpen: ReturnType<typeof useSharpPRocess>,
+	light: ReturnType<typeof useLightProcessing>,
+	color: ReturnType<typeof useColorProcessing>,
+) => {
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const transferColor = async () => {
@@ -15,24 +23,21 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 
 		TranferColor(hook);
 		hook.setIsLoading(false);
-		// if (hook.editedImgArr.length > 0 && hook.refImgArr.length > 0) {
-		// } else {
-		// 	alert("No image data available for transfer color");
-		// }
 	};
 
 	const sharp = async (value: number[]) => {
-		hook.setSharpVal(value[0]);
+		sharpen.setSharpVal(value[0]);
+		console.log("Sharp value set to:", value[0]);
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Sharp(hook, value);
+			sharpen.Sharp(hook, value);
 		}, 300);
 	};
 
 	const saturation = async (value: number[]) => {
-		hook.setColorVal((prev) => ({
+		color.setColorVal((prev) => ({
 			...prev,
 			saturationValue: value[0],
 		}));
@@ -40,12 +45,12 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Saturation(hook, value);
+			color.Saturation(hook, value);
 		}, 300);
 	};
 
 	const temperature = async (value: number[]) => {
-		hook.setColorVal((prev) => ({
+		color.setColorVal((prev) => ({
 			...prev,
 			temperatureValue: value[0],
 		}));
@@ -53,12 +58,12 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Temperature(hook, value);
+			color.Temperature(hook, value);
 		}, 300);
 	};
 
 	const tint = async (value: number[]) => {
-		hook.setColorVal((prev) => ({
+		color.setColorVal((prev) => ({
 			...prev,
 			tintValue: value[0],
 		}));
@@ -66,13 +71,12 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Tint(hook, value);
+			color.Tint(hook, value);
 		}, 300);
 	};
 
 	const exposure = async (value: number[]) => {
-		console.time("Adjust Exposure finish in");
-		hook.setLightVal((prev) => ({
+		light.setLightVal((prev) => ({
 			...prev,
 			exposureValue: value[0],
 		}));
@@ -80,13 +84,13 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Exposure(hook, value);
+			light.Exposure(hook, value);
 		}, 300);
 	};
 
 	const contrast = async (value: number[]) => {
 		console.time("Adjust Exposure finish in");
-		hook.setLightVal((prev) => ({
+		light.setLightVal((prev) => ({
 			...prev,
 			contrastValue: value[0],
 		}));
@@ -94,7 +98,7 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 			clearTimeout(timeoutRef.current);
 		}
 		timeoutRef.current = setTimeout(async () => {
-			Contrast(hook, value);
+			light.Contrast(hook, value);
 		}, 300);
 	};
 
@@ -155,3 +159,34 @@ export const useWasmHook = (hook: ReturnType<typeof useImageEditor>) => {
 		contrast,
 	};
 };
+
+export function useInitWasm() {
+	const [wasmInitialized, setWasmInitialized] = useState(false);
+	const [wasmError, setWasmError] = useState<string | null>(null);
+
+	const abortController = new AbortController();
+
+	// Initialize WASM in useEffect
+	useEffect(() => {
+		async function initializeWasm() {
+			try {
+				console.time("WASM initialization successful in");
+				await init(); // Initialize WASM asynchronously
+				setWasmInitialized(true);
+				console.timeEnd("WASM initialization successful in");
+			} catch (error) {
+				setWasmError(
+					error instanceof Error ? error.message : "Unknown WASM error",
+				);
+			}
+		}
+
+		initializeWasm();
+
+		return () => {
+			abortController.abort(); // Cleanup on unmount
+		};
+	}, [wasmInitialized, wasmError]);
+
+	return { wasmInitialized, wasmError };
+}
