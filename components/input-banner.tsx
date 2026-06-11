@@ -13,7 +13,6 @@ interface InputBannerProps {
 	inputImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	style?: React.CSSProperties;
 	isUploadImage?: boolean;
-	removeImage: () => void;
 }
 
 export function InputBanner({
@@ -24,7 +23,6 @@ export function InputBanner({
 	inputImage,
 	style,
 	isUploadImage,
-	removeImage,
 }: InputBannerProps) {
 	return (
 		<>
@@ -38,14 +36,15 @@ export function InputBanner({
 					<p className="mt-4 text-lg font-medium">Uploading Image...</p>
 				</div>
 			) : (
-				<div>
+				<div
+					className={`flex items-center justify-center w-full h-full cursor-pointer ${isAvailable ? "hidden" : ""}`}>
 					<Label
-						className={`${
-							isAvailable ? "hidden" : ""
-						} text-sm text-gray-600 border-2 border-dashed border-slate-300 p-2 rounded-sm`}
+						className={`text-sm text-gray-600 p-2 rounded-sm w-full h-full flex justify-center items-center cursor-pointer`}
 						htmlFor="image-upload">
-						<Plus className="inline mr-1" />
-						Upload Image
+						<div className="border-2 border-dashed border-slate-300 p-2 rounded-md flex items-center justify-center">
+							<Plus className="inline mr-1" />
+							Upload Image
+						</div>
 					</Label>
 					<Input
 						id="image-upload"
@@ -76,12 +75,6 @@ export function InputBanner({
 							</div>
 						)}
 					</div>
-					<Button
-						variant={"outline"}
-						className="absolute -top-4 -right-4 rounded-full py-1"
-						onClick={removeImage}>
-						<X />
-					</Button>
 				</div>
 			)}
 		</>

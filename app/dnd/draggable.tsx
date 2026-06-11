@@ -60,17 +60,17 @@ export function Draggable({
 					? "fit-content"
 					: `${
 							windowSize.width > 400 ? "384px" : `${windowSize.width - 10}px`
-					  }`,
+						}`,
 				touchAction: "none",
 			}}
 			{...listeners}
 			{...attributes}
 			className={`
-            flex items-center justify-center relative rounded-lg font-medium text-slate-500
+            flex relative rounded-lg font-medium text-slate-500
             bg-transparent backdrop-blur-lg from shadow-lg hover:shadow-xl scale-90
             cursor-grab active:cursor-grabbing	
 			${isDragging ? (isAvailable ? "" : "rotate-2") : ""}
-            ${isAvailable ? "" : "h-56 px-6 py-3 border border-slate-100"}
+            ${isAvailable ? "" : "h-56 w-96 border border-slate-100"}
             `}>
 			{children}
 		</div>
