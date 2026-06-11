@@ -1,50 +1,53 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-	MenuItemProps,
+	MenuItemDetailProps,
+	MenuItemLabelProps,
 	SliderMenuItemProps,
 	SliderWithValueMenuItemProps,
 	SliderZoomProps,
 } from "./type";
 
-export function MenuItem({ icon, label, children, windowSize }: MenuItemProps) {
+export function MenuItemLabel({
+	id,
+	icon,
+	handleOpenChange,
+	selectedId,
+}: MenuItemLabelProps) {
 	return (
-		<div className="flex items-center justify-center w-full h-full rounded-md hover:bg-gray-100/80 cursor-pointer">
-			<DropdownMenu>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<DropdownMenuTrigger className="md:w-full w-20 flex flex-col items-center justify-center">
-							{icon}
-							<Label className="text-xs font-light md:hidden text-nowrap">
-								{label}
-							</Label>
-						</DropdownMenuTrigger>
-					</TooltipTrigger>
-					<TooltipContent side="bottom" className="md:block hidden">
-						{label}
-					</TooltipContent>
-				</Tooltip>
-				<DropdownMenuContent
-					side={`${
-						windowSize?.width !== undefined && windowSize?.width > 768
-							? "bottom"
-							: "top"
-					}`}
-					className={`md:min-w-96 md:w-96 min-w-full w-screen p-4`}
-					onWheel={(e) => e.stopPropagation()}>
-					<DropdownMenuLabel>{label}</DropdownMenuLabel>
-					{children}
-				</DropdownMenuContent>
-			</DropdownMenu>
+		<div
+			onClick={() => handleOpenChange(id)}
+			className={`p-2 cursor-pointer w-full hover:bg-zinc-100 ${selectedId === id ? "bg-white" : ""} rounded-lg transition-colors duration-200 flex items-center justify-center`}>
+			<div>{icon}</div>
 		</div>
 	);
 }
 
-export function SliderMenuItem({ value, id, onChange }: SliderMenuItemProps) {
+export function MenuItemDetail({
+	label,
+	children,
+	selectedId,
+	id,
+}: MenuItemDetailProps) {
 	return (
-		<div className="flex flex-col gap-2 md:py-10">
+		<div
+			className={`${selectedId === id ? "flex" : "hidden"} flex-col gap-4 mt-4`}>
+			<p className="text-xl font-semibold text-gray-600">{label}</p>
+			{children}
+		</div>
+	);
+}
+
+export function SliderMenuItem({
+	value,
+	id,
+	onChange,
+	selectedId,
+}: SliderMenuItemProps) {
+	return (
+		<div
+			className="flex flex-col gap-2 md:py-10"
+			id={selectedId === id ? "active" : ""}>
 			{/* <Label htmlFor={id}>Sharp Level</Label> */}
 			<p className="text-sm text-gray-600 mb-2">
 				Current Sharp Level: {value || 0}

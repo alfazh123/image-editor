@@ -7,23 +7,28 @@ interface ToolsPropsItem {
 }
 
 export interface AdjustColorProps {
+	id: string;
 	colorItem: [ToolsPropsItem, ToolsPropsItem, ToolsPropsItem];
-	windowSize?: { width: number; height: number };
+	selectedId: string;
 }
 
 export interface AdjustLightProps {
+	id: string;
 	lightItem: [ToolsPropsItem, ToolsPropsItem];
-	windowSize?: { width: number; height: number };
+	selectedId: string;
 }
 
 export type DownloadProps = {
+	id: string;
 	url: string;
+	selectedId: string;
 };
 
 export type DisplaySizeProps = {
+	id: string;
 	width: number;
 	height: number;
-	windowSize?: { width: number; height: number };
+	selectedId: string;
 };
 
 export type MenuFilter = {
@@ -38,7 +43,8 @@ export interface MenuItemFilterProps {
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	imgRefUrl?: string | null;
 	menuFilter?: MenuFilter[];
-	windowSize?: { width: number; height: number };
+	id: string;
+	selectedId: string;
 }
 
 export interface InputRefBannerProps {
@@ -52,18 +58,25 @@ export interface InputRefProps {
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export interface MenuItemProps {
+export interface MenuItemLabelProps {
+	id: string;
 	icon: React.ReactNode;
+	handleOpenChange: (id: string) => void;
+	selectedId?: string;
+}
+
+export interface MenuItemDetailProps {
+	id: string;
 	label: string;
 	children: React.ReactNode;
-	windowSize?: { width: number; height: number };
+	selectedId: string;
 }
 
 export interface SliderMenuItemProps {
 	value: number;
 	id: string;
 	onChange?: (value: number[]) => void;
-	windowSize?: { width: number; height: number };
+	selectedId: string;
 }
 
 export interface SliderWithValueMenuItemProps {
