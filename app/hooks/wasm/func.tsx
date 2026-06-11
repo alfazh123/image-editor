@@ -11,7 +11,6 @@ import {
 	adjust_temperature_image,
 	adjust_tint_image,
 	adjust_color_image,
-	extend_size_image,
 } from "rust-editor";
 
 export function fixSize(img: Uint8Array): Uint8Array {
@@ -26,22 +25,9 @@ export function fixSize(img: Uint8Array): Uint8Array {
 	}
 }
 
-export function extendSize(
-	img: Uint8Array,
-	sizeType: string = "FHD"
-): Uint8Array {
-	try {
-		const extendedImage = extend_size_image(img, sizeType);
-		return extendedImage;
-	} catch (error) {
-		console.error("Error extending image size:", error);
-		throw error;
-	}
-}
-
 export async function transferColorWASM(
 	imgT: Uint8Array,
-	imgR: Uint8Array
+	imgR: Uint8Array,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -76,7 +62,7 @@ export function getSizeImgWASM(imageData: Uint8Array): {
 
 export async function blurImageWASM(
 	imageData: Uint8Array,
-	radius: number
+	radius: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -93,7 +79,7 @@ export async function blurImageWASM(
 
 export async function sharpImageWASM(
 	imageData: Uint8Array,
-	radius: number
+	radius: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -102,14 +88,14 @@ export async function sharpImageWASM(
 		const result = sharpen(imageData, radius);
 		return result;
 	} catch (error) {
-		console.error("Error blur image:", error);
-		alert("Error while blur");
+		console.error("Error sharp image:", error);
+		alert("Error while sharp");
 		return new Uint8Array();
 	}
 }
 
 export async function grayscaleImage(
-	imageData: Uint8Array
+	imageData: Uint8Array,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -126,7 +112,7 @@ export async function grayscaleImage(
 
 export async function adjustSaturation(
 	imageData: Uint8Array,
-	saturation: number
+	saturation: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -143,7 +129,7 @@ export async function adjustSaturation(
 
 export async function adjustContrasts(
 	imageData: Uint8Array,
-	contrasts: number
+	contrasts: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -160,7 +146,7 @@ export async function adjustContrasts(
 
 export async function adjustExposure(
 	imageData: Uint8Array,
-	exposure: number
+	exposure: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -177,7 +163,7 @@ export async function adjustExposure(
 
 export async function adjustTemperature(
 	imageData: Uint8Array,
-	temperature: number
+	temperature: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -194,7 +180,7 @@ export async function adjustTemperature(
 
 export async function adjustTint(
 	imageData: Uint8Array,
-	tint: number
+	tint: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 50));
@@ -213,7 +199,7 @@ export async function adjustColorWASM(
 	imageData: Uint8Array,
 	saturation: number,
 	temperature: number,
-	tint: number
+	tint: number,
 ): Promise<Uint8Array> {
 	try {
 		await new Promise((resolve) => setTimeout(resolve, 200));
@@ -234,14 +220,14 @@ interface OutputInputImage {
 }
 
 export async function inputImage(
-	e: React.ChangeEvent<HTMLInputElement>
+	e: React.ChangeEvent<HTMLInputElement>,
 ): Promise<OutputInputImage> {
 	try {
 		const file = e.target.files?.[0];
 		if (file) {
 			const fixSizeImg = fixSize(new Uint8Array(await file.arrayBuffer()));
 			const imageUrl = URL.createObjectURL(
-				new Blob([new Uint8Array(fixSizeImg)], { type: "image/png" })
+				new Blob([new Uint8Array(fixSizeImg)], { type: "image/png" }),
 			);
 			return {
 				imgUrl: imageUrl,
@@ -256,32 +242,3 @@ export async function inputImage(
 		imgArr: new Uint8Array(),
 	};
 }
-
-// Extended function with no limitation on image size
-// export async function inputImageExtend(
-// 	e: React.ChangeEvent<HTMLInputElement>,
-// 	sizeType: string = "FHD"
-// ): Promise<OutputInputImage> {
-// 	try {
-// 		const file = e.target.files?.[0];
-// 		if (file) {
-// 			const extendedSizeImg = extendSize(
-// 				new Uint8Array(await file.arrayBuffer()),
-// 				sizeType
-// 			);
-// 			const imageUrl = URL.createObjectURL(
-// 				new Blob([new Uint8Array(extendedSizeImg)], { type: "image/png" })
-// 			);
-// 			return {
-// 				imgUrl: imageUrl,
-// 				imgArr: extendedSizeImg,
-// 			};
-// 		}
-// 	} catch (error) {
-// 		console.error("Error reading image file:", error);
-// 	}
-// 	return {
-// 		imgUrl: "",
-// 		imgArr: new Uint8Array(),
-// 	};
-// }

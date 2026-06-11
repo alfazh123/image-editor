@@ -54,5 +54,5 @@ export function useSetUpPosition(hook: ReturnType<typeof useImageEditor>) {
         }
     }
 
-    return { itemPosition, handleDragEnd, isOnCanvas, isInitialized };
+    return { itemPosition, handleDragEnd, isInitialized };
 }

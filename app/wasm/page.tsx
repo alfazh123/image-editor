@@ -1,13 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DndContext } from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
 
 import { Droppable } from "../dnd/droppable";
 import { Draggable } from "../dnd/draggable";
-import { getWindowSize } from "../dnd/get-window-size";
-import { Redo } from "lucide-react";
 
 import {
 	ColorTransfer,
@@ -20,89 +17,60 @@ import {
 import { StatusBanner } from "@/components/status-banner";
 import { InputBanner } from "@/components/input-banner";
 
-import init from "rust-editor";
-import { getSizeImgWASM, inputImage } from "../hooks/wasm/func";
 import { filterMenuItems } from "../data";
 
 import { AdjustColorProps, AdjustLightProps } from "../menu/type";
-import { useImageEditor } from "../hooks/useImageEditor";
+import { useImageEditor, useZoom } from "../hooks/useImageEditor";
 import { ZoomControls } from "@/components/zoom-controls";
-import { useWasmHook } from "../hooks/useWasmEditor";
+import { useInitWasm, useWasmHook } from "../hooks/useWasmEditor";
 import { toast } from "sonner";
 
+import { useLightProcessing } from "../hooks/useLightProcess";
+import { useSharpPRocess } from "../hooks/useSharpProcess";
+import { useColorProcessing } from "../hooks/useColorProcess";
+import { useHandleSlider } from "../hooks/useHandleSlider";
+import { useSetUpPosition } from "../hooks/useSetupPosition";
+import { useInputImage } from "../hooks/useInputImage";
+import WelcomeOverlay from "@/components/welcom-overlay";
+import BackgroundCanvas from "@/components/background-canvas";
+import MenuGroup from "../menu/menu-group";
+
 export default function Wasm() {
-	const [itemPosition, setItemPosition] = useState({ x: 0, y: 0 });
-	const [isOnCanvas, setIsOnCanvas] = useState(true);
-	const [isInitialized, setIsInitialized] = useState(false); // Add initialization flag
 	const [isAvailable, setIsAvailable] = useState(false);
 
+	const [selectedMenu, setSelectedMenu] = useState<string>("");
+	const handleMenuClick = (id: string) => {
+		setSelectedMenu((prev) => (prev === id ? "" : id));
+	};
+
 	const hook = useImageEditor();
-	const wasmHooks = useWasmHook(hook);
+	const lightHook = useLightProcessing();
+	const colorHook = useColorProcessing();
+	const sharpHook = useSharpPRocess();
+	const wasmHooks = useWasmHook(hook, sharpHook, lightHook, colorHook);
 
-	const [wasmInitialized, setWasmInitialized] = useState(false);
-	const [wasmError, setWasmError] = useState<string | null>(null);
+	const { zoomLevel, handleZoomReset, handleZoomChange, handleOnWheel } =
+		useZoom();
 
-	// Initialize WASM in useEffect
-	useEffect(() => {
-		async function initializeWasm() {
-			try {
-				console.time("WASM initialization successful in");
-				await init(); // Initialize WASM asynchronously
-				setWasmInitialized(true);
-				console.timeEnd("WASM initialization successful in");
-				const imgUrl = localStorage.getItem("imgUrl");
-				const imgArrString = localStorage.getItem("imgArr");
-				if (imgUrl && imgArrString) {
-					const imgArr = new Uint8Array(JSON.parse(imgArrString as string));
-					hook.setImgUrl(imgUrl);
-					hook.setOriginalImgArr(imgArr);
-					setIsAvailable(true);
-				}
-			} catch (error) {
-				setWasmError(
-					error instanceof Error ? error.message : "Unknown WASM error"
-				);
-			}
-		}
+	const {
+		handleSharpChange,
+		handleSaturation,
+		handleTemperature,
+		handleTint,
+		handleExposure,
+		handleContrast,
+		handleTransferColor,
+	} = useHandleSlider(wasmHooks);
 
-		initializeWasm();
-	}, [wasmInitialized, wasmError]);
+	const { itemPosition, handleDragEnd, isInitialized } = useSetUpPosition(hook);
 
-	async function inputImageTarget(e: React.ChangeEvent<HTMLInputElement>) {
-		if (!wasmInitialized) {
-			console.warn("WASM not initialized");
-			return;
-		} else {
-			const { imgUrl, imgArr } = await inputImage(e);
-			console.log("Input Image Array:", imgArr);
-			// localStorage.setItem("imgUrl", imgUrl);
-			// localStorage.setItem("imgArr", JSON.stringify(Array.from(imgArr)));
-			console.log("Image URL:", imgUrl);
-			hook.setImgUrl(imgUrl);
-			hook.setOriginalImgArr(imgArr);
-			// hook.setEditedImgArr(imgArr);
-			setIsAvailable(true);
-			hook.setImageSize(getSizeImgWASM(imgArr));
-		}
-	}
+	const initWasm = useInitWasm();
 
-	async function inputRefImage(e: React.ChangeEvent<HTMLInputElement>) {
-		if (!wasmInitialized) {
-			console.warn("WASM not initialized");
-			return;
-		} else {
-			const { imgUrl, imgArr } = await inputImage(e);
-			hook.setImgRefUrl(imgUrl);
-			console.log("Reference Image URL:", imgUrl);
-			hook.setRefImgArr(imgArr);
-			hook.setRefSize(getSizeImgWASM(imgArr));
-		}
-	}
-
-	// Function to process transfer color with WASM
-	async function handleTransferColor() {
-		wasmHooks.transferColor();
-	}
+	const { inputImageTarget, inputRefImage } = useInputImage(
+		hook,
+		initWasm,
+		setIsAvailable,
+	);
 
 	filterMenuItems.map((item) => {
 		wasmHooks.filterMenu.push({
@@ -118,87 +86,60 @@ export default function Wasm() {
 		});
 	});
 
-	// sharp image
-	async function handleSharpChange(value: number[]) {
-		wasmHooks.sharp(value);
-	}
-
-	// color
-	async function handleSaturation(value: number[]) {
-		wasmHooks.saturation(value);
-	}
-
-	async function handleTemperature(value: number[]) {
-		wasmHooks.temperature(value);
-	}
-
-	async function handleTint(value: number[]) {
-		wasmHooks.tint(value);
-	}
-
-	// light
-	async function handleExposure(value: number[]) {
-		wasmHooks.exposure(value);
-	}
-
-	async function handleContrast(value: number[]) {
-		wasmHooks.contrast(value);
-	}
-
-	// Initialize window size and item position on mount
-	useEffect(() => {
-		const handleResize = () => {
-			if (typeof window !== "undefined") {
-				const windowSize = getWindowSize();
-				const newWidth = windowSize.width;
-				const newHeight = windowSize.height;
-				hook.setWindowSize({ width: newWidth, height: newHeight });
-
-				setItemPosition({
-					x: newWidth > 400 ? newWidth / 2.2 - 150 : 0,
-					y: newWidth > 400 ? newHeight / 2.5 : newHeight / 2,
-				});
-				setIsInitialized(true);
-			}
-		};
-
-		handleResize(); // Set initial size
-		window.addEventListener("resize", handleResize);
-		// Cleanup event listener on unmount
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
-
-	// Handle drag end event
-	function handleDragEnd(event: DragEndEvent): void {
-		const { over, delta } = event;
-
-		if (over && over.id === "canvas") {
-			if (isOnCanvas) {
-				// Move existing item on canvas
-				setItemPosition((prev) => ({
-					x: prev.x + delta.x,
-					y: prev.y + delta.y,
-				}));
-			} else {
-				// Place item from toolbar to canvas
-				setItemPosition({
-					x: delta.x, // Offset from drag start
-					y: delta.y,
-				});
-				setIsOnCanvas(true);
-			}
-		}
-	}
-
 	function closeWelcomeOverlay() {
 		setTimeout(() => {
 			hook.setWelcomeOverlay(false);
 		}, 2000);
 	}
 
-	// Don't render until initialized
+	const color: AdjustColorProps = {
+		id: "ac",
+		colorItem: [
+			{
+				title: "Saturation",
+				value: colorHook.colorVal.saturationValue,
+				id: "saturation-slider",
+				onChange: handleSaturation,
+				className: "bg-slate-200",
+			},
+			{
+				title: "Temperature",
+				value: colorHook.colorVal.temperatureValue,
+				id: "temperature-slider",
+				onChange: handleTemperature,
+				className: "bg-gradient-to-r from-blue-400 via-slate-200 to-yellow-200",
+			},
+			{
+				title: "Tint",
+				value: colorHook.colorVal.tintValue,
+				id: "tint-slider",
+				onChange: handleTint,
+				className:
+					"bg-gradient-to-l from-green-400 via-slate-200 to-fuchsia-400",
+			},
+		],
+		selectedId: selectedMenu,
+	};
+
+	const light: AdjustLightProps = {
+		id: "al",
+		lightItem: [
+			{
+				title: "Exposure",
+				value: lightHook.lightVal.exposureValue,
+				id: "exposure-slider",
+				onChange: handleExposure,
+			},
+			{
+				title: "Contrast",
+				value: lightHook.lightVal.contrastValue,
+				id: "contrast-slider",
+				onChange: handleContrast,
+			},
+		],
+		selectedId: selectedMenu,
+	};
+
 	if (!isInitialized) {
 		return (
 			<div className="h-screen flex items-center justify-center">
@@ -207,202 +148,106 @@ export default function Wasm() {
 		);
 	}
 
-	const color: AdjustColorProps = {
-		colorItem: [
-			{
-				title: "Saturation",
-				value: hook.colorVal.saturationValue,
-				id: "saturation-slider",
-				onChange: handleSaturation,
-				className: "bg-slate-200",
-			},
-			{
-				title: "Temperature",
-				value: hook.colorVal.temperatureValue,
-				id: "temperature-slider",
-				onChange: handleTemperature,
-				className: "bg-gradient-to-r from-blue-400 via-slate-200 to-yellow-200",
-			},
-			{
-				title: "Tint",
-				value: hook.colorVal.tintValue,
-				id: "tint-slider",
-				onChange: handleTint,
-				className:
-					"bg-gradient-to-l from-green-400 via-slate-200 to-fuchsia-400",
-			},
-		],
-	};
-
-	const light: AdjustLightProps = {
-		lightItem: [
-			{
-				title: "Exposure",
-				value: hook.lightVal.exposureValue,
-				id: "exposure-slider",
-				onChange: handleExposure,
-			},
-			{
-				title: "Contrast",
-				value: hook.lightVal.contrastValue,
-				id: "contrast-slider",
-				onChange: handleContrast,
-			},
-		],
-	};
-
-	const removeImage = () => {
-		hook.setIsLoading(true);
-		try {
-			hook.setImgUrl(null);
-			hook.setEditedImgArr(new Uint8Array());
-			hook.setOriginalImgArr(new Uint8Array());
-			hook.setImageSize({ width: 0, height: 0 });
-			hook.setZoomLevel(1);
-			setIsAvailable(false);
-			localStorage.removeItem("imgUrl");
-			localStorage.removeItem("imgArr");
-		} catch (e: any) {
-			toast.error("Failed to remove image.", e);
-		} finally {
-			hook.setIsLoading(false);
-		}
-	};
-
 	return (
 		<div
 			className="h-screen bg-gradient-to-br from-gray-50 to-blue-50"
-			onWheel={
-				isAvailable ? (e) => hook.handleOnWheel(e.nativeEvent) : () => {}
-			}>
+			onWheel={isAvailable ? (e) => handleOnWheel(e.nativeEvent) : () => {}}>
 			<DndContext
 				onDragStart={closeWelcomeOverlay} // Hide overlay when drag starts
 				onDragEnd={handleDragEnd}>
-				{/* Toolbar */}
+				<div
+					className={`fixed ${hook.imgUrl ? "flex" : "hidden"} flex-col items-center md:top-4 md:right-50 md:left-50 md:bottom-auto bottom-4 left-0 right-0 z-50 rounded-md justify-center`}>
+					<MenuGroup
+						handleMenuClick={handleMenuClick}
+						selectedMenu={selectedMenu}>
+						<ColorTransfer
+							id="tc"
+							onClick={handleTransferColor}
+							onChange={inputRefImage}
+							imgRefUrl={hook.imgRefUrl}
+							menuFilter={wasmHooks.filterMenu}
+							selectedId={selectedMenu}
+						/>
+						<Sharp
+							value={sharpHook.sharpVal}
+							id="sh"
+							onChange={handleSharpChange}
+							selectedId={selectedMenu}
+						/>
+						<AdjustColor
+							id={color.id}
+							colorItem={color.colorItem}
+							selectedId={selectedMenu}
+						/>
+						<AdjustLight
+							id={light.id}
+							lightItem={light.lightItem}
+							selectedId={selectedMenu}
+						/>
+						<DisplaySize
+							id="sz"
+							width={hook.imageSize.width}
+							height={hook.imageSize.height}
+							selectedId={selectedMenu}
+						/>
+						<DownloadImage
+							id="dl"
+							url={hook.imgUrl || ""}
+							selectedId={selectedMenu}
+						/>
+					</MenuGroup>
+				</div>
 				{hook.imgUrl && (
-					<>
-						<div className="fixed flex flex-col items-center md:top-4 md:right-50 md:left-50 md:bottom-auto bottom-4 left-0 right-0 z-50 rounded-md justify-center">
-							<nav className="flex items-center z-50 bg-gray-200/40 backdrop-blur-3xl shadow-lg md:w-fit w-full md:m-4 rounded-md md:justify-center justify-between overflow-x-scroll scrollbar-hide">
-								<div className="flex w-full md:h-10 h-14">
-									{/* Transfer Color Tool */}
-
-									<ColorTransfer
-										onClick={handleTransferColor}
-										onChange={inputRefImage}
-										imgRefUrl={hook.imgRefUrl}
-										menuFilter={wasmHooks.filterMenu}
-										windowSize={hook.windowSize}
-									/>
-									{/* Sharp Tool */}
-									<Sharp
-										value={hook.sharpVal}
-										id="sharp-slider"
-										onChange={handleSharpChange}
-										windowSize={hook.windowSize}
-									/>
-
-									{/* Blur Tool */}
-									<AdjustColor
-										colorItem={color.colorItem}
-										windowSize={hook.windowSize}
-									/>
-
-									<AdjustLight
-										lightItem={light.lightItem}
-										windowSize={hook.windowSize}
-									/>
-
-									<DisplaySize
-										width={hook.imageSize.width}
-										height={hook.imageSize.height}
-										windowSize={hook.windowSize}
-									/>
-
-									<DownloadImage url={hook.imgUrl} />
-
-									{/* <BenchmarkMenu {...benchmarkProps} /> */}
-								</div>
-							</nav>
-						</div>
-						<div className="fixed md:block hidden bottom-10 right-10 z-50">
-							<ZoomControls
-								zoomLevel={hook.zoomLevel}
-								onZoomReset={hook.handleZoomReset}
-								onZoomChange={hook.handleZoomChange}
-							/>
-						</div>
-					</>
+					<ZoomControls
+						zoomLevel={zoomLevel}
+						onZoomReset={handleZoomReset}
+						onZoomChange={handleZoomChange}
+					/>
 				)}
-				{/* {hook.imgUrl && (
-				)} */}
 
 				{/* Canvas Area */}
-				<div className="">
-					{" "}
-					{/* Offset for fixed toolbar */}
-					<Droppable id="canvas" className="h-screen relative">
-						{/* Grid pattern for visual reference */}
-						<div className="absolute inset-0 opacity-20">
-							<div
-								className="w-full h-full"
-								style={{
-									backgroundImage: `
-										linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
-										linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px)
-									`,
-									backgroundSize: `${20 * hook.zoomLevel}px ${
-										20 * hook.zoomLevel
-									}px`,
-								}}
-							/>
-						</div>
+				<Droppable id="canvas" className="h-screen relative">
+					<BackgroundCanvas zoomLevel={zoomLevel} />
 
-						{!hook.imgUrl && (
-							<StatusBanner
-								title="This page use WASM for image processing."
-								initialized={wasmInitialized}
-								error={wasmError}
+					{!hook.imgUrl && (
+						<StatusBanner
+							title="This page use WASM for image processing."
+							initialized={initWasm.wasmInitialized}
+							error={initWasm.wasmError}
+						/>
+					)}
+
+					<Draggable
+						id="single-item"
+						position={itemPosition}
+						windowSize={hook.windowSize}
+						isAvailable={isAvailable}>
+						{hook.welcomeOverlay && !isAvailable && (
+							<WelcomeOverlay
+								welcomeOverlay={hook.welcomeOverlay}
+								imgUrl={hook.imgUrl}
 							/>
 						)}
-
-						<Draggable
-							id="single-item"
-							position={itemPosition}
+						<InputBanner
+							imageSize={hook.imageSize}
 							windowSize={hook.windowSize}
-							isAvailable={isAvailable}>
-							{hook.welcomeOverlay && !isAvailable && (
-								<div
-									className={`absolute md:-top-0 md:-right-40 -top-10 right-40 z-50 ${
-										hook.welcomeOverlay || !hook.imgUrl ? "flex" : "hidden"
-									}`}>
-									<h2 className="flex gap-2 text-2xl font-bold mb-4 text-gray-600 md:rotate-12 -rotate-12">
-										<Redo className="transform scale-150 -scale-x-150 -rotate-45" />
-										👋 Drag this
-									</h2>
-								</div>
-							)}
-							<InputBanner
-								imageSize={hook.imageSize}
-								windowSize={hook.windowSize}
-								imgUrl={hook.imgUrl}
-								isLoading={hook.isLoading}
-								isAvailable={isAvailable}
-								inputImage={inputImageTarget}
-								removeImage={removeImage}
-								style={{
-									height: `${
-										((hook.windowSize.height < 800
-											? 600
-											: hook.windowSize.height) -
-											120) *
-										hook.zoomLevel
-									}px`,
-									objectFit: "contain",
-								}}
-							/>
-						</Draggable>
-					</Droppable>
-				</div>
+							imgUrl={hook.imgUrl}
+							isLoading={hook.isLoading}
+							isAvailable={isAvailable}
+							inputImage={inputImageTarget}
+							style={{
+								height: `${
+									((hook.windowSize.height < 800
+										? 600
+										: hook.windowSize.height) -
+										120) *
+									zoomLevel
+								}px`,
+								objectFit: "contain",
+							}}
+						/>
+					</Draggable>
+				</Droppable>
 			</DndContext>
 		</div>
 	);

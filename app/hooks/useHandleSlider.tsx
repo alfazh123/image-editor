@@ -28,6 +28,11 @@ export function useHandleSlider(wasmHooks: ReturnType<typeof useWasmHook>) {
 		wasmHooks.contrast(value);
 	}
 
+	// color transfer
+	async function handleTransferColor() {
+		wasmHooks.transferColor();
+	}
+
 	return {
 		handleSharpChange,
 		handleSaturation,
@@ -35,5 +40,6 @@ export function useHandleSlider(wasmHooks: ReturnType<typeof useWasmHook>) {
 		handleTint,
 		handleExposure,
 		handleContrast,
-	}
+		handleTransferColor,
+	};
 }
